@@ -1,0 +1,14 @@
+*.class
+out
+
+*.iml
+*.ipr
+*.iws
+
+.gradle
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.log
