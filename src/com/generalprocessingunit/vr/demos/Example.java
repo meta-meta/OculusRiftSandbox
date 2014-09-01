@@ -4,6 +4,7 @@ import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PShape;
 
+
 public class Example extends PAppletVR {
 
     public static void main(String[] args){
@@ -47,9 +48,6 @@ public class Example extends PAppletVR {
 
     @Override
     protected void updateState() { }
-
-    @Override
-    protected void drawHeadContainerView(int eye, PGraphics pG) { }
 
     float hue = 0;
 

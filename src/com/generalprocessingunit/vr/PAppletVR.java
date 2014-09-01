@@ -19,7 +19,7 @@ import static com.oculusvr.capi.OvrLibrary.ovrTrackingCaps.ovrTrackingCap_Orient
 import static com.oculusvr.capi.OvrLibrary.ovrTrackingCaps.ovrTrackingCap_Position;
 
 public abstract class PAppletVR extends PApplet {
-    public static final float PIXELS_PER_DISPLAY_PIXEL = 1f;
+    private static final float PIXELS_PER_DISPLAY_PIXEL = 1f;
 
     private final Hmd hmd;
 
@@ -34,6 +34,9 @@ public abstract class PAppletVR extends PApplet {
      * The Oculus rift is the homunculus inside.
      * */
     public EuclideanSpaceObject headContainer = new EuclideanSpaceObject();
+    public PVector lookat = new PVector();
+
+    public int eyeTextureW, eyeTextureH;
 
     private static Hmd openFirstHmd() {
         Hmd hmd = Hmd.create(0);
@@ -114,6 +117,9 @@ public abstract class PAppletVR extends PApplet {
 
             views[eye] = (PGraphicsOpenGL)createGraphics(header.TextureSize.w, header.TextureSize.h, OPENGL);
             eyeTextures[eye].TextureId = views[eye].getTexture().glName;
+
+            eyeTextureW = views[0].width;
+            eyeTextureH = views[0].height;
         }
 
 
@@ -130,6 +136,7 @@ public abstract class PAppletVR extends PApplet {
 
         // Processing defaults to 60
         frameRate(75);
+        hmd.setEnabledCaps(hmd.getEnabledCaps() | OvrLibrary.ovrHmdCaps.ovrHmdCap_NoVSync);
     }
 
     @Override
@@ -165,6 +172,8 @@ public abstract class PAppletVR extends PApplet {
 
             PVector lookat = new PVector(0, 0, 1);
             rotationMatrix.mult(lookat, lookat).normalize(lookat);
+            this.lookat = lookat.get();
+            this.lookat.y = - this.lookat.y;
             lookat.y = -lookat.y;
             lookat.add(eyeLocation);
 
@@ -180,6 +189,9 @@ public abstract class PAppletVR extends PApplet {
 //            OvrVector3f trans = eyeRenderDescs[eye].ViewAdjust;
 //            views[eye].translate(trans.x, trans.y, trans.z);
 
+            views[eye].beginDraw();
+
+            drawViewPreCamera(eye, views[eye]);
 
             /* Draw Eye
             * */
@@ -193,7 +205,7 @@ public abstract class PAppletVR extends PApplet {
                     up.x, up.y, up.z
             );
 
-            views[eye].beginDraw();
+
 
             views[eye].pushMatrix();
                 AxisAngle aa = headContainer.getOrientation();
@@ -209,7 +221,7 @@ public abstract class PAppletVR extends PApplet {
 
         hmd.endFrame(poses, eyeTextures);
 
-        println(frameRate);
+//        println(frameRate);
     }
 
 
@@ -253,7 +265,7 @@ public abstract class PAppletVR extends PApplet {
      *
      * called twice per draw cycle
      * */
-    protected abstract void drawHeadContainerView(int eye, PGraphics pG);
+    protected void drawHeadContainerView(int eye, PGraphics pG){}
 
     /**
      * For drawing the outside world. Location and orientation of headContainer are accounted for.
@@ -261,6 +273,9 @@ public abstract class PAppletVR extends PApplet {
      * called twice per draw cycle
      * */
     protected abstract void drawView(int eye, PGraphics pG);
+
+
+    protected void drawViewPreCamera(int eye, PGraphics pG){}
 
     /**
      * Use this to update game logic.
