@@ -3,7 +3,7 @@ package com.generalprocessingunit.processing;
 import processing.core.PVector;
 
 public class EuclideanSpaceObject extends MathsHelpers {
-    private final Orientation orientation;
+    private Orientation orientation;
     private final PVector location;
 
     public EuclideanSpaceObject(PVector location, Orientation orientation) {
@@ -51,7 +51,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
         orientation.rotate(rotation);
     }
 
-    public PVector location(){
+    public PVector getLocation(){
         return location.get();
     }
 
@@ -67,7 +67,19 @@ public class EuclideanSpaceObject extends MathsHelpers {
         return location.z;
     }
 
-    public AxisAngle getOrientation() {
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(float yaw, float pitch, float roll) {
+        orientation = new Orientation(yaw, pitch, roll);
+    }
+
+    public void setOrientation(Orientation o) {
+        orientation = o;
+    }
+
+    public AxisAngle getAxisAngle() {
         return orientation.getOrientation();
     }
 

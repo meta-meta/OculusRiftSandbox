@@ -9,6 +9,15 @@ public class Orientation {
 
     private Quaternion orientation = new Quaternion();
 
+    public Orientation() {}
+
+    public Orientation (float yaw, float pitch, float roll) {
+        this();
+        yaw(yaw);
+        pitch(pitch);
+        roll(roll);
+    }
+
     //TODO: rotations can probably be combined into 1 step
     public void rotate(PVector rotation){
         yaw(rotation.y);

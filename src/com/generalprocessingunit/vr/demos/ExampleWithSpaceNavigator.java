@@ -52,7 +52,7 @@ public class ExampleWithSpaceNavigator extends Example {
         headContainer.rotate(rotMomentum);
 
         if(headContainer.y() < 2) {
-            PVector location = headContainer.location();
+            PVector location = headContainer.getLocation();
             location.y = 2;
             headContainer.setLocation(location);
         }

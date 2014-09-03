@@ -208,7 +208,7 @@ public abstract class PAppletVR extends PApplet {
 
 
             views[eye].pushMatrix();
-                AxisAngle aa = headContainer.getOrientation();
+                AxisAngle aa = headContainer.getAxisAngle();
                 views[eye].rotate(-aa.w, aa.x, aa.y, aa.z); // -w because we want to rotate the opposite way
                 views[eye].translate(-headContainer.x(), -headContainer.y(), -headContainer.z());
                 drawView(eye, views[eye]);

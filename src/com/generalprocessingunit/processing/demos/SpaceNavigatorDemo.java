@@ -72,7 +72,7 @@ public class SpaceNavigatorDemo extends PApplet {
 
         translate(ship.x(), ship.y(), ship.z());
 
-        AxisAngle aa = ship.getOrientation();
+        AxisAngle aa = ship.getAxisAngle();
         rotate(aa.w, aa.x, aa.y, aa.z);
 
         fill(204, 102, 0);
