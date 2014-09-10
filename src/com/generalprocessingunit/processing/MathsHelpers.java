@@ -1,9 +1,10 @@
 package com.generalprocessingunit.processing;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
-public abstract class MathsHelpers {
+public abstract class MathsHelpers implements PConstants {
 
     public static PVector add(PVector ... pVectors) {
         PVector v = new PVector();
@@ -119,5 +120,8 @@ public abstract class MathsHelpers {
 
     //TODO: ceil on
 
+    public static float map(float value, float start1, float stop1, float start2, float stop2) {
+        return PApplet.map(value, start1, stop1, start2, stop2);
+    }
 
 }
