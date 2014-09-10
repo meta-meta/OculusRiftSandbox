@@ -1,10 +1,8 @@
-package com.generalprocessingunit.processing.hid;
+package com.generalprocessingunit.hid;
 
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.Quaternion;
 import com.sixense.ControllerData;
 import com.sixense.EnumButton;
-import processing.core.PConstants;
 import processing.core.PVector;
 
 public class RazerHydra extends EuclideanSpaceObject {

@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing.hid;
+package com.generalprocessingunit.hid;
 
 import com.sixense.ControllerData;
 import com.sixense.Sixense;

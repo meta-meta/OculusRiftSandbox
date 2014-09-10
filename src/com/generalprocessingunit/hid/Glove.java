@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing.hid;
+package com.generalprocessingunit.hid;
 
 public class Glove extends RazerHydra {
     protected int[] bend = new int[5];

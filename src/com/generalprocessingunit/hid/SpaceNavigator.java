@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing.hid;
+package com.generalprocessingunit.hid;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -35,7 +35,7 @@ public class SpaceNavigator {
         sliderZrot = device.getSlider(4);
         button1 = device.getButton(0);
         button2 = device.getButton(1);
-        sliderXpos.setMultiplier(-0.01f); // sensitivities
+        sliderXpos.setMultiplier(0.01f); // sensitivities
         sliderYpos.setMultiplier(-0.01f);
         sliderZpos.setMultiplier(-0.01f);
         sliderXrot.setMultiplier(-0.0001f);

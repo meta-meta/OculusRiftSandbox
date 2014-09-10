@@ -1,6 +1,6 @@
 package com.generalprocessingunit.vr.demos;
 
-import com.generalprocessingunit.processing.hid.SpaceNavigator;
+import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PVector;

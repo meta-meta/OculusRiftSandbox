@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing.hid;
+package com.generalprocessingunit.hid;
 
 
 import com.generalprocessingunit.processing.AxisAngle;

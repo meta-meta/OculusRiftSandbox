@@ -1,10 +1,8 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.processing.AxisAngle;
-import com.generalprocessingunit.processing.hid.GloveManager;
-import com.generalprocessingunit.processing.hid.RazerHydra;
-import com.generalprocessingunit.processing.hid.RazerHydraManager;
-import com.generalprocessingunit.processing.hid.SpaceNavigator;
+import com.generalprocessingunit.hid.GloveManager;
+import com.generalprocessingunit.hid.RazerHydraManager;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
