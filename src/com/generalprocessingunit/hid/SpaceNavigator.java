@@ -22,28 +22,41 @@ public class SpaceNavigator {
     private ControllButton button1; // Buttons
     private ControllButton button2;
 
+    private boolean spaceNavigatorPresent = true;
+
     public SpaceNavigator(PApplet p5) {
         controll = ControllIO.getInstance(p5);
-        device = controll.getDevice("SpaceNavigator");
-        device.setTolerance(1.00f);
+        try {
+            device = controll.getDevice("SpaceNavigator");
+            device.setTolerance(1.00f);
 
-        sliderXpos = device.getSlider(2);
-        sliderYpos = device.getSlider(0);
-        sliderZpos = device.getSlider(1);
-        sliderXrot = device.getSlider(5);
-        sliderYrot = device.getSlider(3);
-        sliderZrot = device.getSlider(4);
-        button1 = device.getButton(0);
-        button2 = device.getButton(1);
-        sliderXpos.setMultiplier(0.01f); // sensitivities
-        sliderYpos.setMultiplier(-0.01f);
-        sliderZpos.setMultiplier(-0.01f);
-        sliderXrot.setMultiplier(-0.0001f);
-        sliderYrot.setMultiplier(-0.0001f);
-        sliderZrot.setMultiplier(-0.0001f);
+            sliderXpos = device.getSlider(2);
+            sliderYpos = device.getSlider(0);
+            sliderZpos = device.getSlider(1);
+            sliderXrot = device.getSlider(5);
+            sliderYrot = device.getSlider(3);
+            sliderZrot = device.getSlider(4);
+            button1 = device.getButton(0);
+            button2 = device.getButton(1);
+            sliderXpos.setMultiplier(0.01f); // sensitivities
+            sliderYpos.setMultiplier(-0.01f);
+            sliderZpos.setMultiplier(-0.01f);
+            sliderXrot.setMultiplier(-0.0001f);
+            sliderYrot.setMultiplier(-0.0001f);
+            sliderZrot.setMultiplier(-0.0001f);
+        } catch (Exception e) {
+            spaceNavigatorPresent = false;
+            p5.println(e.getMessage());
+        }
     }
 
     public void poll() {
+        if(!spaceNavigatorPresent) {
+            PApplet.println("No SpaceNavigator Found");
+            return;
+        }
+
+
         translation.set(
                 sliderXpos.getValue(),
                 sliderYpos.getValue(),
