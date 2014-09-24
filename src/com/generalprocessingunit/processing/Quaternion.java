@@ -81,7 +81,7 @@ public class Quaternion extends AxisAngle {
     public PVector rotateVector (PVector v) {
         PVector qVec = new PVector(x, y, z);
         PVector t = PVector.mult(qVec.cross(v), 2);
-        return PVector.add(PVector.add(v, PVector.mult(t, w)), qVec.cross(t));
+        return add(v, PVector.mult(t, w), qVec.cross(t));
     }
 
     public PVector rotateVector (float x, float y, float z) {
