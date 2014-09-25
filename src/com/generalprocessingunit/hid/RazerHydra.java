@@ -19,11 +19,22 @@ public class RazerHydra extends EuclideanSpaceObject {
     public float joyY;
 
     public float trigger;
-    
-    protected void setData(ControllerData data){
-        setLocation(data.pos[0] * -.0004f, data.pos[1] * .0004f, data.pos[2] * -.0004f);
-//        System.out.println(data.pos[0] + ", " + data.pos[1]  + ", " + data.pos[2]);
 
+    public boolean inverted = true;
+
+    public void toggleInvertedLocation() {
+        inverted = !inverted;
+    }
+
+    protected void setData(ControllerData data){
+        int i = inverted ? -1 : 1;
+        System.out.println(inverted);
+        System.out.println(i);
+        setLocation(
+                data.pos[0] * -.0004f * i,
+                data.pos[1] *  .0004f * i,
+                data.pos[2] * -.0004f * i
+        );
 
         btn1 =          (data.buttons & EnumButton.BUTTON_1.mask()) == 1;
         btn2 =          (data.buttons & EnumButton.BUTTON_2.mask()) == 1;

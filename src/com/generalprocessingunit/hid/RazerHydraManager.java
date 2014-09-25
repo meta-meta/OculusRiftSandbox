@@ -25,6 +25,11 @@ public class RazerHydraManager {
         }
     }
 
+    public RazerHydraManager(RazerHydra[] razerHydras) {
+        this();
+        this.razerHydras = razerHydras;
+    }
+
     public void poll() {
 
         if(!Sixense.getAllNewestData(data))

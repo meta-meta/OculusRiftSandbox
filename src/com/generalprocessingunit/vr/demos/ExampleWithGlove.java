@@ -4,6 +4,7 @@ import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.hid.RazerHydraManager;
 import com.generalprocessingunit.vr.PAppletVR;
+import javafx.scene.input.KeyCode;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -16,12 +17,9 @@ public class ExampleWithGlove extends Example {
     GloveManager.RightHand rightHand = gloveManager.getRightHand();
     //TODO: these calls should be condensed to GloveManger.getLeftHand and GloveManager should be a singleton
 
-    RazerHydraManager razerHydraManager = new RazerHydraManager();
-
     public static void main(String[] args){
         PAppletVR.main(ExampleWithGlove.class);
     }
-
 
 
     @Override
@@ -29,19 +27,20 @@ public class ExampleWithGlove extends Example {
         super.setup();
 
         gloveManager.init();
-
     }
 
     @Override
     protected void updateState() {
+
     }
 
     @Override
     protected void drawHeadContainerView(int eye, PGraphics pG) {
 
-        pG.translate(0, -.3f, .25f);
+//        pG.translate(0f, 0f, -.25f);
+
         drawHand(leftHand, pG);
-        drawHand(rightHand, pG);
+//        drawHand(rightHand, pG);
 
     }
 
@@ -58,6 +57,13 @@ public class ExampleWithGlove extends Example {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(KeyEvent.VK_SPACE == e.getKeyCode()) {
+            leftHand.reset();
+        }
+
+        if(KeyEvent.VK_I == e.getKeyCode()) {
+            leftHand.toggleInvertedLocation();
+        }
 
         super.keyPressed(e);
     }

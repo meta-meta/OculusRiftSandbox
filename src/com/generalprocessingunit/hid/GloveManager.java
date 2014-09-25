@@ -17,7 +17,7 @@ import java.util.*;
 public class GloveManager implements SerialPortEventListener  {
     public Glove[] gloves = new Glove[2];
 
-    private RazerHydraManager razerHydraManager = new RazerHydraManager();
+    private RazerHydraManager razerHydraManager = new RazerHydraManager(gloves);
 
     public GloveManager() {
         for (int i = 0; i < 2; i++) {
@@ -132,10 +132,6 @@ public class GloveManager implements SerialPortEventListener  {
 
         // TODO: this doesn't really belong here but at least it is not in the draw loop
         razerHydraManager.poll();
-        for (int j = 0; j < 2; j++) {
-            gloves[j].setLocation(razerHydraManager.razerHydras[j].getLocation());
-            gloves[j].setOrientation(razerHydraManager.razerHydras[j].getOrientation());
-        }
     }
 
     public void setVibrate(Map<Integer, Integer> vibrate) {
@@ -211,23 +207,25 @@ public class GloveManager implements SerialPortEventListener  {
       return new RightHand(this);
     }
 
-    public static class LeftHand extends Hand{
+    public class LeftHand extends Hand{
         LeftHand(GloveManager gloveManager){
             super(gloveManager, 0);
         }
     }
 
 
-    public static class RightHand extends Hand{
+    public class RightHand extends Hand{
         RightHand(GloveManager gloveManager){
             super(gloveManager, 1);
         }
     }
 
 
-    public static class Hand {
+    public class Hand {
         public GloveManager gloveManager;
         private int gloveIndex;
+
+        private Glove glove;
 
         public Finger thumb;
         public Finger index;
@@ -238,9 +236,13 @@ public class GloveManager implements SerialPortEventListener  {
         public Fingers fingers;
         public Fingertips fingertips;
 
+        private PVector origin = new PVector();
+
         public Hand(GloveManager gloveManager, int gloveIndex){
             this.gloveManager = gloveManager;
             this.gloveIndex = gloveIndex;
+
+            glove = gloveManager.gloves[gloveIndex];
 
             int zeroIndexBend = gloveIndex * 5;
             int zeroIndexVibrate = gloveIndex * 14;
@@ -255,12 +257,20 @@ public class GloveManager implements SerialPortEventListener  {
             fingertips = new Fingertips(Arrays.asList(thumb, index, middle, ring, pinky), gloveManager) ;
         }
 
+        public void reset() {
+            origin.set(glove.getLocation());
+        }
+
+        public void toggleInvertedLocation() {
+            glove.toggleInvertedLocation();
+        }
+
         public PVector getLocation() {
-            return gloveManager.gloves[gloveIndex].getLocation();
+            return PVector.sub(origin, glove.getLocation());
         }
 
         public AxisAngle getAxisAngle() {
-            return gloveManager.gloves[gloveIndex].getAxisAngle();
+            return glove.getAxisAngle();
         }
     }
 
