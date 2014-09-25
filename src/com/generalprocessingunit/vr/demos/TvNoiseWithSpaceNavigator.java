@@ -48,7 +48,7 @@ public class TvNoiseWithSpaceNavigator extends TvNoise {
         rotMomentum.y = rotMomentum.y - rotMomentum.y * drag;
         rotMomentum.z = rotMomentum.z - rotMomentum.z * drag;
 
-        headContainer.translateObjectCoords(momentum);
+        headContainer.translateWRTObjectCoords(momentum);
         headContainer.rotate(rotMomentum);
 
         super.updateState();
