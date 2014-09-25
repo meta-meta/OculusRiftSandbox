@@ -28,8 +28,6 @@ public class RazerHydra extends EuclideanSpaceObject {
 
     protected void setData(ControllerData data){
         int i = inverted ? -1 : 1;
-        System.out.println(inverted);
-        System.out.println(i);
         setLocation(
                 data.pos[0] * -.0004f * i,
                 data.pos[1] *  .0004f * i,
