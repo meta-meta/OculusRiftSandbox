@@ -35,6 +35,7 @@ public abstract class PAppletVR extends PApplet {
      * */
     public EuclideanSpaceObject headContainer = new EuclideanSpaceObject();
     public PVector lookat = new PVector();
+    public PVector headLocation = new PVector();
 
     public int eyeTextureW, eyeTextureH;
 
@@ -156,32 +157,43 @@ public abstract class PAppletVR extends PApplet {
             poses[eye].Position = pose.Position;
 
 
-            /* Location
+
+            /* Location Vector
             * */
-            float s = .8f; // scale down a bit
+            float s = .5f; // scale down a bit
              PVector eyeLocation = new PVector(
-                    - pose.Position.x,
-                    + pose.Position.y,
-                    - pose.Position.z
+                    - pose.Position.x * s,
+                    + pose.Position.y * s,
+                    - pose.Position.z * s
             );
 
+            headLocation = eyeLocation.get();
+            headLocation.x = -headLocation.x;
 
-            /* Lookat
+
+            /* Lookat Vector
             * */
             PMatrix3D rotationMatrix = OvrQuatToPMatrix3D(pose.Orientation);
 
             PVector lookat = new PVector(0, 0, 1);
             rotationMatrix.mult(lookat, lookat).normalize(lookat);
-            this.lookat = lookat.get();
-            this.lookat.y = - this.lookat.y;
             lookat.y = -lookat.y;
+
+            this.lookat = lookat.get();
+            this.lookat.x = -this.lookat.x;
+
             lookat.add(eyeLocation);
 
+
+            /* Up Vector
+            * */
             PVector up = new PVector(0, 1, 0);
             rotationMatrix.mult(up, up).normalize(up);
             up.x = -up.x;
             up.z = -up.z;
 
+//            println("H: " + headLocation + " L: " + this.lookat);
+//            println("E: " + eyeLocation + " L: " + lookat + " U: " + up);
 
             /* View Adjust  ????
                 documentation reads: How many display pixels will fit in tan(angle) = 1.
@@ -189,12 +201,14 @@ public abstract class PAppletVR extends PApplet {
 //            OvrVector3f trans = eyeRenderDescs[eye].ViewAdjust;
 //            views[eye].translate(trans.x, trans.y, trans.z);
 
+
+
+            /* Draw Eye
+            * */
             views[eye].beginDraw();
 
             drawViewPreCamera(eye, views[eye]);
 
-            /* Draw Eye
-            * */
             views[eye].setProjection(projections[eye]);
 
             /* It may end up being faster directly applying transform matrices instead of using camera
@@ -205,7 +219,8 @@ public abstract class PAppletVR extends PApplet {
                     up.x, up.y, up.z
             );
 
-
+            // weird stuff is going on with camera and coordinate system. this flips the image
+            views[eye].scale(-1, 1);
 
             views[eye].pushMatrix();
                 AxisAngle aa = headContainer.getAxisAngle();

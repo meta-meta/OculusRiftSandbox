@@ -42,8 +42,8 @@ public class SpaceNavigator {
             sliderYpos.setMultiplier(-0.01f);
             sliderZpos.setMultiplier(-0.01f);
             sliderXrot.setMultiplier(-0.0001f);
-            sliderYrot.setMultiplier(-0.0001f);
-            sliderZrot.setMultiplier(-0.0001f);
+            sliderYrot.setMultiplier(0.0001f);
+            sliderZrot.setMultiplier(0.0001f);
         } catch (Exception e) {
             spaceNavigatorPresent = false;
             p5.println(e.getMessage());
