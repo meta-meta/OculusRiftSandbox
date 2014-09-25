@@ -1,7 +1,9 @@
 package com.generalprocessingunit.processing.demos;
 
+import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.MomentumVector;
 import processing.core.PApplet;
 import processing.core.PVector;
 import procontroll.ControllButton;
@@ -19,46 +21,25 @@ public class SpaceNavigatorDemo extends PApplet {
         PApplet.main(new String[] { /*"--present",*/ SpaceNavigatorDemo.class.getCanonicalName() });
     }
 
+    SpaceNavigator spaceNavigator;
 
-    ControllIO controll;
-    ControllDevice device; // my SpaceNavigator
-    ControllSlider sliderXpos; // Positions
-    ControllSlider sliderYpos;
-    ControllSlider sliderZpos;
-    ControllSlider sliderXrot; // Rotations
-    ControllSlider sliderYrot;
-    ControllSlider sliderZrot;
-    ControllButton button1; // Buttons
-    ControllButton button2;
+    MomentumVector momentum = new MomentumVector(this, .001f);
+    MomentumVector rotMomentum = new MomentumVector(this, .001f);
 
-    PVector momentum = new PVector();
-    PVector rotMomentum = new PVector();
     EuclideanSpaceObject ship = new EuclideanSpaceObject();
+    EuclideanSpaceObject shipChild = new EuclideanSpaceObject();
+    EuclideanSpaceObject shipChild2 = new EuclideanSpaceObject();
+    EuclideanSpaceObject shipChildChild = new EuclideanSpaceObject();
 
     public void setup() {
         size(1280, 720, P3D);
 
-        controll = ControllIO.getInstance(this);
-        device = controll.getDevice("SpaceNavigator");
-        device.setTolerance(1.00f);
+        spaceNavigator = new SpaceNavigator(this);
 
-        sliderXpos = device.getSlider(2);
-        sliderYpos = device.getSlider(0);
-        sliderZpos = device.getSlider(1);
-        sliderXrot = device.getSlider(5);
-        sliderYrot = device.getSlider(3);
-        sliderZrot = device.getSlider(4);
-        button1 = device.getButton(0);
-        button2 = device.getButton(1);
-        sliderXpos.setMultiplier(0.01f); // sensitivities
-        sliderYpos.setMultiplier(0.01f);
-        sliderZpos.setMultiplier(0.01f);
-        sliderXrot.setMultiplier(-0.0001f);
-        sliderYrot.setMultiplier(-0.0001f);
-        sliderZrot.setMultiplier(-0.0001f);
+        ship.addChild(shipChild, new PVector(20f, 10f, 10f), new PVector());
+        ship.addChild(shipChild2, new PVector(-20f, 10f, 10f), new PVector());
 
-
-        super.setup();
+        shipChild.addChild(shipChildChild, new PVector(0, 0, -10f), new PVector());
     }
 
     public void draw() {
@@ -67,6 +48,38 @@ public class SpaceNavigatorDemo extends PApplet {
         updateScene();
 
         translate(width/2, height/2);
+
+
+        pushMatrix(); // shipChild
+        {
+            translate(shipChildChild.x(), shipChildChild.y(), shipChildChild.z());
+
+            AxisAngle aa = shipChildChild.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            box(5);
+        }
+        popMatrix();
+
+        pushMatrix(); // shipChild
+        {
+            translate(shipChild.x(), shipChild.y(), shipChild.z());
+
+            AxisAngle aa = shipChild.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            box(10);
+        }
+        popMatrix();
+
+        pushMatrix(); // shipChild
+        {
+            translate(shipChild2.x(), shipChild2.y(), shipChild2.z());
+
+            AxisAngle aa = shipChild2.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            box(10);
+        }
+        popMatrix();
+
 
         pushMatrix();
 
@@ -95,28 +108,21 @@ public class SpaceNavigatorDemo extends PApplet {
     }
 
     public void updateScene() {
+        spaceNavigator.poll();
 
-        momentum.add(
-                sliderXpos.getValue() / 10,
-                sliderYpos.getValue() / 10,
-                sliderZpos.getValue() / 10
-        );
+        PVector t = PVector.mult(spaceNavigator.translation, .1f);
+        momentum.add(t.x, -t.y, -t.z);
 
-        rotMomentum.add(
-                sliderXrot.getValue() / 10,
-                sliderYrot.getValue() / 10,
-                sliderZrot.getValue() / 10
-        );
+        rotMomentum.add(PVector.mult(spaceNavigator.rotation, .1f));
 
-        ship.translateObjectCoords(momentum);
-        ship.rotate(rotMomentum);
+        momentum.friction();
+        rotMomentum.friction();
 
-        float drag = 0.02f;
-        momentum.x = momentum.x - momentum.x * drag;
-        momentum.y = momentum.y - momentum.y * drag;// + 0.01f;
-        momentum.z = momentum.z - momentum.z * drag;
-        rotMomentum.x = rotMomentum.x - rotMomentum.x * drag;
-        rotMomentum.y = rotMomentum.y - rotMomentum.y * drag;
-        rotMomentum.z = rotMomentum.z - rotMomentum.z * drag;
+        ship.translateWRTObjectCoords(momentum.getValue());
+        ship.rotate(rotMomentum.getValue());
+
+        shipChild.roll(.1f);
+        shipChild2.roll(-.1f);
+        shipChildChild.yaw(.2f);
     }
 }
