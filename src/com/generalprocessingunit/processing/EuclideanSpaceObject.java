@@ -16,7 +16,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
     public Set<EuclideanSpaceObject> getAllChildren() {
         Set<EuclideanSpaceObject> c = new HashSet<>();
-        for(EuclideanSpaceObject child : children) {
+        for (EuclideanSpaceObject child : children) {
             c.addAll(child.getAllChildren());
         }
 
@@ -48,7 +48,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
     }
 
     private void addProgeny(Set<EuclideanSpaceObject> children) {
-        for (EuclideanSpaceObject child: children) {
+        for (EuclideanSpaceObject child : children) {
             addProgeny(child);
         }
     }
@@ -73,16 +73,16 @@ public class EuclideanSpaceObject extends MathsHelpers {
     public void translate(PVector translation) {
         location.add(translation);
 
-        for(EuclideanSpaceObject p : progeny) {
+        for (EuclideanSpaceObject p : progeny) {
             p.location.add(translation);
         }
     }
 
-    public void setLocation(PVector v){
-        if(progeny.size() > 0) {
+    public void setLocation(PVector v) {
+        if (progeny.size() > 0) {
             // translate all progeny by the same amount
             PVector t = PVector.sub(v, location);
-            for(EuclideanSpaceObject p : progeny) {
+            for (EuclideanSpaceObject p : progeny) {
                 p.translate(t);
             }
         }
@@ -90,7 +90,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
         location.set(v);
     }
 
-    public void setLocation(float x, float y, float z){
+    public void setLocation(float x, float y, float z) {
         setLocation(new PVector(x, y, z));
     }
 
@@ -123,21 +123,21 @@ public class EuclideanSpaceObject extends MathsHelpers {
         }
     }
 
-    public void rotate(PVector rotation){
+    public void rotate(PVector rotation) {
         yaw(rotation.y);
         pitch(rotation.x);
         roll(rotation.z);
     }
 
-    public PVector getLocation(){
+    public PVector getLocation() {
         return location.get();
     }
 
-    public float x(){
+    public float x() {
         return location.x;
     }
 
-    public float y(){
+    public float y() {
         return location.y;
     }
 
