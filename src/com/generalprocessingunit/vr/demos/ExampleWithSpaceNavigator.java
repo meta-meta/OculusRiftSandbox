@@ -1,5 +1,6 @@
 package com.generalprocessingunit.vr.demos;
 
+import com.generalprocessingunit.processing.MomentumVector;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.hid.SpaceNavigator;
 import processing.core.PGraphics;
@@ -15,10 +16,9 @@ public class ExampleWithSpaceNavigator extends Example {
     }
 
     SpaceNavigator spaceNav;
-    PVector momentum = new PVector();
-    PVector rotMomentum = new PVector();
+    MomentumVector momentum = new MomentumVector(this, 0.0125f);
+    MomentumVector rotMomentum = new MomentumVector(this, 0.0125f);
 
-    static final float drag = 0.0125f;
     static final float speedCoef = 0.004f;
     static final float rotSpeedCoef = 0.015f;
 
@@ -39,17 +39,11 @@ public class ExampleWithSpaceNavigator extends Example {
         momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
         rotMomentum.add(PVector.mult(spaceNav.rotation, i * rotSpeedCoef));
 
-        // this is somewhat incorrect as forward momentum rotates with the object
-        momentum.x = momentum.x - momentum.x * drag;
-        momentum.y = momentum.y - momentum.y * drag;
-        momentum.z = momentum.z - momentum.z * drag;
+        momentum.friction();
+        rotMomentum.friction();
 
-        rotMomentum.x = rotMomentum.x - rotMomentum.x * drag;
-        rotMomentum.y = rotMomentum.y - rotMomentum.y * drag;
-        rotMomentum.z = rotMomentum.z - rotMomentum.z * drag;
-        
-        headContainer.translateObjectCoords(momentum);
-        headContainer.rotate(rotMomentum);
+        headContainer.translateWRTObjectCoords(momentum.getValue());
+        headContainer.rotate(rotMomentum.getValue());
 
         if(headContainer.y() < 2) {
             PVector location = headContainer.getLocation();
