@@ -36,10 +36,10 @@ public class SpaceNavigatorDemo extends PApplet {
 
         spaceNavigator = new SpaceNavigator(this);
 
-        ship.addChild(shipChild, new PVector(20f, 10f, 10f), new PVector());
-        ship.addChild(shipChild2, new PVector(-20f, 10f, 10f), new PVector());
+        ship.addChild(shipChild, new PVector(20f, 10f, -10f), new PVector());
+        ship.addChild(shipChild2, new PVector(-20f, 10f, -10f), new PVector());
 
-        shipChild.addChild(shipChildChild, new PVector(0, 0, -10f), new PVector());
+        shipChild.addChild(shipChildChild, new PVector(0, 0, 10f), new PVector());
     }
 
     public void draw() {
@@ -47,8 +47,57 @@ public class SpaceNavigatorDemo extends PApplet {
 
         updateScene();
 
-        translate(width/2, height/2);
+        camera(
+                0, 50, -500,
+                0, 0, 0,
+                0, -1, 0
+        );
 
+
+        pushMatrix();
+        {
+            translate(100, 100, 100);
+            fill(255, 0, 0);
+            box(40);
+        }
+        popMatrix();
+
+        pushMatrix();
+        {
+            translate(100, 100, -100);
+            fill(0, 0, 255);
+            box(40);
+        }
+        popMatrix();
+
+        pushMatrix();
+        {
+            translate(ship.x(), ship.y(), ship.z());
+
+            AxisAngle aa = ship.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+
+            fill(204, 102, 0);
+            box(20, 30, 20);
+
+            pushMatrix();
+            {
+                fill(0);
+                translate(0, -15, 15);
+                box(30, 3, 70);
+            }
+            popMatrix();
+
+            pushMatrix();
+            {
+                translate(0, 0, 30);
+
+                fill(200, 40, 200);
+                box(20, 20, 20);
+            }
+            popMatrix();
+        }
+        popMatrix();
 
         pushMatrix(); // shipChild
         {
@@ -81,37 +130,16 @@ public class SpaceNavigatorDemo extends PApplet {
         popMatrix();
 
 
-        pushMatrix();
 
-        translate(ship.x(), ship.y(), ship.z());
-
-        AxisAngle aa = ship.getAxisAngle();
-        rotate(aa.w, aa.x, aa.y, aa.z);
-
-        fill(204, 102, 0);
-        box(20, 30, 20);
-
-        pushMatrix();
-        fill(0);
-        translate(0, 15, -15);
-        box(30, 3, 70);
-        popMatrix();
-
-        pushMatrix();
-        translate(0, 0, -30);
-
-        fill(200, 40, 200);
-        box(20, 20, 20);
-        popMatrix();
-
-        popMatrix();
     }
 
     public void updateScene() {
         spaceNavigator.poll();
 
         PVector t = PVector.mult(spaceNavigator.translation, .1f);
-        momentum.add(t.x, -t.y, -t.z);
+        momentum.add(t);
+
+        println(t);
 
         rotMomentum.add(PVector.mult(spaceNavigator.rotation, .1f));
 
