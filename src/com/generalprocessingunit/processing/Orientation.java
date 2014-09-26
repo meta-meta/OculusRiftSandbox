@@ -1,5 +1,6 @@
 package com.generalprocessingunit.processing;
 
+import processing.core.PConstants;
 import processing.core.PVector;
 
 public class Orientation {
@@ -26,6 +27,16 @@ public class Orientation {
         this.zAxis.set(zAxis);
     }
 
+//    public static Orientation fromVector(PVector direction) {
+//        Orientation o = new Orientation();
+//        direction.normalize();
+//        o.orientation = Quaternion.fromAxis(-PConstants.PI, direction);
+//        o.xAxis =  o.orientation.rotateVector(o.xAxis);
+//        o.yAxis = o.orientation.rotateVector(o.yAxis);
+//        o.zAxis = o.orientation.rotateVector(o.zAxis);
+//        return o;
+//    }
+
     //TODO: rotations can probably be combined into 1 step
 
     /**
@@ -39,6 +50,17 @@ public class Orientation {
     }
 
     /**
+     * rotates by a Quaternion. TODO: need to test this
+     * @param rotation
+     */
+    public void rotate(Quaternion rotation) {
+        orientation = rotation.mult(orientation);
+        xAxis = rotation.rotateVector(xAxis);
+        yAxis = rotation.rotateVector(yAxis);
+        zAxis = rotation.rotateVector(zAxis);
+    }
+
+    /**
      * returns a new Orientation rotated relative to this orientation
      * @param rotation pitch, yaw, roll relateve to this orientation
      * @return
@@ -49,6 +71,19 @@ public class Orientation {
         o.pitch(rotation.x);
         o.roll(rotation.z);
         return o;
+    }
+
+    /**
+     * returns a new Orientation relative to this orientation
+     * @param o
+     */
+    public Orientation rotateFrom(Orientation o) {
+        Orientation newO = new Orientation();
+        newO.orientation = orientation.mult(o.orientation);
+        newO.xAxis = orientation.rotateVector(o.xAxis);
+        newO.yAxis = orientation.rotateVector(o.yAxis);
+        newO.zAxis = orientation.rotateVector(o.zAxis);
+        return newO;
     }
 
     /**

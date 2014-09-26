@@ -25,12 +25,13 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
     public void addChild(EuclideanSpaceObject child, PVector locationWRTParent, PVector rotationWRTParent) {
 
-        child.location.set(add(
-                PVector.mult(orientation.xAxis(), locationWRTParent.x),
-                PVector.mult(orientation.yAxis(), locationWRTParent.y),
-                PVector.mult(orientation.zAxis(), locationWRTParent.z),
-                location
-        ));
+        child.locationWRTParent = locationWRTParent;
+        child.rotationWRTParent = rotationWRTParent;
+
+        child.location.set(getTranslationWRTObjectCoords(locationWRTParent));
+
+//        System.out.println("x: " + orientation.xAxis() + "  y: " + orientation.yAxis() + " z: " + orientation.zAxis());
+//        System.out.println("L: " + location + "  CL: " + child.location);
 
         child.orientation = orientation.rotateFrom(rotationWRTParent);
 
@@ -41,6 +42,31 @@ public class EuclideanSpaceObject extends MathsHelpers {
         if (parent != null) {
             parent.addProgeny(progeny);
         }
+    }
+
+    public PVector getTranslationWRTObjectCoords(PVector locationWRTParent) {
+        return add(
+                getLocationRelativeToThisObject(locationWRTParent),
+                location
+        );
+    }
+
+    private PVector getLocationRelativeToThisObject(PVector locationWRTParent) {
+        return add(
+                PVector.mult(orientation.xAxis(), locationWRTParent.x),
+                PVector.mult(orientation.yAxis(), locationWRTParent.y),
+                PVector.mult(orientation.zAxis(), locationWRTParent.z)
+        );
+    }
+
+    /**
+     * places the object relative to this object's local coordinates without adding it as a child
+     * @param obj
+     */
+    public void translateAndRotateObjectWRTObjectCoords(EuclideanSpaceObject obj) {
+        obj.setLocation(getTranslationWRTObjectCoords(obj.location));
+
+        obj.setOrientation(orientation.rotateFrom(obj.orientation));
     }
 
     private void addProgeny(EuclideanSpaceObject child) {
@@ -63,11 +89,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
     }
 
     public void translateWRTObjectCoords(PVector translation) {
-        translate(add(
-                PVector.mult(orientation.xAxis(), translation.x),
-                PVector.mult(orientation.yAxis(), translation.y),
-                PVector.mult(orientation.zAxis(), translation.z)
-        ));
+        translate(getLocationRelativeToThisObject(translation));
     }
 
     public void translate(PVector translation) {
@@ -83,9 +105,21 @@ public class EuclideanSpaceObject extends MathsHelpers {
             // translate all progeny by the same amount
             PVector t = PVector.sub(v, location);
             for (EuclideanSpaceObject p : progeny) {
-                p.translate(t);
+                p.location.add(t);
             }
         }
+
+        //TODO: what if this object has a parent?
+//        if(null != parent) {
+//            location.set(add(
+//                    PVector.mult(parent.orientation.xAxis(), locationWRTParent.x),
+//                    PVector.mult(parent.orientation.yAxis(), locationWRTParent.y),
+//                    PVector.mult(parent.orientation.zAxis(), locationWRTParent.z),
+//                    v
+//            ));
+//
+//            orientation = parent.orientation.rotateFrom(rotationWRTParent);
+//        }
 
         location.set(v);
     }
@@ -149,13 +183,35 @@ public class EuclideanSpaceObject extends MathsHelpers {
         return orientation;
     }
 
+    private PVector locationWRTParent;
+    private PVector rotationWRTParent;
+
     public void setOrientation(float yaw, float pitch, float roll) {
         //TODO:   set progeny new orientation
         orientation = new Orientation(yaw, pitch, roll);
+
+
+        // TODO: THIS IS A HACK. It does not preserve the progeny's orientation
+        for(EuclideanSpaceObject p : progeny) {
+
+            p.location.set(getTranslationWRTObjectCoords(p.locationWRTParent));
+
+            p.orientation = orientation.rotateFrom(p.rotationWRTParent);
+        }
+        
     }
 
     public void setOrientation(Orientation o) {
         orientation = o;
+
+        // TODO: THIS IS A HACK It does not preserve the progeny's orientation
+        for(EuclideanSpaceObject p : progeny) {
+
+            p.location.set(getTranslationWRTObjectCoords(p.locationWRTParent));
+
+            p.orientation = orientation.rotateFrom(p.rotationWRTParent);
+        }
+
     }
 
     public AxisAngle getAxisAngle() {
