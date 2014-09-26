@@ -2,6 +2,7 @@ package com.generalprocessingunit.vr;
 
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.Orientation;
 import com.oculusvr.capi.*;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -35,7 +36,7 @@ public abstract class PAppletVR extends PApplet {
      * */
     public EuclideanSpaceObject headContainer = new EuclideanSpaceObject();
     public PVector lookat = new PVector();
-    public PVector headLocation = new PVector();
+    public EuclideanSpaceObject head = new EuclideanSpaceObject();
 
     public int eyeTextureW, eyeTextureH;
 
@@ -101,7 +102,7 @@ public abstract class PAppletVR extends PApplet {
 
             /* Eye Projections
             * */
-            float[] M = Hmd.getPerspectiveProjection(fovPorts[eye], 0.01f, 1000000f, true).M;
+            float[] M = Hmd.getPerspectiveProjection(fovPorts[eye], 0.001f, 1000000f, true).M;
 
             PMatrix3D pm3d = new PMatrix3D();
             pm3d.set(M);
@@ -167,8 +168,14 @@ public abstract class PAppletVR extends PApplet {
                     - pose.Position.z * s
             );
 
-            headLocation = eyeLocation.get();
+
+            /* Head Location Object
+            * */
+            PVector headLocation = eyeLocation.get();
             headLocation.x = -headLocation.x;
+            head.setLocation(headLocation);
+            head.setOrientation(new Orientation());
+            headContainer.translateAndRotateObjectWRTObjectCoords(head);
 
 
             /* Lookat Vector
@@ -192,7 +199,7 @@ public abstract class PAppletVR extends PApplet {
             up.x = -up.x;
             up.z = -up.z;
 
-//            println("H: " + headLocation + " L: " + this.lookat);
+//            println("H: " + head + " L: " + this.lookat);
 //            println("E: " + eyeLocation + " L: " + lookat + " U: " + up);
 
             /* View Adjust  ????
