@@ -1,15 +1,13 @@
 package com.generalprocessingunit.processing.demos;
 
+import com.generalprocessingunit.hid.RazerHydra;
+import com.generalprocessingunit.hid.RazerHydraManager;
 import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.MomentumVector;
 import processing.core.PApplet;
 import processing.core.PVector;
-import procontroll.ControllButton;
-import procontroll.ControllDevice;
-import procontroll.ControllIO;
-import procontroll.ControllSlider;
 
 public class SpaceNavigatorDemo extends PApplet {
     /**
@@ -22,6 +20,7 @@ public class SpaceNavigatorDemo extends PApplet {
     }
 
     SpaceNavigator spaceNavigator;
+    RazerHydraManager razerHydraManager;
 
     MomentumVector momentum = new MomentumVector(this, .001f);
     MomentumVector rotMomentum = new MomentumVector(this, .001f);
@@ -31,10 +30,14 @@ public class SpaceNavigatorDemo extends PApplet {
     EuclideanSpaceObject shipChild2 = new EuclideanSpaceObject();
     EuclideanSpaceObject shipChildChild = new EuclideanSpaceObject();
 
+    EuclideanSpaceObject hydraChild = new EuclideanSpaceObject();
+
     public void setup() {
         size(1280, 720, P3D);
 
         spaceNavigator = new SpaceNavigator(this);
+        razerHydraManager = new RazerHydraManager();
+        razerHydraManager.razerHydras[0].addChild(hydraChild, new PVector(0, 0, -30), new PVector());
 
         ship.addChild(shipChild, new PVector(20f, 10f, -10f), new PVector());
         ship.addChild(shipChild2, new PVector(-20f, 10f, -10f), new PVector());
@@ -130,11 +133,36 @@ public class SpaceNavigatorDemo extends PApplet {
         popMatrix();
 
 
+        pushMatrix(); // hydra
+        {
+            RazerHydra hydra = razerHydraManager.razerHydras[0];
+            PVector loc = hydra.getLocation();
+            translate(loc.x, loc.y, loc.z);
+
+            AxisAngle aa = hydra.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            fill(60);
+            box(25, 5, 50);
+        }
+        popMatrix();
+
+        pushMatrix(); // hydra child
+        {
+            PVector loc = hydraChild.getLocation();
+            translate(loc.x, loc.y, loc.z);
+
+            AxisAngle aa = hydraChild.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            fill(120);
+            box(5, 5, 5);
+        }
+        popMatrix();
 
     }
 
     public void updateScene() {
         spaceNavigator.poll();
+        razerHydraManager.poll();
 
         PVector t = PVector.mult(spaceNavigator.translation, .1f);
         momentum.add(t);
@@ -152,5 +180,9 @@ public class SpaceNavigatorDemo extends PApplet {
         shipChild.roll(.1f);
         shipChild2.roll(-.1f);
         shipChildChild.yaw(.2f);
+
+        RazerHydra hydra = razerHydraManager.razerHydras[0];
+        hydra.setLocation(PVector.mult(hydra.getLocation(), 300));
+        ship.translateAndRotateObjectWRTObjectCoords(hydra);
     }
 }
