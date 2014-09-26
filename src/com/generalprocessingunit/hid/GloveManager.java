@@ -130,7 +130,9 @@ public class GloveManager implements SerialPortEventListener  {
             }
         }
 
-        // TODO: this doesn't really belong here but at least it is not in the draw loop
+    }
+
+    public void poll() {
         razerHydraManager.poll();
     }
 
@@ -225,7 +227,7 @@ public class GloveManager implements SerialPortEventListener  {
         public GloveManager gloveManager;
         private int gloveIndex;
 
-        private Glove glove;
+        public Glove glove;
 
         public Finger thumb;
         public Finger index;
@@ -236,7 +238,6 @@ public class GloveManager implements SerialPortEventListener  {
         public Fingers fingers;
         public Fingertips fingertips;
 
-        private PVector origin = new PVector();
 
         public Hand(GloveManager gloveManager, int gloveIndex){
             this.gloveManager = gloveManager;
@@ -257,8 +258,12 @@ public class GloveManager implements SerialPortEventListener  {
             fingertips = new Fingertips(Arrays.asList(thumb, index, middle, ring, pinky), gloveManager) ;
         }
 
-        public void reset() {
-            origin.set(glove.getLocation());
+        /**
+         * resets location of the glove to landmark. wearer should place glove at landmark (such as head)
+         * @param landmark
+         */
+        public void reset(PVector landmark) {
+            glove.reset(landmark);
         }
 
         public void toggleInvertedLocation() {
@@ -266,7 +271,7 @@ public class GloveManager implements SerialPortEventListener  {
         }
 
         public PVector getLocation() {
-            return PVector.sub(origin, glove.getLocation());
+            return glove.getLocation();
         }
 
         public AxisAngle getAxisAngle() {

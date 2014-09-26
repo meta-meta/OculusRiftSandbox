@@ -1,6 +1,7 @@
 package com.generalprocessingunit.hid;
 
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.Orientation;
 import com.sixense.ControllerData;
 import com.sixense.EnumButton;
 import processing.core.PVector;
@@ -20,19 +21,31 @@ public class RazerHydra extends EuclideanSpaceObject {
 
     public float trigger;
 
-    public boolean inverted = true;
+    public boolean inverted = false;
+
+    private PVector origin = new PVector();
+
+    private PVector rawLocation = new PVector();
+
+    public void reset(PVector landmark) {
+        origin.set(PVector.add(rawLocation, landmark));
+    }
 
     public void toggleInvertedLocation() {
         inverted = !inverted;
     }
 
+    private float prevYaw, prevPitch, prevRoll;
     protected void setData(ControllerData data){
         int i = inverted ? -1 : 1;
-        setLocation(
+
+        rawLocation.set(
                 data.pos[0] * -.0004f * i,
-                data.pos[1] *  .0004f * i,
-                data.pos[2] * -.0004f * i
+                data.pos[1] * -.0004f * i,
+                data.pos[2] * .0004f * i
         );
+
+        setLocation(PVector.sub(origin, rawLocation));
 
         btn1 =          (data.buttons & EnumButton.BUTTON_1.mask()) == 1;
         btn2 =          (data.buttons & EnumButton.BUTTON_2.mask()) == 1;
@@ -51,11 +64,17 @@ public class RazerHydra extends EuclideanSpaceObject {
 
         trigger = data.trigger;
 
-        setOrientation(-data.yaw, data.pitch, data.roll);
+        setOrientation(data.yaw, data.pitch + PI, data.roll);
 
-//        rotation.x = data.pitch;
-//        rotation.y = -data.yaw;
-//        rotation.z = data.roll;
+
+//        yaw(data.yaw - prevYaw);
+//        pitch(data.pitch - prevPitch);
+//        roll(-data.roll - prevRoll);
+//
+//        prevYaw = data.yaw;
+//        prevPitch = data.pitch;
+//        prevRoll = -data.roll;
+
     }
 
     public boolean isGrabbing() {
