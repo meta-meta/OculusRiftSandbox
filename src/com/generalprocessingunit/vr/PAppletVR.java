@@ -3,6 +3,7 @@ package com.generalprocessingunit.vr;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.Orientation;
+import com.generalprocessingunit.processing.Quaternion;
 import com.oculusvr.capi.*;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -36,7 +37,10 @@ public abstract class PAppletVR extends PApplet {
      * */
     public EuclideanSpaceObject headContainer = new EuclideanSpaceObject();
     public PVector lookat = new PVector();
+
     public EuclideanSpaceObject head = new EuclideanSpaceObject();
+
+    public EuclideanSpaceObject neck = new EuclideanSpaceObject();
 
     public int eyeTextureW, eyeTextureH;
 
@@ -169,19 +173,26 @@ public abstract class PAppletVR extends PApplet {
             );
 
 
+            PMatrix3D rotationMatrix = OvrQuatToPMatrix3D(pose.Orientation);
+
             /* Head Location Object
             * */
             PVector headLocation = eyeLocation.get();
             headLocation.x = -headLocation.x;
             head.setLocation(headLocation);
             head.setOrientation(new Orientation());
+            head.rotate(new Quaternion(pose.Orientation.w, -pose.Orientation.x, -pose.Orientation.y, pose.Orientation.z));
             headContainer.translateAndRotateObjectWRTObjectCoords(head);
+
+            /* Neck Location Object
+            * */
+            neck.setLocation(headLocation.x, headLocation.y - .01f, headLocation.z);
+            neck.setOrientation(new Orientation());
+            headContainer.translateAndRotateObjectWRTObjectCoords(neck);
 
 
             /* Lookat Vector
             * */
-            PMatrix3D rotationMatrix = OvrQuatToPMatrix3D(pose.Orientation);
-
             PVector lookat = new PVector(0, 0, 1);
             rotationMatrix.mult(lookat, lookat).normalize(lookat);
             lookat.y = -lookat.y;
