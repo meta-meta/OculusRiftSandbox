@@ -1,6 +1,7 @@
 package com.generalprocessingunit.processing;
 
 import processing.core.PConstants;
+import processing.core.PMatrix3D;
 import processing.core.PVector;
 
 public class Orientation {
@@ -58,6 +59,10 @@ public class Orientation {
         xAxis = rotation.rotateVector(xAxis);
         yAxis = rotation.rotateVector(yAxis);
         zAxis = rotation.rotateVector(zAxis);
+
+        xAxis.normalize();
+        yAxis.normalize();
+        zAxis.normalize();
     }
 
     /**

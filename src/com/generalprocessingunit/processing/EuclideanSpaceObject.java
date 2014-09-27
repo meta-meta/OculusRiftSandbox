@@ -1,5 +1,6 @@
 package com.generalprocessingunit.processing;
 
+import processing.core.PMatrix3D;
 import processing.core.PVector;
 
 import java.util.HashSet;
@@ -161,6 +162,10 @@ public class EuclideanSpaceObject extends MathsHelpers {
         yaw(rotation.y);
         pitch(rotation.x);
         roll(rotation.z);
+    }
+
+    public void rotate(Quaternion rotation) {
+        orientation.rotate(rotation);
     }
 
     public PVector getLocation() {
