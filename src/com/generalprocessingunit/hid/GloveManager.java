@@ -235,6 +235,8 @@ public class GloveManager implements SerialPortEventListener  {
         public Finger ring;
         public Finger pinky;
 
+        public Palm palm;
+
         public Fingers fingers;
         public Fingertips fingertips;
 
@@ -253,6 +255,8 @@ public class GloveManager implements SerialPortEventListener  {
             middle = new Finger(gloveManager, zeroIndexBend + 2);
             ring = new Finger(gloveManager, zeroIndexBend + 3);
             pinky = new Finger(gloveManager, zeroIndexBend + 4);
+
+            palm = new Palm(gloveManager, gloveIndex);
 
             fingers = new Fingers(Arrays.asList(thumb, index, middle, ring, pinky), gloveManager) ;
             fingertips = new Fingertips(Arrays.asList(thumb, index, middle, ring, pinky), gloveManager) ;
@@ -276,6 +280,10 @@ public class GloveManager implements SerialPortEventListener  {
 
         public AxisAngle getAxisAngle() {
             return glove.getAxisAngle();
+        }
+
+        public boolean isGrabbing() {
+            return glove.isGrabbing();
         }
     }
 

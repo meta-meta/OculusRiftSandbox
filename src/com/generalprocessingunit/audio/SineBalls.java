@@ -2,6 +2,7 @@ package com.generalprocessingunit.audio;
 
 import com.generalprocessingunit.io.OSC;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.MomentumVector;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -17,13 +18,16 @@ public class SineBalls extends VRSoundEntities{
     private static String FREQUENCY = BASE_MSG + "/freq";
     private static String AMPLITUDE = BASE_MSG + "/amp";
 
-    public SineBalls(PApplet p5) {
+    public SineBalls(PApplet p5, int numBalls) {
         this.p5 = p5;
+
+        numBalls = min(16, numBalls);
+
         for(int i = 1; i <= 16; i++) {
             OSC.sendMsg(String.format(AMPLITUDE, i), 0);
         }
 
-        for(int i = 1; i <= 1; i++) {
+        for(int i = 1; i <= numBalls; i++) {
             float freq = 60 + (int)p5.random(50) * 35;
             System.out.println(i + ": " + freq);
             balls.add(new SineBall(i, new PVector(0, 0, 1), freq, i == 1 ? .1f : .03f));
@@ -56,12 +60,26 @@ public class SineBalls extends VRSoundEntities{
         }
     }
 
+    public SineBall get(int i) {
+        return balls.get(i);
+    }
+
+    public List<SineBall> get() {
+        return balls;
+    }
+
     public class SineBall extends EuclideanSpaceObject {
         int id;
-        float freq;
-        float amp;
-
         float tune = 0;
+        float freq, amp;
+        float azimuth, elevation, radius;
+
+        public float size;
+
+        // TODO: move to EuclideanSpaceObject
+        public PVector prevLocation = new PVector();
+
+        public MomentumVector momentum = new MomentumVector(p5, .0001f);
 
         SineBall(int id, PVector location, float freq, float amp) {
             this.id = id;
@@ -71,48 +89,35 @@ public class SineBalls extends VRSoundEntities{
         }
 
         void updateMaxPatch() {
-            PVector loc = getLocation();
-            float dist = loc.mag();
-
             OSC.sendMsg(String.format(FREQUENCY, id), freq + tune);
 
-            OSC.sendMsg(String.format(AMPLITUDE, id), dist <= 1 ? amp : amp / dist);
-
+            OSC.sendMsg(String.format(AMPLITUDE, id), radius <= 1 ? amp : amp / radius);
 
             setVals(
                     id,
-                    atan2(loc.z, loc.x),
-                    acos(loc.y / loc.mag()),
-                    dist
-            );
-        }
-
-        public void updateMaxPatch(float az, float el, float r) {
-            PVector loc = getLocation();
-            float dist = loc.mag();
-
-            OSC.sendMsg(String.format(FREQUENCY, id), freq + tune);
-
-            OSC.sendMsg(String.format(AMPLITUDE, id), dist <= 1 ? amp : amp / dist);
-
-
-            setVals(
-                    id,
-                    az,
-                    el,
-                    r
+                    azimuth,
+                    elevation,
+                    radius
             );
         }
 
         public void draw(PGraphics pG) {
+            size = 0.05f + 0.01f * sin((freq / 2f) * p5.millis() / 1000f);
+
             PVector loc = getLocation();
             pG.pushMatrix();
             pG.translate(loc.x, loc.y, loc.z);
             pG.fill(200, 0, 255);
             pG.noStroke();
             pG.sphereDetail(10);
-            pG.sphere(0.05f + 0.01f * sin((freq / 2f) * p5.millis() / 1000f));
+            pG.sphere(size);
             pG.popMatrix();
+        }
+
+        public void setRadialCoords(float azimuth, float elevation, float radius) {
+            this.azimuth = azimuth;
+            this.elevation = elevation;
+            this.radius = radius;
         }
 
         public void setTune(float tune) {

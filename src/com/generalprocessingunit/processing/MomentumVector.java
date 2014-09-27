@@ -29,6 +29,18 @@ public class MomentumVector extends Momentum<PVector> {
         m.set(v);
     }
 
+    public void reverseX() {
+        m.x = -m.x;
+    }
+
+    public void reverseY() {
+        m.y = -m.y;
+    }
+
+    public void reverseZ() {
+        m.z = -m.z;
+    }
+
     private int prevMillis = 0;
     @Override
     public void friction() {

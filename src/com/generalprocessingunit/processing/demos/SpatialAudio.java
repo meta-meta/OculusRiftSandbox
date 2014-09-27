@@ -27,7 +27,7 @@ public class SpatialAudio extends PApplet {
     public void setup() {
         size(1200, 800, OPENGL);
 
-        sineBalls = new SineBalls(this);
+        sineBalls = new SineBalls(this, 16);
         pG = createGraphics(width, height, OPENGL);
 
         spaceNav = new SpaceNavigator(this);
