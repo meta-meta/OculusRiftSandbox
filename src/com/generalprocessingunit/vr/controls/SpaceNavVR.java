@@ -30,7 +30,7 @@ public class SpaceNavVR {
         spaceNav.poll();
 
         int i = invertedControl ? -1 : 1;
-        momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
+        momentum.add(PVector.mult(PVector.mult(spaceNav.translation, spaceNav.translation.mag() / 3f), i * speedCoef));
         rotMomentum.add(PVector.mult(spaceNav.rotation, i * rotSpeedCoef));
 
         momentum.friction();

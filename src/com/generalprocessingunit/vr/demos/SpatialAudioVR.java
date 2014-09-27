@@ -19,9 +19,8 @@ public class SpatialAudioVR extends PAppletVR {
     GloveVR gloveVR = new GloveVR(this);
     GloveManager.Hand leftHand = gloveVR.leftHand;
 
-    static boolean invertedControl = false;
 
-    static final float roomSize = 10;
+    static final float roomSize = 25;
 
 
     public static void main(String[] args){
@@ -46,6 +45,19 @@ public class SpatialAudioVR extends PAppletVR {
 
     @Override
     protected void drawHeadContainerView(int eye, PGraphics pG) {
+        pG.pushMatrix();
+        {
+            pG.translate(0, -.3f, 0);
+            pG.noFill();
+            pG.stroke(100, 50);
+            for (float i = 0; i < 1; i+= .1f) {
+                pG.box(i * .5f, .01f, i * .7f);
+            }
+            pG.stroke(255, 0, 255);
+            pG.translate(0, 0, .35f);
+            pG.box(.1f, .1f, .1f);
+        }
+        pG.popMatrix();
     }
 
     float radius;
@@ -63,7 +75,6 @@ public class SpatialAudioVR extends PAppletVR {
 
 
         if(!isInRoom(headLoc, .5f)) {
-            headContainer.setLocation(prevLoc);
             float lim = roomSize / 2;
             if(abs(headLoc.x) > lim) {
                 spaceNav.momentum.reverseX();
@@ -76,13 +87,35 @@ public class SpatialAudioVR extends PAppletVR {
             if(abs(headLoc.z) > lim) {
                 spaceNav.momentum.reverseZ();
             }
-            spaceNav.momentum.reverseX();
+            headContainer.setLocation(prevLoc);
         }
 
 
         for(SineBalls.SineBall ball : sineBalls.get()) {
-            updateBallAudio(ball);
             ball.prevLocation.set(ball.getLocation());
+
+            int vibe = 0;
+            if(millis() % (10 / ball.freq) < (10 / ball.freq) / 3) {
+//                float size = 0.05f + 0.01f * sin((ball.freq / 1000f) * millis() / 1000f);
+                vibe = 0;
+                if(ball.id == 1) {
+                    println(vibe);
+                }
+            } else if(millis() % ball.freq < 2 * ball.freq / 3) {
+//                float size = 0.05f + 0.01f * sin((ball.freq / 1000f) * millis() / 1000f);
+                vibe = 2;
+                if(ball.id == 1) {
+                    println(vibe);
+                }
+            } else {
+//                float size = 0.05f + 0.01f * sin((ball.freq / 1000f) * millis() / 1000f);
+                vibe = 5;
+                if(ball.id == 1) {
+                    println(vibe);
+                }
+            }
+
+
 
             if(leftHand.getLocation().dist(ball.getLocation()) < (ball.size + .01f)){
                 if(null == grabbedBall) { // no ball in hand
@@ -90,19 +123,24 @@ public class SpatialAudioVR extends PAppletVR {
                         grabbedBall = ball;
                     }
                 } else if(leftHand.isGrabbing()) { // ball in hand, still grabbing
-                    leftHand.palm.vibrate((int)(ball.size * 400f) - 10);
+
+                    leftHand.palm.vibrate(vibe);
                     grabbedBall.setLocation(leftHand.getLocation());
-                    grabbedBall.momentum.set(PVector.mult(PVector.sub(grabbedBall.getLocation(), grabbedBall.prevLocation), 3));
-                    return;
+                    grabbedBall.momentum.set(PVector.mult(PVector.sub(grabbedBall.getLocation(), grabbedBall.prevLocation), 4));
                 } else { // let go
                     grabbedBall = null;
                 }
 
-                leftHand.palm.vibrate((int)(ball.size * 400f) - 20);
+                if(null == grabbedBall) {
+                    leftHand.palm.vibrate(vibe / 2);
+                }
                 wasGrabbing = leftHand.isGrabbing();
             }
 
-            tryMoveBall(ball);
+            updateBallAudio(ball);
+            if(null == grabbedBall) {
+                tryMoveBall(ball);
+            }
         }
 
         sineBalls.updateMaxPatch();
@@ -208,6 +246,8 @@ public class SpatialAudioVR extends PAppletVR {
 //        }
 //        pG.popMatrix();
     }
+
+
 
     @Override
     public void keyPressed(KeyEvent e) {

@@ -30,7 +30,7 @@ public class SineBalls extends VRSoundEntities{
         for(int i = 1; i <= numBalls; i++) {
             float freq = 60 + (int)p5.random(50) * 35;
             System.out.println(i + ": " + freq);
-            balls.add(new SineBall(i, new PVector(0, 0, 1), freq, i == 1 ? .1f : .03f));
+            balls.add(new SineBall(i, new PVector(0, 0, 1), freq, .1f));
         }
     }
 
@@ -69,9 +69,9 @@ public class SineBalls extends VRSoundEntities{
     }
 
     public class SineBall extends EuclideanSpaceObject {
-        int id;
+        public int id;
         float tune = 0;
-        float freq, amp;
+        public float freq, amp;
         float azimuth, elevation, radius;
 
         public float size;
