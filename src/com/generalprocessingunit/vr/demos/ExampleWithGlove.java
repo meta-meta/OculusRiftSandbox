@@ -151,7 +151,7 @@ public class ExampleWithGlove extends Example {
 
     void drawHand(GloveManager.Hand hand, PGraphics pG) {
 
-        shoulderLocation = head.getTranslationWRTObjectCoords( new PVector(-.01f, -.02f, -.01f));
+        shoulderLocation = neck.getTranslationWRTObjectCoords( new PVector(-.01f, -.02f, -.01f));
 
         pG.colorMode(RGB);
         pG.fill(255, 0, 0);
