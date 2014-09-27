@@ -42,17 +42,19 @@ public class SpatialAudio extends PApplet {
         int i = invertedControl ? -1 : 1;
         momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
 
-        // this is somewhat incorrect as forward momentum rotates with the object
+        println(spaceNav.translation);
+
         momentum.x = momentum.x - momentum.x * drag;
         momentum.y = momentum.y - momentum.y * drag;
         momentum.z = momentum.z - momentum.z * drag;
+
+        ball.translate(momentum);
 
         // fake doppler
         PVector nextPos = PVector.add(ball.getLocation(), momentum);
         float v = nextPos.mag() - ball.getLocation().mag();
         ball.setTune(-v * 1000);
 
-        ball.translate(momentum);
 
         pG.beginDraw();
         pG.background(100);
@@ -69,18 +71,12 @@ public class SpatialAudio extends PApplet {
         pG.fill(200, 190, 100, 150);
         pG.sphere(.1f);
 
-        // floor
-//        pG.fill(50, 50);
-//        pG.box(10, .01f, 10);
-
+        sineBalls.update();
         sineBalls.draw(pG);
         pG.endDraw();
 
-        sineBalls.updateMaxPatch();
-
-
         image(pG, 0, 0);
+
+        sineBalls.updateMaxPatch();
     }
-
-
 }

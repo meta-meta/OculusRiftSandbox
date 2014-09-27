@@ -23,7 +23,7 @@ public class SineBalls extends VRSoundEntities{
             OSC.sendMsg(String.format(AMPLITUDE, i), 0);
         }
 
-        for(int i = 1; i <= 16; i++) {
+        for(int i = 1; i <= 1; i++) {
             float freq = 60 + (int)p5.random(50) * 35;
             System.out.println(i + ": " + freq);
             balls.add(new SineBall(i, new PVector(0, 0, 1), freq, i == 1 ? .1f : .03f));
@@ -36,15 +36,23 @@ public class SineBalls extends VRSoundEntities{
         }
     }
 
-    public void draw(PGraphics pG){
+    public void update() {
         for(SineBall ball: balls) {
-            ball.draw(pG);
-
             if(ball.id == 1) {
                 continue;
             }
 
-            ball.setLocation((2 * sin(p5.millis() / 5000f) + ball.id / 10f) * cos(p5.millis() / (11 - ball.id * 200f)), 0, (2 * sin(p5.millis() / 5000f) + ball.id / 10f) * sin(p5.millis() / (11 - ball.id * 200f)));
+            ball.setLocation(
+                    (2 * sin(p5.millis() / 5000f) + ball.id / 10f) * cos(p5.millis() / (11 - ball.id * 200f)),
+                    0,
+                    (2 * sin(p5.millis() / 5000f) + ball.id / 10f) * sin(p5.millis() / (11 - ball.id * 200f))
+            );
+        }
+    }
+
+    public void draw(PGraphics pG){
+        for(SineBall ball: balls) {
+            ball.draw(pG);
         }
     }
 
@@ -79,7 +87,24 @@ public class SineBalls extends VRSoundEntities{
             );
         }
 
-        void draw(PGraphics pG) {
+        public void updateMaxPatch(float az, float el, float r) {
+            PVector loc = getLocation();
+            float dist = loc.mag();
+
+            OSC.sendMsg(String.format(FREQUENCY, id), freq + tune);
+
+            OSC.sendMsg(String.format(AMPLITUDE, id), dist <= 1 ? amp : amp / dist);
+
+
+            setVals(
+                    id,
+                    az,
+                    el,
+                    r
+            );
+        }
+
+        public void draw(PGraphics pG) {
             PVector loc = getLocation();
             pG.pushMatrix();
             pG.translate(loc.x, loc.y, loc.z);
