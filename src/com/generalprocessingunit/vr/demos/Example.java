@@ -1,5 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
+import com.generalprocessingunit.processing.Color;
+import com.generalprocessingunit.processing.geometry.Cube;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PShape;
@@ -21,14 +23,10 @@ public class Example extends PAppletVR {
         headContainer.setLocation(0, 2, -1);
 
         cubes = createShape(GROUP);
-        for(int y = 0; y < 100; y+= 10) {
-            for (int x = -200; x < 200; x += 10) {
-                for (int z = -200; z < 200; z += 10) {
-                    PShape cube = createShape();
-                    cube.beginShape(QUADS);
-                    cube.fill(127);
-                    cube.translate(x, y, z);
-                    box(1f, 1f, 1f, cube);
+        for(int y = 0; y < 10; y+= 10) {
+            for (int x = -20; x < 20; x += 10) {
+                for (int z = -20; z < 20; z += 10) {
+                    PShape cube = Cube.createCube(this, x, y, z, 1f, 1f, 1f, Color.grey(127), null);
                     cubes.addChild(cube);
                 }
             }
@@ -65,59 +63,5 @@ public class Example extends PAppletVR {
 
         pG.shape(floor);
         pG.shape(cubes);
-    }
-
-    /** Ripped from PApplet.box */
-    private void box(float w, float h, float d, PShape pS) {
-        float x1 = -w/2f; float x2 = w/2f;
-        float y1 = -h/2f; float y2 = h/2f;
-        float z1 = -d/2f; float z2 = d/2f;
-
-        // TODO not the least bit efficient, it even redraws lines
-        // along the vertices. ugly ugly ugly!
-
-        // front
-        pS.normal(0, 0, 1);
-        pS.vertex(x1, y1, z1);
-        pS.vertex(x2, y1, z1);
-        pS.vertex(x2, y2, z1);
-        pS.vertex(x1, y2, z1);
-
-        // right
-        pS.normal(1, 0, 0);
-        pS.vertex(x2, y1, z1);
-        pS.vertex(x2, y1, z2);
-        pS.vertex(x2, y2, z2);
-        pS.vertex(x2, y2, z1);
-
-        // back
-        pS.normal(0, 0, -1);
-        pS.vertex(x2, y1, z2);
-        pS.vertex(x1, y1, z2);
-        pS.vertex(x1, y2, z2);
-        pS.vertex(x2, y2, z2);
-
-        // left
-        pS.normal(-1, 0, 0);
-        pS.vertex(x1, y1, z2);
-        pS.vertex(x1, y1, z1);
-        pS.vertex(x1, y2, z1);
-        pS.vertex(x1, y2, z2);
-
-        // top
-        pS.normal(0, 1, 0);
-        pS.vertex(x1, y1, z2);
-        pS.vertex(x2, y1, z2);
-        pS.vertex(x2, y1, z1);
-        pS.vertex(x1, y1, z1);
-
-        // bottom
-        pS.normal(0, -1, 0);
-        pS.vertex(x1, y2, z1);
-        pS.vertex(x2, y2, z1);
-        pS.vertex(x2, y2, z2);
-        pS.vertex(x1, y2, z2);
-
-        pS.endShape();
     }
 }
