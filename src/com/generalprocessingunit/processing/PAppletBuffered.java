@@ -8,7 +8,7 @@ public abstract class PAppletBuffered extends PApplet {
 
     @Override
     public void setup() {
-        pG = createGraphics(width, height);
+        pG = createGraphics(width, height, P3D);
     }
 
     @Override
