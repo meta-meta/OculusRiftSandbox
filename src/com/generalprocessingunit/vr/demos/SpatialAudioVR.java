@@ -47,7 +47,7 @@ public class SpatialAudioVR extends PAppletVR {
     protected void drawHeadContainerView(int eye, PGraphics pG) {
         pG.pushMatrix();
         {
-            pG.translate(0, -.3f, 0);
+            pG.translate(0, -.3f, -.4f);
             pG.noFill();
             pG.stroke(100, 50);
             for (float i = 0; i < 1; i+= .1f) {
@@ -261,6 +261,10 @@ public class SpatialAudioVR extends PAppletVR {
 
         if(KeyEvent.VK_I == e.getKeyCode()) {
             spaceNav.invertControl();
+        }
+
+        if(KeyEvent.VK_R == e.getKeyCode()) {
+            headContainer.setLocation(0, 0, 0);
         }
 
         super.keyPressed(e);
