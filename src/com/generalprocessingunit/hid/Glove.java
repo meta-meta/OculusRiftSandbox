@@ -1,16 +1,13 @@
 package com.generalprocessingunit.hid;
 
+import processing.core.PVector;
+
 public class Glove extends RazerHydra {
     protected int[] bend = new int[5];
-
-//    private int baseIndex;
-//
-//    protected void setBaseIndex(int baseIndex) {
-//        this.baseIndex = baseIndex;
-//    }
+    private int[] bendOffset = new int[5];
 
     protected int getBend(int i){
-        return Math.abs(800 - bend[i]);
+        return bendOffset[i] - bend[i];
     }
 
     @Override
@@ -23,4 +20,10 @@ public class Glove extends RazerHydra {
         return true;
     }
 
+
+    @Override
+    public void reset(PVector landmark) {
+        super.reset(landmark);
+        System.arraycopy(bend, 0, bendOffset, 0, bend.length);
+    }
 }
