@@ -3,6 +3,7 @@ package com.generalprocessingunit.processing.demos;
 import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.MomentumVector;
+import com.generalprocessingunit.processing.MomentumYawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -19,7 +20,7 @@ public class SpaceNavigatorCameraTest extends PApplet {
     SpaceNavigator spaceNavigator;
 
     MomentumVector momentum = new MomentumVector(this, .001f);
-    MomentumVector rotMomentum = new MomentumVector(this, .001f);
+    MomentumYawPitchRoll rotMomentum = new MomentumYawPitchRoll(this, .001f);
 
     EuclideanSpaceObject camera = new EuclideanSpaceObject();
 

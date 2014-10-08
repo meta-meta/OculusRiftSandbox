@@ -24,7 +24,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
         return c;
     }
 
-    public void addChild(EuclideanSpaceObject child, PVector locationWRTParent, PVector rotationWRTParent) {
+    public void addChild(EuclideanSpaceObject child, YawPitchRoll locationWRTParent, YawPitchRoll rotationWRTParent) {
 
         child.locationWRTParent = locationWRTParent;
         child.rotationWRTParent = rotationWRTParent;
@@ -60,6 +60,13 @@ public class EuclideanSpaceObject extends MathsHelpers {
         );
     }
 
+    public YawPitchRoll getDeltaYawPitchRollFromThisObject(Orientation orientation) {
+        return new YawPitchRoll(
+                PVector.angleBetween(this.orientation.yAxis, orientation.yAxis),
+                PVector.angleBetween(this.orientation.xAxis, orientation.xAxis),
+                PVector.angleBetween(this.orientation.zAxis, orientation.zAxis)
+        );
+    }
     /**
      * places the object relative to this object's local coordinates without adding it as a child
      * @param obj
@@ -158,10 +165,10 @@ public class EuclideanSpaceObject extends MathsHelpers {
         }
     }
 
-    public void rotate(PVector rotation) {
-        yaw(rotation.y);
-        pitch(rotation.x);
-        roll(rotation.z);
+    public void rotate(YawPitchRoll rotation) {
+        yaw(rotation.yaw());
+        pitch(rotation.pitch());
+        roll(rotation.roll());
     }
 
     public void rotate(Quaternion rotation) {
@@ -189,7 +196,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
     }
 
     private PVector locationWRTParent;
-    private PVector rotationWRTParent;
+    private YawPitchRoll rotationWRTParent;
 
     public void setOrientation(float yaw, float pitch, float roll) {
         //TODO:   set progeny new orientation

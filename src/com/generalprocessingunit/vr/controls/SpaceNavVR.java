@@ -2,6 +2,7 @@ package com.generalprocessingunit.vr.controls;
 
 import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.MomentumVector;
+import com.generalprocessingunit.processing.MomentumYawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PVector;
 
@@ -10,7 +11,7 @@ public class SpaceNavVR {
 
     SpaceNavigator spaceNav;
     public MomentumVector momentum;
-    public MomentumVector rotMomentum;
+    public MomentumYawPitchRoll rotMomentum;
 
     static float speedCoef = 0.004f;
     static float rotSpeedCoef = 0.015f;
@@ -21,7 +22,7 @@ public class SpaceNavVR {
         this.p5 = p5;
         spaceNav = new SpaceNavigator(p5);
         momentum = new MomentumVector(p5, friction);
-        rotMomentum = new MomentumVector(p5, friction);
+        rotMomentum = new MomentumYawPitchRoll(p5, friction);
 
         speedCoef *= speed;
     }

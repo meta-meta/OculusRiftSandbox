@@ -3,6 +3,7 @@ package com.generalprocessingunit.vr.controls;
 import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -36,21 +37,21 @@ public class GloveVR {
 
         gloveManager.init();
 
-        leftHand.glove.addChild(razerHydraSensor, new PVector(0, 0, -.01f), new PVector(0, 0, 0));
-        leftHand.glove.addChild(palm, new PVector(0, -.005f, -.012f), new PVector(0, 0, 0));
+        leftHand.glove.addChild(razerHydraSensor, new YawPitchRoll(0, 0, -.01f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(palm, new YawPitchRoll(-.005f, 0, -.012f), new YawPitchRoll(0, 0, 0));
 
-        leftHand.glove.addChild(pinkyKnuckle,      new PVector( -.007f, -.005f, .0f), new PVector(0, 0, 0));
-        leftHand.glove.addChild(ringKnuckle,       new PVector( -.003f, -.005f, .0f), new PVector(0, 0, 0));
-        leftHand.glove.addChild(middleKnuckle,     new PVector(  .002f, -.005f, .0f), new PVector(0, 0, 0));
-        leftHand.glove.addChild(pointerKnuckle,    new PVector(  .007f, -.005f, .0f), new PVector(0, 0, 0));
-        leftHand.glove.addChild(thumbKnuckle,      new PVector(  .015f,  -.01f, -.01f), new PVector(0, .6f, -1.2f));
+        leftHand.glove.addChild(pinkyKnuckle,      new YawPitchRoll(-.005f, -.007f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(ringKnuckle,       new YawPitchRoll(-.005f, -.003f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(middleKnuckle,     new YawPitchRoll(-.005f,  .002f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(pointerKnuckle,    new YawPitchRoll(-.005f,  .007f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(thumbKnuckle,      new YawPitchRoll( -.01f,  .015f, -.01f), new YawPitchRoll(.6f, 0, -1.2f));
 
         // TODO: these should not need to be offset from the knuckle. something is wrong
-        pinkyKnuckle.addChild(pinky,      new PVector( -.007f, -.005f, .007f), new PVector(0, 0, 0));
-        ringKnuckle.addChild(ring,        new PVector( -.003f, -.005f, .008f), new PVector(0, 0, 0));
-        middleKnuckle.addChild(middle,    new PVector(  .002f, -.005f, .009f), new PVector(0, 0, 0));
-        pointerKnuckle.addChild(pointer,  new PVector(  .007f, -.005f, .008f), new PVector(0, 0, 0));
-        thumbKnuckle.addChild(thumb,      new PVector(  .015f,  -.01f, .001f), new PVector(0, 0, 0));
+        pinkyKnuckle.addChild(pinky,      new YawPitchRoll(  -.005f, -.007f, .007f), new YawPitchRoll(0, 0, 0));
+        ringKnuckle.addChild(ring,        new YawPitchRoll(  -.005f, -.003f, .008f), new YawPitchRoll(0, 0, 0));
+        middleKnuckle.addChild(middle,    new YawPitchRoll(  -.005f,  .002f, .009f), new YawPitchRoll(0, 0, 0));
+        pointerKnuckle.addChild(pointer,  new YawPitchRoll(  -.005f,  .007f, .008f), new YawPitchRoll(0, 0, 0));
+        thumbKnuckle.addChild(thumb,      new YawPitchRoll(   -.01f,  .015f, .001f), new YawPitchRoll(0, 0, 0));
     }
 
     public void update() {

@@ -1,6 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.hid.SpaceNavigator;
+import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -16,7 +17,7 @@ public class TvNoiseWithSpaceNavigator extends TvNoise {
 
     SpaceNavigator spaceNav;
     PVector momentum = new PVector();
-    PVector rotMomentum = new PVector();
+    YawPitchRoll rotMomentum = new YawPitchRoll();
 
     static final float drag = 0.0125f;
     static final float speedCoef = 0.004f;

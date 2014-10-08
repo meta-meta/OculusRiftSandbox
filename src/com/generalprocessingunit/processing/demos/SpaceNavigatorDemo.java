@@ -3,9 +3,7 @@ package com.generalprocessingunit.processing.demos;
 import com.generalprocessingunit.hid.RazerHydra;
 import com.generalprocessingunit.hid.RazerHydraManager;
 import com.generalprocessingunit.hid.SpaceNavigator;
-import com.generalprocessingunit.processing.AxisAngle;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.MomentumVector;
+import com.generalprocessingunit.processing.*;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -23,7 +21,7 @@ public class SpaceNavigatorDemo extends PApplet {
     RazerHydraManager razerHydraManager;
 
     MomentumVector momentum = new MomentumVector(this, .001f);
-    MomentumVector rotMomentum = new MomentumVector(this, .001f);
+    MomentumYawPitchRoll rotMomentum = new MomentumYawPitchRoll(this, .001f);
 
     EuclideanSpaceObject ship = new EuclideanSpaceObject();
     EuclideanSpaceObject shipChild = new EuclideanSpaceObject();
@@ -37,12 +35,12 @@ public class SpaceNavigatorDemo extends PApplet {
 
         spaceNavigator = new SpaceNavigator(this);
         razerHydraManager = new RazerHydraManager();
-        razerHydraManager.razerHydras[0].addChild(hydraChild, new PVector(0, 0, -30), new PVector());
+        razerHydraManager.razerHydras[0].addChild(hydraChild, new YawPitchRoll(0, 0, -30), new YawPitchRoll());
 
-        ship.addChild(shipChild, new PVector(20f, 10f, -10f), new PVector());
-        ship.addChild(shipChild2, new PVector(-20f, 10f, -10f), new PVector());
+        ship.addChild(shipChild, new YawPitchRoll(10f, 20f, -10f), new YawPitchRoll());
+        ship.addChild(shipChild2, new YawPitchRoll(10f, -20f, -10f), new YawPitchRoll());
 
-        shipChild.addChild(shipChildChild, new PVector(0, 0, 10f), new PVector());
+        shipChild.addChild(shipChildChild, new YawPitchRoll(0, 0, 10f), new YawPitchRoll());
     }
 
     public void draw() {

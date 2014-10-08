@@ -1,6 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.processing.MomentumVector;
+import com.generalprocessingunit.processing.MomentumYawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.hid.SpaceNavigator;
 import processing.core.PGraphics;
@@ -17,7 +18,7 @@ public class ExampleWithSpaceNavigator extends Example {
 
     SpaceNavigator spaceNav;
     MomentumVector momentum = new MomentumVector(this, 0.0125f);
-    MomentumVector rotMomentum = new MomentumVector(this, 0.0125f);
+    MomentumYawPitchRoll rotMomentum = new MomentumYawPitchRoll(this, 0.0125f);
 
     static final float speedCoef = 0.004f;
     static final float rotSpeedCoef = 0.015f;

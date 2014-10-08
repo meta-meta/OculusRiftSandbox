@@ -44,10 +44,10 @@ public class Orientation {
      * preforms a yaw, then pitch, then roll according to the y, x, z values respectively of rotation
      * @param rotation
      */
-    public void rotate(PVector rotation){
-        yaw(rotation.y);
-        pitch(rotation.x);
-        roll(rotation.z);
+    public void rotate(YawPitchRoll rotation){
+        yaw(rotation.yaw());
+        pitch(rotation.pitch());
+        roll(rotation.roll());
     }
 
     /**
@@ -70,11 +70,11 @@ public class Orientation {
      * @param rotation pitch, yaw, roll relateve to this orientation
      * @return
      */
-    public Orientation rotateFrom(PVector rotation) {
+    public Orientation rotateFrom(YawPitchRoll rotation) {
         Orientation o = new Orientation(orientation, xAxis, yAxis, zAxis);
-        o.yaw(rotation.y);
-        o.pitch(rotation.x);
-        o.roll(rotation.z);
+        o.yaw(rotation.yaw());
+        o.pitch(rotation.pitch());
+        o.roll(rotation.roll());
         return o;
     }
 

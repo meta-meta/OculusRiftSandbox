@@ -1,10 +1,7 @@
 package com.generalprocessingunit.processing.demos;
 
 import com.generalprocessingunit.hid.SpaceNavigator;
-import com.generalprocessingunit.processing.Color;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.MomentumVector;
-import com.generalprocessingunit.processing.PAppletBuffered;
+import com.generalprocessingunit.processing.*;
 import com.generalprocessingunit.processing.geometry.Cube;
 import com.generalprocessingunit.processing.geometry.Dodecahedron;
 import com.generalprocessingunit.processing.geometry.Pentagon;
@@ -19,7 +16,7 @@ public class DodecahedronTree extends PAppletBuffered {
     SpaceNavigator spaceNavigator;
 
     MomentumVector momentum = new MomentumVector(this, .001f);
-    MomentumVector rotMomentum = new MomentumVector(this, .001f);
+    MomentumYawPitchRoll rotMomentum = new MomentumYawPitchRoll(this, .001f);
 
     EuclideanSpaceObject camera = new EuclideanSpaceObject();
 
