@@ -3,7 +3,7 @@ package com.generalprocessingunit.audio;
 import com.generalprocessingunit.io.OSC;
 import com.generalprocessingunit.processing.MathsHelpers;
 
-public abstract class VRSoundEntities extends MathsHelpers {
+public abstract class AudibleEntityVR extends MathsHelpers {
 
     /*  http://spatium.ruipenha.pt/renderers/ambi/
     /spatium/#1/aer f1 f2 f3	with #1 being the channel, from 1 to 16, and f1 f2 f3 being, respectively, its azimuth, elevation and radius

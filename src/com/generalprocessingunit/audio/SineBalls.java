@@ -10,7 +10,7 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SineBalls extends VRSoundEntities{
+public class SineBalls extends AudibleEntityVR {
     private PApplet p5;
     public List<SineBall> balls = new ArrayList<>();
 
