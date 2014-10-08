@@ -10,7 +10,9 @@ import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL;
+import processing.opengl.PJOGL;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import static com.oculusvr.capi.OvrLibrary.ovrDistortionCaps.*;
@@ -143,6 +145,10 @@ public abstract class PAppletVR extends PApplet {
         // Processing defaults to 60
         frameRate(75);
         hmd.setEnabledCaps(hmd.getEnabledCaps() | OvrLibrary.ovrHmdCaps.ovrHmdCap_NoVSync);
+
+
+        // 2nd window
+        secondWindow = new PFrame(views[0].width / 2, views[0].height / 2);
     }
 
     @Override
@@ -252,6 +258,15 @@ public abstract class PAppletVR extends PApplet {
             views[eye].endDraw();
         }
 
+
+        if(DRAW_TO_SECOND_WINDOW && frameCount % 4 == 0) {
+            PJOGL.OVR_Render = false;
+            s.image(views[0].get(), 0, 0, s.w, s.h);
+            s.redraw();
+        }
+
+
+        PJOGL.OVR_Render = true;
         hmd.endFrame(poses, eyeTextures);
 
 //        println(frameRate);
@@ -321,7 +336,6 @@ public abstract class PAppletVR extends PApplet {
     public void keyPressed(KeyEvent e) {
         if (0 != hmd.getHSWDisplayState().Displayed) {
             hmd.dismissHSWDisplay();
-            return;
         }
 
         if(e.getKeyChar() == 'p') {
@@ -358,6 +372,11 @@ public abstract class PAppletVR extends PApplet {
             }
         }
 
+        if(e.getKeyChar() == 'w') {
+            DRAW_TO_SECOND_WINDOW = !DRAW_TO_SECOND_WINDOW;
+            println(DRAW_TO_SECOND_WINDOW);
+        }
+
         super.keyPressed(e);
     }
 
@@ -369,27 +388,41 @@ public abstract class PAppletVR extends PApplet {
     }
 
 
+    /* Secondary Viewport to see what the HMD wearer is seeing
+    * */
+    private PFrame secondWindow;
+    private SecondApplet s;
+    private static boolean DRAW_TO_SECOND_WINDOW = false;
+    private class PFrame extends Frame {
+        int w, h;
+        public PFrame(int w, int h) {
+            this.w = w;
+            this.h = h;
+            setBounds(100,100,views[0].width / 2, views[0].height / 2);
+            s = new SecondApplet(w, h);
+            add(s);
+            s.init();
+            setVisible(true);
+        }
+    }
+
+    private class SecondApplet extends PApplet {
+        int w, h;
+        public SecondApplet(int w, int h) {
+            this.w = w;
+            this.h = h;
+        }
+        public void setup() {
+            size(w, h);
+            noLoop();
+        }
+
+        public void draw() {}
+    }
+
+
     public static void println(Object o) {
         System.out.println(o);
     }
 
-
-
-    /* // this may or may not be a good idea
-
-    public void pollHardware() {}
-
-
-    private int pollMillis = 1;
-    private boolean running = false;
-    private Runnable pollThread = new Thread() {
-        public void run() {
-            try {
-                while(running) {
-                    pollHardware();
-                    Thread.sleep(pollMillis);
-                }
-            } catch (InterruptedException e) { }
-        }
-    };*/
 }
