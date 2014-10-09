@@ -1,8 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.audio.SineBalls;
-import com.generalprocessingunit.hid.Glove;
-import com.generalprocessingunit.hid.GloveManager;
+import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.Quaternion;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.GloveVR;
@@ -17,7 +16,7 @@ public class SpatialAudioVR extends PAppletVR {
     SineBalls sineBalls;
     SpaceNavVR spaceNav;
     GloveVR gloveVR = new GloveVR(this);
-    GloveManager.Hand leftHand = gloveVR.leftHand;
+    Hand leftHand = gloveVR.leftHand;
 
 
     static final float roomSize = 25;

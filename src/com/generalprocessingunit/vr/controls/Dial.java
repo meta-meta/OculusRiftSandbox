@@ -1,6 +1,7 @@
 package com.generalprocessingunit.vr.controls;
 
 import com.generalprocessingunit.hid.GloveManager;
+import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 
@@ -45,11 +46,11 @@ public class Dial extends AbstractControl{
 
     int tick = 0;
 
-    public void update(PApplet p5, GloveManager.Hand hand) {
+    public void update(PApplet p5, Hand hand) {
         setState(p5, hand);
     }
 
-    private void setState(PApplet p5, GloveManager.Hand hand) {
+    private void setState(PApplet p5, Hand hand) {
         if (!engaged) {
             // TODO this grabbing logic should get abstracted away
             // if we are already grabbing when we touch, we can't actually grab the knob
@@ -133,12 +134,12 @@ public class Dial extends AbstractControl{
         top.setEmissive(127);
     }
 
-    private void indicateTick(GloveManager.Hand hand ) {
+    private void indicateTick(Hand hand ) {
         hand.fingertips.vibrate(1);
     }
 
     float prevWarningLimit = 0;
-    void indicateMinOrMax(float attemptedVal, GloveManager.Hand hand) {
+    void indicateMinOrMax(float attemptedVal, Hand hand) {
         if(attemptedVal > maxVal && attemptedVal > prevWarningLimit) {
             hand.index.vibrate(1);
             prevWarningLimit = attemptedVal;
@@ -150,7 +151,7 @@ public class Dial extends AbstractControl{
         }
     }
 
-    private void indicateTouch(GloveManager.Hand hand) {
+    private void indicateTouch(Hand hand) {
         hand.palm.vibrate(1);
     }
 

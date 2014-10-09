@@ -1,6 +1,7 @@
 package com.generalprocessingunit.vr.controls;
 
 import com.generalprocessingunit.hid.GloveManager;
+import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.YawPitchRoll;
@@ -69,7 +70,7 @@ public class GloveVR {
         drawHand(leftHand, pG);
     }
 
-    void drawHand(GloveManager.Hand hand, PGraphics pG) {
+    void drawHand(Hand hand, PGraphics pG) {
 
         shoulderLocation = p5.neck.getTranslationWRTObjectCoords( new PVector(-.01f, -.02f, -.01f));
 

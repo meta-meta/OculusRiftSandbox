@@ -41,9 +41,9 @@ public class ExampleWithGlove extends Example {
         spaceNav.update();
         glove.update();
 
-        dial1.update(this, glove.leftHand); //TODO: ugh
-        dial2.update(this, glove.leftHand); //TODO: ugh
-        dial3.update(this, glove.leftHand); //TODO: ugh
+        dial1.update(this, glove.leftHand);
+        dial2.update(this, glove.leftHand);
+        dial3.update(this, glove.leftHand);
 
         if(headContainer.y() < 2) {
             PVector location = headContainer.getLocation();
