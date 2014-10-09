@@ -35,8 +35,6 @@ public class GloveVR {
     public GloveVR(PAppletVR p5) {
         this.p5 = p5;
 
-        gloveManager.init();
-
         leftHand.glove.addChild(razerHydraSensor, new PVector(0, 0, -.025f), new YawPitchRoll(0, 0, 0));
         leftHand.glove.addChild(palm, new PVector(0, -.0125f, -.03f), new YawPitchRoll(0, 0, 0));
 

@@ -15,107 +15,28 @@ import java.io.OutputStream;
 import java.util.*;
 
 
-public class GloveManager implements SerialPortEventListener  {
-    public Glove[] gloves = new Glove[2];
+public class GloveManager {
+    private Glove[] gloves = new Glove[2];
 
     private RazerHydraManager razerHydraManager = new RazerHydraManager(gloves);
+
+    GloveManagerSerialCom serialCom;
 
     public GloveManager() {
         for (int i = 0; i < 2; i++) {
             gloves[i] = new Glove();
-//            gloves[i].setBaseIndex(i);
         }
+
+        serialCom = new GloveManagerSerialCom(this);
     }
 
-    SerialPort serialPort;
-
-    private static final String PORT_NAMES[] = {
-            "/dev/tty.usbserial-A9007UX1", // Mac OS X
-            "/dev/ttyUSB0", // Linux
-            "COM3", // Windows my desktop
-            "COM4"  // Windows my laptop
-    };
-
-    private BufferedReader input;
-    private OutputStream output;
-
-    /** Milliseconds to block while waiting for port open */
-    private static final int TIME_OUT = 2000;
-
-    /** Default bits per second for COM port. */
-    private static final int DATA_RATE = 115200;
-
-    public void init() {
-        CommPortIdentifier portId = null;
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-
-        //First, Find an instance of serial port as set in PORT_NAMES.
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            for (String portName : PORT_NAMES) {
-                if (currPortId.getName().equals(portName)) {
-                    portId = currPortId;
-                    break;
-                }
-            }
-        }
-        if (portId == null) {
-            System.out.println("Could not find COM port.");
-            return;
-        }
-
-        try {
-            // open serial port, and use class name for the appName.
-            serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-
-            // set port parameters
-            serialPort.setSerialPortParams(DATA_RATE,
-                    SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1,
-                    SerialPort.PARITY_NONE);
-
-            // open the streams
-            input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-            output = serialPort.getOutputStream();
-
-            // add event listeners
-            serialPort.addEventListener(this);
-            serialPort.notifyOnDataAvailable(true);
-        } catch (Exception e) {
-            System.err.println(e.toString());
-        }
-    }
-
-    /**
-     * This should be called when you stop using the port.
-     * This will prevent port locking on platforms like Linux.
-     */
     public synchronized void destroy() {
-        if (serialPort != null) {
-            serialPort.removeEventListener();
-            serialPort.close();
-        }
-
+        serialCom.destroy();
         razerHydraManager.destroy();
     }
 
-    /**
-     * Handle an event on the serial port. Read the data and print it.
-     */
-    public synchronized void serialEvent(SerialPortEvent oEvent) {
-        if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-            try {
-                String inputLine = input.readLine();
-                if (inputLine.startsWith("B")) {
-                    updateState(inputLine.substring(1));
-                }
-            } catch (Exception e) {
-                System.err.println(e.toString());
-            }
-        }
-    }
 
-    private void updateState(String s){
+    protected void updateBendState(String s){
         int i = 0;
         for (String b : s.split(",")) {
             try {
@@ -137,69 +58,14 @@ public class GloveManager implements SerialPortEventListener  {
         razerHydraManager.poll();
     }
 
+    /* note: vibration patterns last for ~350 millis */
     public void setVibrate(Map<Integer, Integer> vibrate) {
         StringBuilder sb = new StringBuilder(30).append("V");
         for (int i = 0; i < 14; i++) {
             sb.append(vibrate.containsKey(i) ? String.format("%02d", vibrate.get(i)) : "00");
         }
         sb.append("\n");
-        try{
-            output.write(sb.toString().getBytes());
-        }
-        catch(Exception e){
-            System.err.println(e.toString());
-        }
-    }
-
-//    public PVector getGlovePosition(int gloveIndex){
-//        // TODO: this might switch depending on the position of the glove relative to the base station
-//        /* 0 means left, 1 means right but due to the orientation of the base station to the hands,
-//         * they are reversed */
-//        return razerHydraManager.position[gloveIndex == 0 ? 1 : 0 ];
-//    }
-
-//    public PVector getGloveRotation(int gloveIndex){
-//        return razerHydraManager.rotation[gloveIndex == 0 ? 1 : 0];
-//    }
-//    public float getGloveRotZ(int gloveIndex){
-//        return razerHydraManager.rotation[gloveIndex == 0 ? 1 : 0 ].z;
-//    }
-//    public float getGloveRotX(int gloveIndex){
-//        return razerHydraManager.rotation[gloveIndex == 0 ? 1 : 0 ].x;
-//    }
-//    public float getGloveRotY(int gloveIndex){
-//        return razerHydraManager.rotation[gloveIndex == 0 ? 1 : 0 ].y;
-//    }
-
-    public static void main(String[] args) throws Exception {
-        GloveManager main = new GloveManager();
-        main.init();
-        Thread t=new Thread() {
-            public void run() {
-                //the following line will keep this app alive for 1000 seconds,
-                //waiting for events to occur and responding to them (printing incoming messages to console).
-                try {Thread.sleep(1000000);} catch (InterruptedException ie) {}
-            }
-        };
-        t.start();
-        System.out.println("Started");
-
-
-        while(true){
-            for(int i=0; i < 5; i++){
-                System.out.print(main.gloves[0].bend[i]);
-                System.out.print(i<4?",":"\n");
-            }
-
-            //Thread.sleep(50);
-        }
-
-//        for(int i = 0; i < 50; i++)
-//        {
-//            Thread.sleep(2000);
-//            System.out.println("sending");
-//            main.output.write("V1001330200030004000500060007\n".getBytes());
-//        }
+        serialCom.write(sb.toString());
     }
 
     public LeftHand getLeftHand() {
