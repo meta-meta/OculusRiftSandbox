@@ -24,7 +24,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
         return c;
     }
 
-    public void addChild(EuclideanSpaceObject child, YawPitchRoll locationWRTParent, YawPitchRoll rotationWRTParent) {
+    public void addChild(EuclideanSpaceObject child, PVector locationWRTParent, YawPitchRoll rotationWRTParent) {
 
         child.locationWRTParent = locationWRTParent;
         child.rotationWRTParent = rotationWRTParent;
@@ -198,9 +198,9 @@ public class EuclideanSpaceObject extends MathsHelpers {
     private PVector locationWRTParent;
     private YawPitchRoll rotationWRTParent;
 
-    public void setOrientation(float yaw, float pitch, float roll) {
+    public void setOrientation(YawPitchRoll rotation) {
         //TODO:   set progeny new orientation
-        orientation = new Orientation(yaw, pitch, roll);
+        orientation = new Orientation(rotation);
 
 
         // TODO: THIS IS A HACK. It does not preserve the progeny's orientation

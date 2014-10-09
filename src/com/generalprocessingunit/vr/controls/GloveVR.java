@@ -37,21 +37,22 @@ public class GloveVR {
 
         gloveManager.init();
 
-        leftHand.glove.addChild(razerHydraSensor, new YawPitchRoll(0, 0, -.01f), new YawPitchRoll(0, 0, 0));
-        leftHand.glove.addChild(palm, new YawPitchRoll(-.005f, 0, -.012f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(razerHydraSensor, new PVector(0, 0, -.025f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(palm, new PVector(0, -.0125f, -.03f), new YawPitchRoll(0, 0, 0));
 
-        leftHand.glove.addChild(pinkyKnuckle,      new YawPitchRoll(-.005f, -.007f,   .0f), new YawPitchRoll(0, 0, 0));
-        leftHand.glove.addChild(ringKnuckle,       new YawPitchRoll(-.005f, -.003f,   .0f), new YawPitchRoll(0, 0, 0));
-        leftHand.glove.addChild(middleKnuckle,     new YawPitchRoll(-.005f,  .002f,   .0f), new YawPitchRoll(0, 0, 0));
-        leftHand.glove.addChild(pointerKnuckle,    new YawPitchRoll(-.005f,  .007f,   .0f), new YawPitchRoll(0, 0, 0));
-        leftHand.glove.addChild(thumbKnuckle,      new YawPitchRoll( -.01f,  .015f, -.01f), new YawPitchRoll(.6f, 0, -1.2f));
 
+        leftHand.glove.addChild(pinkyKnuckle,      new PVector(-.0175f, -.0125f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(ringKnuckle,       new PVector(-.0075f, -.0125f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(middleKnuckle,     new PVector( .005f, -.0125f,    .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(pointerKnuckle,    new PVector( .0175f, -.0125f,   .0f), new YawPitchRoll(0, 0, 0));
+        leftHand.glove.addChild(thumbKnuckle,      new PVector( .0375f,  -.025f, -.025f), new YawPitchRoll(.6f, 0, -1.2f));
+        
         // TODO: these should not need to be offset from the knuckle. something is wrong
-        pinkyKnuckle.addChild(pinky,      new YawPitchRoll(  -.005f, -.007f, .007f), new YawPitchRoll(0, 0, 0));
-        ringKnuckle.addChild(ring,        new YawPitchRoll(  -.005f, -.003f, .008f), new YawPitchRoll(0, 0, 0));
-        middleKnuckle.addChild(middle,    new YawPitchRoll(  -.005f,  .002f, .009f), new YawPitchRoll(0, 0, 0));
-        pointerKnuckle.addChild(pointer,  new YawPitchRoll(  -.005f,  .007f, .008f), new YawPitchRoll(0, 0, 0));
-        thumbKnuckle.addChild(thumb,      new YawPitchRoll(   -.01f,  .015f, .001f), new YawPitchRoll(0, 0, 0));
+        pinkyKnuckle.addChild(pinky,      new PVector(-.0175f, -.0125f, .0175f), new YawPitchRoll(0, 0, 0));
+        ringKnuckle.addChild(ring,        new PVector(-.0075f, -.0125f, .02f), new YawPitchRoll(0, 0, 0));
+        middleKnuckle.addChild(middle,    new PVector( .005f, -.0125f, .0225f), new YawPitchRoll(0, 0, 0));
+        pointerKnuckle.addChild(pointer,  new PVector( .0175f, -.0125f, .02f), new YawPitchRoll(0, 0, 0));
+        thumbKnuckle.addChild(thumb,      new PVector( .0375f,  -.025f, .0025f), new YawPitchRoll(0, 0, 0));
     }
 
     public void update() {
@@ -77,25 +78,25 @@ public class GloveVR {
         pG.colorMode(PConstants.RGB);
         pG.fill(255, 0, 0);
 
-        drawHandPart(pG, razerHydraSensor, new PVector(.005f, .005f, .02f));
+        drawHandPart(pG, razerHydraSensor, new PVector(.0125f, .0125f, .05f));
 
         pG.fill(10);
 
-        drawHandPart(pG, palm, new PVector(.017f, .005f, .02f));
-        drawHandPart(pG, pinky, new PVector(.002f, .004f, .014f));
-        drawHandPart(pG, ring, new PVector(.003f, .005f, .016f));
-        drawHandPart(pG, middle, new PVector(.003f, .005f, .018f));
-        drawHandPart(pG, pointer, new PVector(.003f, .005f, .016f));
-        drawHandPart(pG, thumb, new PVector(.004f, .005f, .012f));
+        drawHandPart(pG, palm,    new PVector(.0425f, .0125f, .05f));
+        drawHandPart(pG, pinky,   new PVector(.005f, .01f, .035f));
+        drawHandPart(pG, ring,    new PVector(.0075f, .0125f, .04f));
+        drawHandPart(pG, middle,  new PVector(.0075f, .0125f, .045f));
+        drawHandPart(pG, pointer, new PVector(.0075f, .0125f, .04f));
+        drawHandPart(pG, thumb,   new PVector(.01f, .0125f, .03f));
 
 
-        PVector wristLoc = hand.glove.getTranslationWRTObjectCoords(new PVector(0, 0, -0.02f));
+        PVector wristLoc = hand.glove.getTranslationWRTObjectCoords(new PVector(0, 0, -0.05f));
         for (float i = 0; i < 1; i += .1f) {
             pG.pushMatrix();
             {
                 PVector loc = PVector.lerp(shoulderLocation, wristLoc, i);
                 pG.translate(loc.x, loc.y, loc.z);
-                pG.sphere(.004f);
+                pG.sphere(.01f);
             }
             pG.popMatrix();
         }
@@ -105,7 +106,7 @@ public class GloveVR {
             PVector loc = shoulderLocation;
             pG.translate(loc.x, loc.y, loc.z);
             pG.fill(255, 0, 255);
-            pG.sphere(.001f);
+            pG.sphere(.0025f);
         }
         pG.popMatrix();
 

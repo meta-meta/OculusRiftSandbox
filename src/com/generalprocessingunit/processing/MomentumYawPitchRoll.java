@@ -21,6 +21,10 @@ public class MomentumYawPitchRoll extends Momentum<YawPitchRoll> {
         m.add(pitch, yaw, roll);
     }
 
+    public void add(PVector v) {
+        m.add(v);
+    }
+
     public void set(float yaw, float pitch, float roll) {
         m.set(pitch, yaw, roll);
     }

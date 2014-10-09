@@ -1,5 +1,6 @@
 package com.generalprocessingunit.hid;
 
+import com.generalprocessingunit.processing.YawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PVector;
 import procontroll.ControllButton;
@@ -9,7 +10,7 @@ import procontroll.ControllSlider;
 
 public class SpaceNavigator {
     public PVector translation = new PVector();
-    public PVector rotation = new PVector();
+    public YawPitchRoll rotation = new YawPitchRoll();
 
     private ControllIO controll;
     private ControllDevice device; // my SpaceNavigator
@@ -56,16 +57,16 @@ public class SpaceNavigator {
             return;
         }
 
-
         translation.set(
                 sliderXpos.getValue(),
                 sliderYpos.getValue(),
                 sliderZpos.getValue()
         );
 
+
         rotation.set(
-                sliderXrot.getValue(),
                 sliderYrot.getValue(),
+                sliderXrot.getValue(),
                 sliderZrot.getValue()
         );
     }

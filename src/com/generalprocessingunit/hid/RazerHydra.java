@@ -2,6 +2,7 @@ package com.generalprocessingunit.hid;
 
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.Orientation;
+import com.generalprocessingunit.processing.YawPitchRoll;
 import com.sixense.ControllerData;
 import com.sixense.EnumButton;
 import processing.core.PVector;
@@ -27,6 +28,7 @@ public class RazerHydra extends EuclideanSpaceObject {
 
     private PVector rawLocation = new PVector();
 
+
     public void reset(PVector landmark) {
         origin.set(PVector.add(rawLocation, landmark));
     }
@@ -35,14 +37,18 @@ public class RazerHydra extends EuclideanSpaceObject {
         inverted = !inverted;
     }
 
+    public YawPitchRoll rotation = new YawPitchRoll();
     private float prevYaw, prevPitch, prevRoll;
+    private long millisAtLastPoll = 0;
+    private int millisSinceLastPoll = 0;
+
     protected void setData(ControllerData data){
         int i = inverted ? -1 : 1;
 
         rawLocation.set(
-                data.pos[0] * -.0004f * i,
-                data.pos[1] * -.0004f * i,
-                data.pos[2] * .0004f * i
+                data.pos[0] * -.001f * i,
+                data.pos[1] * -.001f * i,
+                data.pos[2] * .001f * i
         );
 
         setLocation(PVector.sub(origin, rawLocation));
@@ -64,17 +70,29 @@ public class RazerHydra extends EuclideanSpaceObject {
 
         trigger = data.trigger;
 
-        setOrientation(data.yaw, data.pitch + PI, data.roll);
 
+        prevYaw = rotation.yaw();
+        prevPitch = rotation.pitch();
+        prevRoll = rotation.roll();
 
-//        yaw(data.yaw - prevYaw);
-//        pitch(data.pitch - prevPitch);
-//        roll(-data.roll - prevRoll);
-//
-//        prevYaw = data.yaw;
-//        prevPitch = data.pitch;
-//        prevRoll = -data.roll;
+        rotation.set(data.yaw, data.pitch + PI, data.roll);
+        setOrientation(rotation);
 
+        long millisNow = System.currentTimeMillis();
+        millisSinceLastPoll = (int)(millisNow - millisAtLastPoll);
+        millisAtLastPoll = millisNow;
+    }
+
+    public int millisSinceLastPoll() {
+        return millisSinceLastPoll;
+    }
+
+    public YawPitchRoll deltaYawPitchRoll() {
+        return new YawPitchRoll(
+                rotation.yaw() - prevYaw,
+                rotation.pitch() - prevPitch,
+                rotation.roll() - prevRoll
+        );
     }
 
     public boolean isGrabbing() {

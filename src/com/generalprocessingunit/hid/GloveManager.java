@@ -2,6 +2,7 @@ package com.generalprocessingunit.hid;
 
 
 import com.generalprocessingunit.processing.AxisAngle;
+import com.generalprocessingunit.processing.YawPitchRoll;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -276,6 +277,22 @@ public class GloveManager implements SerialPortEventListener  {
 
         public PVector getLocation() {
             return glove.getLocation();
+        }
+
+        public YawPitchRoll getYawPitchRoll() {
+            return glove.rotation;
+        }
+
+        public float getYaw() {
+            return glove.rotation.yaw();
+        }
+
+        public float getPitch() {
+            return glove.rotation.pitch();
+        }
+
+        public float getRoll() {
+            return glove.rotation.roll();
         }
 
         public AxisAngle getAxisAngle() {

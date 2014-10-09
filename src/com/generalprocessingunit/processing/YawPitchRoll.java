@@ -22,4 +22,9 @@ public class YawPitchRoll extends PVector {
     public float roll() {
         return z;
     }
+
+    @Override
+    public void set(float yaw, float pitch, float roll) {
+        super.set(pitch, yaw, roll);
+    }
 }

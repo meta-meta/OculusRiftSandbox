@@ -13,11 +13,11 @@ public class Orientation {
 
     public Orientation() {}
 
-    public Orientation (float yaw, float pitch, float roll) {
+    public Orientation (YawPitchRoll rotation) {
         this();
-        yaw(yaw);
-        pitch(pitch);
-        roll(roll);
+        yaw(rotation.yaw());
+        pitch(rotation.pitch());
+        roll(rotation.roll());
     }
 
     private Orientation (Quaternion orientation, PVector xAxis, PVector yAxis, PVector zAxis) {
