@@ -1,8 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
-import com.generalprocessingunit.processing.*;
-import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.vr.PAppletVR;
+import com.generalprocessingunit.vr.controls.Dial;
 import com.generalprocessingunit.vr.controls.GloveVR;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
@@ -11,12 +10,13 @@ import processing.core.PVector;
 import java.awt.event.KeyEvent;
 
 public class ExampleWithGlove extends Example {
-
-
-
     GloveVR glove;
 
     SpaceNavVR spaceNav;
+
+    Dial dial1;
+    Dial dial2;
+    Dial dial3;
 
     public static void main(String[] args){
         PAppletVR.main(ExampleWithGlove.class);
@@ -27,9 +27,13 @@ public class ExampleWithGlove extends Example {
     public void setup() {
         super.setup();
 
-        spaceNav = new SpaceNavVR(this, .001f, 1);
+        spaceNav = new SpaceNavVR(this, .001f, .1f);
         glove = new GloveVR(this);
 
+        // place these in the head container so that they are immobile but we can fly around
+        dial1 = new Dial(this, new PVector(-.3f, 1.8f, 0), 0, .1f, .025f);
+        dial2 = new Dial(this, new PVector(  0f, 1.8f, 0), 0, .1f, .025f);
+        dial3 = new Dial(this, new PVector( .3f, 1.8f, 0), 0, .1f, .025f);
     }
 
     @Override
@@ -37,13 +41,15 @@ public class ExampleWithGlove extends Example {
         spaceNav.update();
         glove.update();
 
+        dial1.update(this, glove.leftHand); //TODO: ugh
+        dial2.update(this, glove.leftHand); //TODO: ugh
+        dial3.update(this, glove.leftHand); //TODO: ugh
+
         if(headContainer.y() < 2) {
             PVector location = headContainer.getLocation();
             location.y = 2;
             headContainer.setLocation(location);
         }
-
-
     }
 
     @Override
@@ -77,6 +83,12 @@ public class ExampleWithGlove extends Example {
     protected void drawView(int eye, PGraphics pG) {
         super.drawView(eye, pG);
         glove.drawView(pG);
+
+
+        dial1.draw(pG);
+        dial2.draw(pG);
+        dial3.draw(pG);
+
     }
 
 
@@ -85,14 +97,17 @@ public class ExampleWithGlove extends Example {
     public void keyPressed(KeyEvent e) {
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
             glove.reset();
+            println("reset glove");
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {
             glove.invert();
+            println("invert glove");
         }
 
         if(KeyEvent.VK_I == e.getKeyCode()) {
             spaceNav.invertControl();
+            println("invert spacenav");
         }
 
         super.keyPressed(e);

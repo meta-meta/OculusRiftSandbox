@@ -41,6 +41,6 @@ public abstract class AbstractControl {
 
     boolean setValue(float val){
         this.val = Math.min(maxVal, Math.max(minVal, val));
-        return (val <= maxVal && val >= minVal);
+        return (val < maxVal && val > minVal);
     }
 }

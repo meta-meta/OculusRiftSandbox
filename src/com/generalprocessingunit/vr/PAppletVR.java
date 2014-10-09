@@ -374,10 +374,14 @@ public abstract class PAppletVR extends PApplet {
 
         if(e.getKeyChar() == 'w') {
             DRAW_TO_SECOND_WINDOW = !DRAW_TO_SECOND_WINDOW;
-            println(DRAW_TO_SECOND_WINDOW);
+            printSetting("Draw to second window", DRAW_TO_SECOND_WINDOW);
         }
 
         super.keyPressed(e);
+    }
+
+    private void printSetting(String settingName, boolean setting){
+        println(settingName + ": " + (setting ? "on" : "off"));
     }
 
     @Override

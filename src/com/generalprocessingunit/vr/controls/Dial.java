@@ -1,26 +1,30 @@
 package com.generalprocessingunit.vr.controls;
 
+import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 
 public class Dial extends AbstractControl{
     PShape knob;
-    float radius = 50;
-    float depth = 30;
+    float radius;
+    float depth;
 
     PShape meter;
     public static final int NUM_TICKS = 20;
 
-    public Dial(PApplet p5, PVector position, int initialValue){
+    public Dial(PApplet p5, PVector position, int initialValue, float radius, float depth){
         super(position, initialValue);
+
+        this.radius = radius;
+        this.depth = depth;
 
         knob = Primitives.cylinder(p5, radius, depth, 50);
         knob.rotateX(PApplet.HALF_PI);
 
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
         p5.colorMode(PConstants.HSB);
-        top.setFill(p5.color(0, 255, 255, 30));
         top.setStroke(false);
+        setDefaultKnobColor(p5);
 
         PShape mid = knob.getChild(Primitives.CYLINDER_MID);
         p5.colorMode(PConstants.HSB);
@@ -41,40 +45,48 @@ public class Dial extends AbstractControl{
 
     int tick = 0;
 
-    public void update(PApplet p5, PGraphics pG, PVector cursorPosition, float grip, PVector cursorRotation) {
-        setState(p5, cursorPosition, grip, cursorRotation);
-        draw(pG);
+    public void update(PApplet p5, GloveManager.Hand hand) {
+        setState(p5, hand);
     }
 
-    private void setState(PApplet p5, PVector cursorPosition, float grip, PVector cursorRotation) {
+    private void setState(PApplet p5, GloveManager.Hand hand) {
         if (!engaged) {
             // TODO this grabbing logic should get abstracted away
             // if we are already grabbing when we touch, we can't actually grab the knob
-            if (!isGrabbing(grip) && isTouching(cursorPosition)) {
-                indicateTouch();
+            if (!hand.isGrabbing() && isTouching(hand.getLocation())) {
+                if(!touched) {
+                    indicateTouch(hand);
+                }
                 touched = true;
             }
 
             if (touched) {
-                if (isTouching(cursorPosition)) {
-                    if (isGrabbing(grip)) {
+                if (isTouching(hand.getLocation())) {
+                    if (hand.isGrabbing()) { // just started grabbing
                         engaged = true;
-                        prevRotation = cursorRotation.z + PConstants.PI;  // cursorRotation.z ranges from -PI to +PI
-                        totalRotation = 0;
+                        prevRotation = hand.getRoll()  + PConstants.PI;
+                        totalRotationWhileGrabbing = 0;
                         valAtEngage = val;
+                        setEngagedKnobColor(p5);
+                    } else {
+                        setTouchedKnobColor(p5);
                     }
                 } else {
                     touched = false;
+                    setDefaultKnobColor(p5);
                 }
             }
         } else {
-            if (isGrabbing(grip)) {
+            if (hand.isGrabbing()) {
 
-                if (!setValue(valAtEngage + getChangeInRotation(cursorRotation.z))) {
-                    indicateMinOrMax();
+                float nextVal = valAtEngage + getChangeInRotation(hand.getRoll());
+                if (!setValue(nextVal)) {
+                    indicateMinOrMax(nextVal, hand);
+                } else {
+                    prevWarningLimit = 0;
                 }
 
-                // this divides the dial into 20 'ticks' where switching to the next tick triggers a vibrate
+                // this divides the dial into NUM_TICKS 'ticks' where switching to the next tick triggers a vibrate
                 int prevTick = tick;
                 tick = (int) (val / (range / NUM_TICKS));
                 if (prevTick != tick) {
@@ -82,17 +94,19 @@ public class Dial extends AbstractControl{
                     // TODO drawing logic should be separate
                     if (tick > 0) {
                         for (int i = 0; i < 4; i++) {
-                            meter.setFill((tick - 1) * 2 + i, p5.color(160, 200, 200));
+                            int vertex = (tick - 1) * 2 + i;
+                            meter.setEmissive(vertex, 127);
                         }
                     }
 
                     if (prevTick > tick) {
                         for (int i = (prevTick == 1 ? 0 : 2); i < 4; i++) {
-                            meter.setFill((prevTick - 1) * 2 + i, p5.color(0));
+                            int vertex = (prevTick - 1) * 2 + i;
+                            meter.setEmissive(vertex, 0);
                         }
                     }
 
-                    indicateTick();
+                    indicateTick(hand);
                 }
             } else {
                 engaged = false;
@@ -100,17 +114,49 @@ public class Dial extends AbstractControl{
         }
     }
 
-    private void indicateTick() {
-        // TODO vibrate
+    private void setDefaultKnobColor(PApplet p5) {
+        PShape top = knob.getChild(Primitives.CYLINDER_TOP);
+        p5.colorMode(PConstants.HSB);
+        top.setEmissive(20);
+        top.setFill(p5.color(200, 255, 255, 127));
     }
 
-    private void indicateTouch() {
-        // TODO vibrate lightly to indicate that we've brushed up against the knob
+    private void setTouchedKnobColor(PApplet p5) {
+        PShape top = knob.getChild(Primitives.CYLINDER_TOP);
+        p5.colorMode(PConstants.HSB);
+        top.setEmissive(40);
+    }
+
+    private void setEngagedKnobColor(PApplet p5) {
+        PShape top = knob.getChild(Primitives.CYLINDER_TOP);
+        p5.colorMode(PConstants.HSB);
+        top.setEmissive(127);
+    }
+
+    private void indicateTick(GloveManager.Hand hand ) {
+        hand.fingertips.vibrate(1);
+    }
+
+    float prevWarningLimit = 0;
+    void indicateMinOrMax(float attemptedVal, GloveManager.Hand hand) {
+        if(attemptedVal > maxVal && attemptedVal > prevWarningLimit) {
+            hand.index.vibrate(1);
+            prevWarningLimit = attemptedVal;
+        }
+
+        if(attemptedVal < minVal && attemptedVal < prevWarningLimit) {
+            hand.pinky.vibrate(1);
+            prevWarningLimit = attemptedVal;
+        }
+    }
+
+    private void indicateTouch(GloveManager.Hand hand) {
+        hand.palm.vibrate(1);
     }
 
     // TODO this total rotation logic should get abstracted away
-    float prevRotation;
-    float totalRotation;
+    private float prevRotation;
+    private float totalRotationWhileGrabbing;
     private float getChangeInRotation(float r) {
 
         // cursorRotation.z ranges from -PI to +PI
@@ -122,22 +168,23 @@ public class Dial extends AbstractControl{
         if (PApplet.abs(d) > PConstants.QUARTER_PI) {   // PConstants.QUARTER_PI is arbitrary
             if (d < 0) {
                 // crossed 12 o'clock going clockwise
-                totalRotation += (currRotation + (PConstants.TWO_PI - prevRotation));
+                totalRotationWhileGrabbing -= (currRotation + (PConstants.TWO_PI - prevRotation));
             } else {
                 // crossed 12 o'clock going counter-clockwise
-                totalRotation -= (prevRotation + (PConstants.TWO_PI - currRotation));
+                totalRotationWhileGrabbing += (prevRotation + (PConstants.TWO_PI - currRotation));
             }
         } else {
-            totalRotation += d;
+            totalRotationWhileGrabbing -= d;
         }
 
         prevRotation = currRotation;
-        return (totalRotation / PConstants.TWO_PI) * range;
+        return (totalRotationWhileGrabbing / PConstants.TWO_PI) * range;
     }
 
-    void draw(PGraphics pG) {
+    public void draw(PGraphics pG) {
         pG.pushMatrix();
-        pG.rotateX(-0.4f);
+        pG.translate(position.x, position.y, position.z);
+        pG.rotateX(PConstants.PI);
         pG.shape(meter);
 
         pG.rotateZ(PConstants.TWO_PI * (val / range));
@@ -145,15 +192,8 @@ public class Dial extends AbstractControl{
         pG.popMatrix();
     }
 
-    void indicateMinOrMax() {
-        // TODO vibrate hard to indicate that you've turned as far as you can
-    }
-
     private boolean isTouching(PVector cursorPosition) {
-        return PVector.dist(cursorPosition, position) < radius;
+        return PVector.dist(cursorPosition, position) < radius * 1.4f;
     }
 
-    private boolean isGrabbing(float grip){
-        return grip > 0.7;
-    }
 }
