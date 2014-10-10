@@ -27,10 +27,7 @@ public class Color {
 
     // TODO: not sure if this works or if Processing's fill(int rgb) is not recognizing it
     public int get() {
-        int rgb = R;
-        rgb = (rgb << 8) + G;
-        rgb = (rgb << 8) + B;
-        return rgb;
+        return (A << 24) | (R << 16) | (G << 8) | B;
     }
 
     public static Color grey(int luminance) {
