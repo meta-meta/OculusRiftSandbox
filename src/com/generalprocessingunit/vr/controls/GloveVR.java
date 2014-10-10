@@ -3,6 +3,7 @@ package com.generalprocessingunit.vr.controls;
 import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.AxisAngle;
+import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
@@ -32,6 +33,7 @@ public class GloveVR {
 
     PVector shoulderLocation;
 
+    public Color color = new Color(10);
     public GloveVR(PAppletVR p5) {
         this.p5 = p5;
 
@@ -77,7 +79,7 @@ public class GloveVR {
 
         drawHandPart(pG, razerHydraSensor, new PVector(.0125f, .0125f, .05f));
 
-        pG.fill(10);
+        pG.fill(color.R, color.G, color.B);
 
         drawHandPart(pG, palm,    new PVector(.0425f, .0125f, .05f));
         drawHandPart(pG, pinky,   new PVector(.005f, .01f, .035f));

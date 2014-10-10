@@ -1,5 +1,6 @@
 package com.generalprocessingunit.vr.demos;
 
+import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.Dial;
@@ -28,18 +29,18 @@ public class ExampleWithGlove extends Example {
     public void setup() {
         super.setup();
 
-        spaceNav = new SpaceNavVR(this, .001f, .1f);
+        spaceNav = new SpaceNavVR(this, .001f, .2f);
         glove = new GloveVR(this);
 
         // place these in the head container so that they are immobile but we can fly around
-        dial1 = new Dial(this, 0, .1f, .025f);
-        headContainer.addChild(dial1, new PVector( .3f, 0, .4f), new YawPitchRoll());
+        dial1 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(192, 0, 0, 127));
+        headContainer.addChild(dial1, new PVector(-.15f, -.4f, .25f), new YawPitchRoll(-.3f, .5f, 0));
 
-        dial2 = new Dial(this, 0, .1f, .025f);
-        headContainer.addChild(dial2, new PVector  (0f, 0, .4f), new YawPitchRoll());
+        dial2 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(0, 192, 0, 127));
+        headContainer.addChild(dial2, new PVector(  0f, -.4f, .35f), new YawPitchRoll(0, .5f, 0));
 
-        dial3 = new Dial(this, 0, .1f, .025f);
-        headContainer.addChild(dial3, new PVector(-.3f, 0, .4f), new YawPitchRoll());
+        dial3 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(0, 0, 192, 127));
+        headContainer.addChild(dial3, new PVector( .15f, -.4f, .25f), new YawPitchRoll(.3f, .5f, 0));
     }
 
     @Override
@@ -50,6 +51,7 @@ public class ExampleWithGlove extends Example {
         dial1.update(this, glove.leftHand);
         dial2.update(this, glove.leftHand);
         dial3.update(this, glove.leftHand);
+        glove.color = new Color((int)dial1.val, (int)dial2.val, (int)dial3.val);
 
         if(headContainer.y() < 2) {
             PVector location = headContainer.getLocation();
@@ -88,6 +90,7 @@ public class ExampleWithGlove extends Example {
     @Override
     protected void drawView(int eye, PGraphics pG) {
         super.drawView(eye, pG);
+
         glove.drawView(pG);
 
         dial1.draw(pG);

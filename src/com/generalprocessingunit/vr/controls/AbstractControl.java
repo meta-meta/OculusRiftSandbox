@@ -3,7 +3,7 @@ package com.generalprocessingunit.vr.controls;
 import com.generalprocessingunit.processing.EuclideanSpaceObject;
 
 public abstract class AbstractControl extends EuclideanSpaceObject {
-    float val;
+    public float val;
     float minVal;
     float maxVal;
     float range;

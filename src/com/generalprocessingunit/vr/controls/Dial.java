@@ -2,42 +2,47 @@ package com.generalprocessingunit.vr.controls;
 
 import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.AxisAngle;
+import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 
 public class Dial extends AbstractControl{
     PShape knob;
+    Color knobColor;
     float radius;
     float depth;
 
     PShape meter;
     public static final int NUM_TICKS = 20;
 
-    public Dial(PApplet p5, int initialValue, float radius, float depth){
-        super(initialValue);
+    public Dial(PApplet p5, int initialValue, float radius, float depth, float minVal, float maxVal, Color knobColor){
+        super(initialValue, minVal, maxVal);
 
         this.radius = radius;
         this.depth = depth;
 
+        this.knobColor = knobColor;
+
         knob = Primitives.cylinder(p5, radius, depth, 50);
         knob.rotateX(PApplet.HALF_PI);
 
+        p5.colorMode(PConstants.RGB);
+
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
-        p5.colorMode(PConstants.HSB);
         top.setStroke(false);
+        top.setFill(p5.color(knobColor.R, knobColor.G, knobColor.B, knobColor.A));
         setDefaultKnobColor(p5);
 
         PShape mid = knob.getChild(Primitives.CYLINDER_MID);
-        p5.colorMode(PConstants.HSB);
-        mid.setStroke(p5.color(0, 255, 255, 255));
-        mid.setFill(false);
+        mid.setStroke(p5.color(127, 127, 127, 255));
+        mid.setFill(p5.color(knobColor.R, knobColor.G, knobColor.B, knobColor.A));
 
         knob.removeChild(knob.getChildIndex(knob.getChild(Primitives.CYLINDER_BOT)));
 
         meter = Primitives.arc(p5, radius * 1.05f, radius * 1.2f, PConstants.PI, NUM_TICKS);
         meter.rotateX(PApplet.HALF_PI);
-        meter.setFill(p5.color(0));
-        meter.setStroke(p5.color(150, 200, 200));
+        meter.setFill(p5.color(255, 127));
+        meter.setStroke(p5.color(127, 127, 127));
     }
 
     boolean touched = false;
@@ -96,14 +101,14 @@ public class Dial extends AbstractControl{
                     if (tick > 0) {
                         for (int i = 0; i < 4; i++) {
                             int vertex = (tick - 1) * 2 + i;
-                            meter.setEmissive(vertex, 127);
+                            meter.setEmissive(vertex, p5.color(255));
                         }
                     }
 
                     if (prevTick > tick) {
                         for (int i = (prevTick == 1 ? 0 : 2); i < 4; i++) {
                             int vertex = (prevTick - 1) * 2 + i;
-                            meter.setEmissive(vertex, 0);
+                            meter.setEmissive(vertex, p5.color(0));
                         }
                     }
 
@@ -117,21 +122,17 @@ public class Dial extends AbstractControl{
 
     private void setDefaultKnobColor(PApplet p5) {
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
-        p5.colorMode(PConstants.HSB);
-        top.setEmissive(20);
-        top.setFill(p5.color(200, 255, 255, 127));
+        top.setEmissive(p5.color(knobColor.R / 10, knobColor.G / 10, knobColor.B / 10));
     }
 
     private void setTouchedKnobColor(PApplet p5) {
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
-        p5.colorMode(PConstants.HSB);
-        top.setEmissive(64);
+        top.setEmissive(p5.color(knobColor.R / 4, knobColor.G / 4, knobColor.B / 4));
     }
 
     private void setEngagedKnobColor(PApplet p5) {
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
-        p5.colorMode(PConstants.HSB);
-        top.setEmissive(127);
+        top.setEmissive(p5.color(knobColor.R / 2, knobColor.G / 2, knobColor.B / 2));
     }
 
     private void indicateTick(Hand hand ) {
@@ -152,7 +153,7 @@ public class Dial extends AbstractControl{
     }
 
     private void indicateTouch(Hand hand) {
-        hand.palm.vibrate(1);
+        hand.fingers.vibrate(1);
     }
 
     // TODO this total rotation logic should get abstracted away
