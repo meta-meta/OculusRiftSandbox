@@ -22,7 +22,7 @@ public class Cube implements PConstants {
             cube.stroke(stroke.R, stroke.G, stroke.B, stroke.A);
         }
 
-//        cube.translate(x, y, z);
+        cube.translate(x, y, z);
         box(w, h, d, cube);
         return cube;
     }
