@@ -14,8 +14,7 @@ public class GloveVR {
     PAppletVR p5;
 
     GloveManager gloveManager = new GloveManager();
-    public GloveManager.LeftHand leftHand = gloveManager.getLeftHand();
-    GloveManager.RightHand rightHand = gloveManager.getRightHand();
+    public Hand leftHand = gloveManager.getLeftHand();
 
     EuclideanSpaceObject razerHydraSensor = new EuclideanSpaceObject();
     EuclideanSpaceObject palm = new EuclideanSpaceObject();

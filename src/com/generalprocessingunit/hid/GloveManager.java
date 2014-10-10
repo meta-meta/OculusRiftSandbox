@@ -66,30 +66,11 @@ public class GloveManager {
         serialCom.write(sb.toString());
     }
 
-    public LeftHand getLeftHand() {
-        return new LeftHand();
+    public Hand getLeftHand() {
+        return new Hand(gloves[0]);
     }
 
-    public RightHand getRightHand() {
-      return new RightHand();
+    public Hand getRightHand() {
+        return new Hand(gloves[1]);
     }
-
-    public class LeftHand extends Hand {
-        LeftHand(){
-            super(gloves[0]);
-        }
-    }
-
-    public class RightHand extends Hand {
-        RightHand(){
-            super(gloves[1]);
-        }
-    }
-
-
-
-
-
-
-
 }
