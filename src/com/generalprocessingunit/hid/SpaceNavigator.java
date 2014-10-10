@@ -42,9 +42,9 @@ public class SpaceNavigator {
             sliderXpos.setMultiplier(0.01f); // sensitivities
             sliderYpos.setMultiplier(-0.01f);
             sliderZpos.setMultiplier(-0.01f);
-            sliderXrot.setMultiplier(-0.0001f);
-            sliderYrot.setMultiplier(0.0001f);
-            sliderZrot.setMultiplier(0.0001f);
+            sliderXrot.setMultiplier(-0.001f);
+            sliderYrot.setMultiplier(0.001f);
+            sliderZrot.setMultiplier(0.001f);
         } catch (Exception e) {
             spaceNavigatorPresent = false;
             p5.println(e.getMessage());
@@ -58,16 +58,24 @@ public class SpaceNavigator {
         }
 
         translation.set(
-                sliderXpos.getValue(),
-                sliderYpos.getValue(),
-                sliderZpos.getValue()
+                powPreserveSign(sliderXpos.getValue(), 2),
+                powPreserveSign(sliderYpos.getValue(), 2),
+                powPreserveSign(sliderZpos.getValue(), 2)
         );
 
 
         rotation.set(
-                sliderYrot.getValue(),
-                sliderXrot.getValue(),
-                sliderZrot.getValue()
+//                sliderYrot.getValue(),
+//                sliderXrot.getValue(),
+//                sliderZrot.getValue()
+
+                powPreserveSign(sliderYrot.getValue(), 2),
+                powPreserveSign(sliderXrot.getValue(), 2),
+                powPreserveSign(sliderZrot.getValue(), 2)
         );
+    }
+
+    private float powPreserveSign(float in, float e){
+        return (in < 0 ? -1 : 1) * PApplet.abs(PApplet.pow(in, e));
     }
 }

@@ -14,7 +14,7 @@ public class SpaceNavVR {
     public MomentumYawPitchRoll rotMomentum;
 
     static float speedCoef = 0.004f;
-    static float rotSpeedCoef = 0.015f;
+    static float rotSpeedCoef = 0.005f;
 
     static boolean invertedControl = true;
 
@@ -31,7 +31,9 @@ public class SpaceNavVR {
         spaceNav.poll();
 
         int i = invertedControl ? -1 : 1;
-        momentum.add(PVector.mult(PVector.mult(spaceNav.translation, spaceNav.translation.mag() / 3f), i * speedCoef));
+
+
+        momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
         rotMomentum.add(PVector.mult(spaceNav.rotation, i * rotSpeedCoef));
 
         momentum.friction();
