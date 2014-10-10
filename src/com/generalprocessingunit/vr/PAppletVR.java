@@ -332,6 +332,11 @@ public abstract class PAppletVR extends PApplet {
      * */
     protected abstract void updateState();
 
+    public void recenterPose() {
+        hmd.recenterPose();
+        println("recenter pose");
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         if (0 != hmd.getHSWDisplayState().Displayed) {

@@ -102,6 +102,8 @@ public class ExampleWithGlove extends Example {
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
             glove.reset();
             println("reset glove");
+
+            recenterPose();
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {
