@@ -66,6 +66,55 @@ public class EuclideanSpaceObject extends MathsHelpers {
                 PVector.angleBetween(this.orientation.zAxis, orientation.zAxis)
         );
     }
+
+    /**
+     * get local vector from world vector
+     * http://stackoverflow.com/questions/21125987/how-do-i-convert-a-coordinate-in-one-3d-cartesian-coordinate-system-to-another-3
+     * @param worldCoords
+     * @return
+     */
+    public PVector localCoordinatesFromWorld(PVector worldCoords) {
+        Mat3 local = new Mat3(orientation.xAxis, orientation.yAxis, orientation.zAxis);
+
+        // O2 - O1 is just 0,0,0 - location
+        PVector dOrigin = new PVector();
+        dOrigin.sub(location);
+
+        return local.transpose().mult(PVector.add(dOrigin, worldCoords));
+    }
+
+    class Mat3 {
+        float a11, a12, a13, a21, a22, a23, a31, a32, a33;
+
+        Mat3(float a11, float a12, float a13, float a21, float a22, float a23, float a31, float a32, float a33) {
+            this.a11 = a11;
+            this.a12 = a12;
+            this.a13 = a13;
+            this.a21 = a21;
+            this.a22 = a22;
+            this.a23 = a23;
+            this.a31 = a31;
+            this.a32 = a32;
+            this.a33 = a33;
+        }
+
+        Mat3(PVector x, PVector y, PVector z) {
+            this(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z);
+        }
+
+        Mat3 transpose() {
+            return new Mat3(a11, a21, a31, a12, a22, a32, a13, a23, a33);
+        }
+
+        PVector mult(PVector v) {
+            return new PVector(
+                    v.x * a11 + v.y * a12 + v.z * a13,
+                    v.x * a21 + v.y * a22 + v.z * a23,
+                    v.x * a31 + v.y * a32 + v.z * a33
+            );
+        }
+    }
+
     /**
      * places the object relative to this object's local coordinates without adding it as a child
      * @param obj
