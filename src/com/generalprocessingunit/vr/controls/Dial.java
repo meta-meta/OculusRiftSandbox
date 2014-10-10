@@ -1,7 +1,7 @@
 package com.generalprocessingunit.vr.controls;
 
-import com.generalprocessingunit.hid.GloveManager;
 import com.generalprocessingunit.hid.Hand;
+import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 
@@ -13,8 +13,8 @@ public class Dial extends AbstractControl{
     PShape meter;
     public static final int NUM_TICKS = 20;
 
-    public Dial(PApplet p5, PVector position, int initialValue, float radius, float depth){
-        super(position, initialValue);
+    public Dial(PApplet p5, int initialValue, float radius, float depth){
+        super(initialValue);
 
         this.radius = radius;
         this.depth = depth;
@@ -125,7 +125,7 @@ public class Dial extends AbstractControl{
     private void setTouchedKnobColor(PApplet p5) {
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
         p5.colorMode(PConstants.HSB);
-        top.setEmissive(40);
+        top.setEmissive(64);
     }
 
     private void setEngagedKnobColor(PApplet p5) {
@@ -184,17 +184,21 @@ public class Dial extends AbstractControl{
 
     public void draw(PGraphics pG) {
         pG.pushMatrix();
-        pG.translate(position.x, position.y, position.z);
-        pG.rotateX(PConstants.PI);
-        pG.shape(meter);
+        {
+            pG.translate(this.x(), this.y(), this.z());
+            AxisAngle aa = getAxisAngle();
+            pG.rotate(aa.w, aa.x, aa.y, aa.z);
+            pG.rotateX(PConstants.PI);
+            pG.shape(meter);
 
-        pG.rotateZ(PConstants.TWO_PI * (val / range));
-        pG.shape(knob);
+            pG.rotateZ(PConstants.TWO_PI * (val / range));
+            pG.shape(knob);
+        }
         pG.popMatrix();
     }
 
     private boolean isTouching(PVector cursorPosition) {
-        return PVector.dist(cursorPosition, position) < radius * 1.4f;
+        return getDistFrom(cursorPosition) < radius * 1.4f;
     }
 
 }

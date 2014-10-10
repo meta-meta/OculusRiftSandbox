@@ -1,20 +1,19 @@
 package com.generalprocessingunit.vr.controls;
 
-import processing.core.PVector;
+import com.generalprocessingunit.processing.EuclideanSpaceObject;
 
-public abstract class AbstractControl {
-    public PVector position;
+public abstract class AbstractControl extends EuclideanSpaceObject {
     float val;
     float minVal;
     float maxVal;
     float range;
 
-    AbstractControl(PVector position, int initalVal){
-        this(position, initalVal, 0, 100);
+    AbstractControl(int initalVal){
+        this(initalVal, 0, 100);
     }
 
-    AbstractControl(PVector position, int initalVal, float minVal, float maxVal){
-        this.position = position;
+    AbstractControl(int initalVal, float minVal, float maxVal){
+        super();
         val = initalVal;
         this.minVal = minVal;
         this.maxVal = maxVal;

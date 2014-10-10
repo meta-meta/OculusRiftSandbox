@@ -1,5 +1,6 @@
 package com.generalprocessingunit.vr.demos;
 
+import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.Dial;
 import com.generalprocessingunit.vr.controls.GloveVR;
@@ -31,9 +32,14 @@ public class ExampleWithGlove extends Example {
         glove = new GloveVR(this);
 
         // place these in the head container so that they are immobile but we can fly around
-        dial1 = new Dial(this, new PVector(-.3f, 1.8f, 0), 0, .1f, .025f);
-        dial2 = new Dial(this, new PVector(  0f, 1.8f, 0), 0, .1f, .025f);
-        dial3 = new Dial(this, new PVector( .3f, 1.8f, 0), 0, .1f, .025f);
+        dial1 = new Dial(this, 0, .1f, .025f);
+        headContainer.addChild(dial1, new PVector( .3f, 0, .4f), new YawPitchRoll());
+
+        dial2 = new Dial(this, 0, .1f, .025f);
+        headContainer.addChild(dial2, new PVector  (0f, 0, .4f), new YawPitchRoll());
+
+        dial3 = new Dial(this, 0, .1f, .025f);
+        headContainer.addChild(dial3, new PVector(-.3f, 0, .4f), new YawPitchRoll());
     }
 
     @Override
@@ -84,11 +90,9 @@ public class ExampleWithGlove extends Example {
         super.drawView(eye, pG);
         glove.drawView(pG);
 
-
         dial1.draw(pG);
         dial2.draw(pG);
         dial3.draw(pG);
-
     }
 
 

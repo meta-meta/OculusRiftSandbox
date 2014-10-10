@@ -1,6 +1,5 @@
 package com.generalprocessingunit.processing;
 
-import processing.core.PMatrix3D;
 import processing.core.PVector;
 
 import java.util.HashSet;
@@ -197,6 +196,14 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
     private PVector locationWRTParent;
     private YawPitchRoll rotationWRTParent;
+
+    public float getDistFrom(EuclideanSpaceObject that) {
+        return getDistFrom(that.location);
+    }
+
+    public float getDistFrom(PVector that) {
+        return PVector.dist(this.location, that);
+    }
 
     public void setOrientation(YawPitchRoll rotation) {
         //TODO:   set progeny new orientation
