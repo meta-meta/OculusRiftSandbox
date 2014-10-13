@@ -76,10 +76,13 @@ public class GloveVR {
 
         pG.colorMode(PConstants.RGB);
         pG.fill(255, 0, 0);
+        pG.emissive(hand.isGrabbing() ? 64 : 32, 0, 0);
 
         drawHandPart(pG, razerHydraSensor, new PVector(.0125f, .0125f, .05f));
+        pG.emissive(0);
 
         pG.fill(color.R, color.G, color.B);
+        pG.stroke(64 , 32, 32);
 
         drawHandPart(pG, palm,    new PVector(.0425f, .0125f, .05f));
         drawHandPart(pG, pinky,   new PVector(.005f, .01f, .035f));
@@ -89,6 +92,7 @@ public class GloveVR {
         drawHandPart(pG, thumb,   new PVector(.01f, .0125f, .03f));
 
 
+        pG.noStroke();
         PVector wristLoc = hand.glove.getTranslationWRTObjectCoords(new PVector(0, 0, -0.05f));
         for (float i = 0; i < 1; i += .1f) {
             pG.pushMatrix();

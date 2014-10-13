@@ -3,6 +3,8 @@ package com.generalprocessingunit.vr.controls;
 import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.AxisAngle;
 import com.generalprocessingunit.processing.Color;
+import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 
@@ -12,11 +14,14 @@ public class Dial extends AbstractControl{
     float radius;
     float depth;
 
+    public static final int NUM_TICKS = 64;
     PShape meter;
-    public static final int NUM_TICKS = 20;
 
-    public Dial(PApplet p5, int initialValue, float radius, float depth, float minVal, float maxVal, Color knobColor){
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, float radius, float depth, int initialValue, float minVal, float maxVal, Color knobColor){
         super(initialValue, minVal, maxVal);
+
+        locationWRTParent = location;
+        rotationWRTParent = rotation;
 
         this.radius = radius;
         this.depth = depth;
@@ -35,7 +40,7 @@ public class Dial extends AbstractControl{
 
         PShape mid = knob.getChild(Primitives.CYLINDER_MID);
         mid.setStroke(p5.color(127, 127, 127, 255));
-        mid.setFill(p5.color(knobColor.R, knobColor.G, knobColor.B, knobColor.A));
+        mid.setFill(p5.color(knobColor.R / 2, knobColor.G / 2, knobColor.B / 2, knobColor.A));
 
         knob.removeChild(knob.getChildIndex(knob.getChild(Primitives.CYLINDER_BOT)));
 
@@ -45,7 +50,28 @@ public class Dial extends AbstractControl{
         meter.setStroke(p5.color(127, 127, 127));
     }
 
-    boolean touched = false;
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, float radius, float depth, Color knobColor){
+        this(p5, location, rotation, radius, depth, 0, 0, 1, knobColor);
+    }
+
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, float radius, float depth, float maxVal, Color knobColor){
+        this(p5, location, rotation, radius, depth, 0, 0, maxVal, knobColor);
+    }
+
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, int initialValue, float minVal, float maxVal, Color knobColor){
+        this(p5, location, rotation, .03f, .02f, initialValue, minVal, maxVal, knobColor);
+    }
+
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, float maxVal, Color knobColor){
+        this(p5, location, rotation, 0, 0, maxVal, knobColor);
+    }
+
+    public Dial(PApplet p5, PVector location, YawPitchRoll rotation, Color knobColor){
+        this(p5, location, rotation, 0, 0, 1, knobColor);
+    }
+
+
+        boolean touched = false;
     boolean engaged = false;
     float valAtEngage;
 
@@ -96,23 +122,15 @@ public class Dial extends AbstractControl{
                 int prevTick = tick;
                 tick = (int) (val / (range / NUM_TICKS));
                 if (prevTick != tick) {
-
-                    // TODO drawing logic should be separate
-                    if (tick > 0) {
-                        for (int i = 0; i < 4; i++) {
-                            int vertex = (tick - 1) * 2 + i;
-                            meter.setEmissive(vertex, p5.color(255));
+                    for (int i = 1; i <= NUM_TICKS; i++) {
+                        for (int v = 0; v < 4; v++) {
+                            meter.setEmissive((i - 1) * 2 + v, i <= tick ? p5.color(255) : p5.color(0));
                         }
                     }
 
-                    if (prevTick > tick) {
-                        for (int i = (prevTick == 1 ? 0 : 2); i < 4; i++) {
-                            int vertex = (prevTick - 1) * 2 + i;
-                            meter.setEmissive(vertex, p5.color(0));
-                        }
+                    if(tick % 4 == 0){
+                        indicateTick(hand);
                     }
-
-                    indicateTick(hand);
                 }
             } else {
                 engaged = false;
@@ -132,7 +150,7 @@ public class Dial extends AbstractControl{
 
     private void setEngagedKnobColor(PApplet p5) {
         PShape top = knob.getChild(Primitives.CYLINDER_TOP);
-        top.setEmissive(p5.color(knobColor.R / 2, knobColor.G / 2, knobColor.B / 2));
+        top.setEmissive(p5.color(knobColor.R, knobColor.G, knobColor.B));
     }
 
     private void indicateTick(Hand hand ) {
@@ -180,7 +198,7 @@ public class Dial extends AbstractControl{
         }
 
         prevRotation = currRotation;
-        return (totalRotationWhileGrabbing / PConstants.TWO_PI) * range;
+        return (totalRotationWhileGrabbing / PConstants.HALF_PI) * range;
     }
 
     public void draw(PGraphics pG) {
@@ -190,6 +208,7 @@ public class Dial extends AbstractControl{
             AxisAngle aa = getAxisAngle();
             pG.rotate(aa.w, aa.x, aa.y, aa.z);
             pG.rotateX(PConstants.PI);
+
             pG.shape(meter);
 
             pG.rotateZ(PConstants.TWO_PI * (val / range));
@@ -199,7 +218,11 @@ public class Dial extends AbstractControl{
     }
 
     private boolean isTouching(PVector cursorPosition) {
-        return getDistFrom(cursorPosition) < radius * 1.4f;
+        return getDistFrom(PVector.sub(cursorPosition, new PVector(0, radius / 2f, 0))) < radius * 1.5f;
     }
 
+    public Dial addAsChildTo(EuclideanSpaceObject parent) {
+        parent.addChild(this, locationWRTParent, rotationWRTParent);
+        return this;
+    }
 }

@@ -243,8 +243,8 @@ public class EuclideanSpaceObject extends MathsHelpers {
         return orientation;
     }
 
-    private PVector locationWRTParent;
-    private YawPitchRoll rotationWRTParent;
+    public PVector locationWRTParent;
+    public YawPitchRoll rotationWRTParent;
 
     public float getDistFrom(EuclideanSpaceObject that) {
         return getDistFrom(that.location);

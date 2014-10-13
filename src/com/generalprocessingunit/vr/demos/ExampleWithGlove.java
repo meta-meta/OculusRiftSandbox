@@ -33,14 +33,14 @@ public class ExampleWithGlove extends Example {
         glove = new GloveVR(this);
 
         // place these in the head container so that they are immobile but we can fly around
-        dial1 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(192, 0, 0, 127));
-        headContainer.addChild(dial1, new PVector(-.15f, -.4f, .25f), new YawPitchRoll(-.3f, .5f, 0));
+        dial1 = new Dial(this, new PVector(), new YawPitchRoll(), .03f, .02f, 0, 0, 255, new Color(192, 0, 0, 127));
+        headContainer.addChild(dial1, new PVector(-.07f, -.4f, .25f), new YawPitchRoll(-.2f, .5f, 0));
 
-        dial2 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(0, 192, 0, 127));
-        headContainer.addChild(dial2, new PVector(  0f, -.4f, .35f), new YawPitchRoll(0, .5f, 0));
+        dial2 = new Dial(this, new PVector(), new YawPitchRoll(), .03f, .02f, 0, 0, 255, new Color(0, 192, 0, 127));
+        headContainer.addChild(dial2, new PVector(  0f, -.4f, .3f), new YawPitchRoll(0, .5f, 0));
 
-        dial3 = new Dial(this, 0, .06f, .02f, 0, 255, new Color(0, 0, 192, 127));
-        headContainer.addChild(dial3, new PVector( .15f, -.4f, .25f), new YawPitchRoll(.3f, .5f, 0));
+        dial3 = new Dial(this, new PVector(), new YawPitchRoll(), .03f, .02f, 0, 0, 255, new Color(0, 0, 192, 127));
+        headContainer.addChild(dial3, new PVector( .07f, -.4f, .25f), new YawPitchRoll(.2f, .5f, 0));
     }
 
     @Override

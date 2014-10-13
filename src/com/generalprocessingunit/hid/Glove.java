@@ -27,14 +27,13 @@ public class Glove extends RazerHydra {
 
     @Override
     public boolean isGrabbing() {
-        for (int i = 1; i < bend.length; i++) {
-            if(bendOffset[i] - bend[i] < 150) {
+        for (int i = 1; i < 4; i++) {
+            if(getBend(i) < 100) {
                 return false;
             }
         }
         return true;
     }
-
 
     @Override
     public void reset(PVector landmark) {
