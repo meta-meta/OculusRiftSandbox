@@ -43,4 +43,87 @@ public class Lighting implements PConstants {
         pG.directionalLight(posZH, posZS, posZB,  0,  0,  1);
         pG.directionalLight(negZH, negZS, negZB,  0,  0, -1);
     }
+
+    public static void WhiteCube(PGraphics pG, float posXB, float negXB, float posYB, float negYB, float posZB, float negZB) {
+        WhiteCube(pG, posXB, 0, 0, negXB, 0, 0, posYB, 0, 0, negYB, 0, 0, posZB, 0, 0, negZB, 0, 0);
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, posXB);
+            pG.translate(-2.5f, 0, 0);
+            pG.box(.01f, 5, 5);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, negXB);
+            pG.translate(2.5f, 0, 0);
+            pG.box(.01f, 5, 5);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, posYB);
+            pG.translate(0, -2.5f, 0);
+            pG.box(5, .01f, 5);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, negYB);
+            pG.translate(0, 2.5f, 0);
+            pG.box(5, .01f, 5);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, posZB);
+            pG.translate(0, 0, -2.5f);
+            pG.box(5, 5, .01f);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.colorMode(RGB);
+            pG.fill(255);
+            pG.colorMode(HSB);
+
+            pG.emissive(0, 0, negZB);
+            pG.translate(0, 0, 2.5f);
+            pG.box(5, 5, .01f);
+        }
+        pG.popMatrix();
+
+        pG.emissive(0);
+    }
+
+    public static void WhiteCube(PGraphics pG) {
+        WhiteCube(pG, 255,255, 255, 255, 255, 255);
+    }
+
 }

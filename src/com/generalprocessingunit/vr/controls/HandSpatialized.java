@@ -35,7 +35,7 @@ public class HandSpatialized {
     EuclideanSpaceObject pointerKnuckle = new EuclideanSpaceObject();
     EuclideanSpaceObject thumbKnuckle = new EuclideanSpaceObject();
     
-    
+    static final float vibratorShellRadius = .005f;
     VibratorShell thumbBase = new VibratorShell(leftHand.knuckles.get(0));
     VibratorShell pointerBase = new VibratorShell(leftHand.knuckles.get(1));
     VibratorShell middleBase = new VibratorShell(leftHand.knuckles.get(2));
@@ -53,7 +53,7 @@ public class HandSpatialized {
     VibratorShell palmThumbMeat = new VibratorShell(leftHand.palm.get(2));
     VibratorShell palmPinkyMeat = new VibratorShell(leftHand.palm.get(3));
     
-    List<VibratorShell> vibratorShells = Arrays.asList(
+    public List<VibratorShell> vibratorShells = Arrays.asList(
             thumbTip, pointerTip, middleTip, ringTip, pinkyTip,
             thumbBase, pointerBase, middleBase, ringBase, pinkyBase,
             palmPointerMid, palmRingPinky, palmThumbMeat, palmPinkyMeat
@@ -111,7 +111,7 @@ public class HandSpatialized {
         pointerKnuckle.pitch(leftHand.pointer.getBend() / 350f);
         thumbKnuckle.pitch(leftHand.thumb.getBend() / 350f);
 
-        shoulderLocation = p5.neck.getTranslationWRTObjectCoords( new PVector(-.01f, -.02f, -.01f));
+
     }
 
     public void drawView(PGraphics pG) {
@@ -119,6 +119,8 @@ public class HandSpatialized {
     }
 
     void drawHand(Hand hand, PGraphics pG) {
+        shoulderLocation = p5.neck.getTranslationWRTObjectCoords( new PVector(-.01f, -.02f, -.01f));
+
         pG.colorMode(PConstants.RGB);
         pG.fill(255, 0, 0);
         pG.emissive(hand.isGrabbing() ? 64 : 32, 0, 0);
@@ -196,9 +198,11 @@ public class HandSpatialized {
     }
 
     public class VibratorShell extends EuclideanSpaceObject {
-        Hand.Vibrator vibrator;
+        public Hand.Vibrator vibrator;
+        public float r;
         VibratorShell(Hand.Vibrator vibrator) {
             this.vibrator = vibrator;
+            r = vibratorShellRadius;
         }
         
         void draw(PGraphics pG) {
@@ -207,7 +211,7 @@ public class HandSpatialized {
                 pG.translate(x(), y(), z());
                 AxisAngle aa = getAxisAngle();
                 pG.rotate(aa.w, aa.x, aa.y, aa.z);
-                pG.sphere(.005f);
+                pG.sphere(r);
             }
             pG.popMatrix();
         }

@@ -48,6 +48,11 @@ public class EuclideanSpaceObject extends MathsHelpers {
         addChild(child, new PVector(), rotationWRTParent);
     }
 
+    public void clearChildren() {
+        children.clear();
+        progeny.clear();
+    }
+
     private void addProgeny(EuclideanSpaceObject child) {
         progeny.add(child);
         if(null != parent) {
