@@ -7,35 +7,41 @@ import processing.core.PVector;
 import java.util.*;
 
 public class Hand {
-    public Glove glove;
+    public GloveDevice gloveDevice;
 
     public Finger thumb;
-    public Finger index;
+    public Finger pointer;
     public Finger middle;
     public Finger ring;
     public Finger pinky;
 
-    public PartsCollection palm;
+    public List<Vibrator> vibrators = new ArrayList<>(14);
+
+    public VibratorCollection palm;
 
     public Fingers fingers;
-    public PartsCollection fingertips;
-    public PartsCollection knuckles;
+    public VibratorCollection fingertips;
+    public VibratorCollection knuckles;
 
 
-    public Hand(Glove glove){
-        this.glove = glove;
+    public Hand(GloveDevice gloveDevice){
+        this.gloveDevice = gloveDevice;
 
         thumb = new Finger(0);
-        index = new Finger(1);
+        pointer = new Finger(1);
         middle = new Finger(2);
         ring = new Finger(3);
         pinky = new Finger(4);
 
-        palm = new PartsCollection(Arrays.asList(10, 11, 12, 13));
+        for (int i = 0; i < 14; i++) {
+            vibrators.add(new Vibrator(i));
+        }
 
-        fingers = new Fingers(Arrays.asList(thumb, index, middle, ring, pinky));
-        fingertips = new PartsCollection(Arrays.asList(0, 1, 2, 3, 4));
-        knuckles = new PartsCollection(Arrays.asList(5, 6, 7, 8, 9));
+        fingers = new Fingers(Arrays.asList(thumb, pointer, middle, ring, pinky));
+        fingertips = new VibratorCollection(vibrators.subList(0, 5));
+        knuckles = new VibratorCollection(vibrators.subList(5, 10));
+
+        palm = new VibratorCollection(vibrators.subList(10, 14));
     }
 
     /**
@@ -43,42 +49,42 @@ public class Hand {
      * @param landmark
      */
     public void reset(PVector landmark) {
-        glove.reset(landmark);
+        gloveDevice.reset(landmark);
     }
 
     public void toggleInvertedLocation() {
-        glove.toggleInvertedLocation();
+        gloveDevice.toggleInvertedLocation();
     }
 
     public PVector getLocation() {
-        return glove.getLocation();
+        return gloveDevice.getLocation();
     }
 
     public YawPitchRoll getYawPitchRoll() {
-        return glove.rotation;
+        return gloveDevice.rotation;
     }
 
     public float getYaw() {
-        return glove.rotation.yaw();
+        return gloveDevice.rotation.yaw();
     }
 
     public float getPitch() {
-        return glove.rotation.pitch();
+        return gloveDevice.rotation.pitch();
     }
 
     public float getRoll() {
-        return glove.rotation.roll();
+        return gloveDevice.rotation.roll();
     }
 
     public AxisAngle getAxisAngle() {
-        return glove.getAxisAngle();
+        return gloveDevice.getAxisAngle();
     }
 
     public boolean isGrabbing() {
-        return glove.isGrabbing();
+        return gloveDevice.isGrabbing();
     }
 
-    public class Finger {
+    public class Finger implements VibratingPart {
         public int fingerIndex;
         public FingerTip fingerTip = new FingerTip();
         public Knuckle knuckle = new Knuckle();
@@ -88,48 +94,62 @@ public class Hand {
         }
 
         public int getBend(){
-            return glove.getBend(fingerIndex);
+            return gloveDevice.getBend(fingerIndex);
         }
 
-        public void vibrate(int intensity/*, int millis*/){
-            Map m = new HashMap<Integer, Integer>();
-            m.put(fingerIndex, intensity);       //fingertip vibrators
-            m.put(fingerIndex + 5, intensity);   //knuckle vibrators
-            glove.setVibrate(m);
+        @Override
+        public void setVibrate(int intensity) {
+            fingerTip.setVibrate(intensity);
+            knuckle.setVibrate(intensity);
         }
 
-        public class FingerTip {
-            public void vibrate(int intensity/*, int millis*/){
-                Map m = new HashMap<Integer, Integer>();
-                m.put(fingerIndex, intensity);       //fingertip vibrators
-                glove.setVibrate(m);
+        @Override
+        public void vibrate(int intensity) {
+            fingerTip.vibrate(intensity);
+            knuckle.vibrate(intensity);
+        }
+
+        public class FingerTip implements VibratingPart {
+            @Override
+            public void setVibrate(int intensity) {
+                vibrators.get(fingerIndex).setVibrate(intensity);
+            }
+
+            @Override
+            public void vibrate(int intensity){
+                vibrators.get(fingerIndex).vibrate(intensity);
             }
         }
 
-        public class Knuckle {
-            public void vibrate(int intensity/*, int millis*/){
-                Map m = new HashMap<Integer, Integer>();
-                m.put(fingerIndex + 5, intensity);       //knuckle vibrators
-                glove.setVibrate(m);
+        public class Knuckle implements VibratingPart {
+            @Override
+            public void setVibrate(int intensity) {
+                vibrators.get(5 + fingerIndex).setVibrate(intensity);
+            }
+
+            public void vibrate(int intensity){
+                vibrators.get(5 + fingerIndex).vibrate(intensity);
             }
         }
     }
 
-
-
     // TODO: generify this and use for Fingers
-    public class PartsCollection extends ArrayList<Integer> {
-        public PartsCollection(List<Integer> indexList) {
-            super(indexList);
+    public class VibratorCollection extends ArrayList<Vibrator> implements VibratingPart {
+        public VibratorCollection(List<Vibrator> vibrators) {
+            super(vibrators);
         }
 
-        public void vibrate(int intensity){
-            Map m = new HashMap<Integer, Integer>();
-            for(Integer partIndex : this){
-                m.put(partIndex, intensity);
+        @Override
+        public void setVibrate(int intensity) {
+            for(Vibrator v : this){
+                v.setVibrate(intensity);
             }
+        }
 
-            glove.setVibrate(m);
+        @Override
+        public void vibrate(int intensity) {
+            setVibrate(intensity);
+            doVibrate();
         }
     }
 
@@ -146,7 +166,36 @@ public class Hand {
                 m.put(finger.fingerIndex + 5, intensity);  //knuckle vibrators
             }
 
-            glove.setVibrate(m);
+            gloveDevice.vibrate(m);
         }
     }
+
+    public interface VibratingPart {
+        public void setVibrate(int intensity);
+        public void vibrate(int intensity);
+    }
+
+    Map<Integer, Integer> vibes = new HashMap();
+    public class Vibrator {
+        int index;
+        Vibrator(int index) {
+            this.index = index;
+        }
+
+        public void setVibrate(int intensity) {
+            vibes.put(index, intensity);
+        }
+
+        public void vibrate(int intensity) {
+            setVibrate(intensity);
+            doVibrate();
+        }
+    }
+
+    public void doVibrate() {
+        gloveDevice.vibrate(vibes);
+        vibes.clear();
+    }
+
+
 }

@@ -160,7 +160,7 @@ public class Dial extends AbstractControl{
     float prevWarningLimit = 0;
     void indicateMinOrMax(float attemptedVal, Hand hand) {
         if(attemptedVal > maxVal && attemptedVal > prevWarningLimit) {
-            hand.index.vibrate(1);
+            hand.pointer.vibrate(1);
             prevWarningLimit = attemptedVal;
         }
 

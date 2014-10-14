@@ -3,7 +3,7 @@ package com.generalprocessingunit.vr.demos;
 import com.generalprocessingunit.processing.*;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.Dial;
-import com.generalprocessingunit.vr.controls.GloveVR;
+import com.generalprocessingunit.vr.controls.HandSpatialized;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LightCubeControlPanel extends PAppletVR {
-    GloveVR glove;
+    HandSpatialized glove;
 
     SpaceNavVR spaceNav;
 
@@ -30,7 +30,7 @@ public class LightCubeControlPanel extends PAppletVR {
         super.setup();
 
         spaceNav = new SpaceNavVR(this, .001f, .2f);
-        glove = new GloveVR(this);
+        glove = new HandSpatialized(this);
 
         for (int y = -3; y < 0; y++) {
             for (float x = -2.5f; x <= 2.5f; x++) {
@@ -61,17 +61,8 @@ public class LightCubeControlPanel extends PAppletVR {
 
 
 //        if(millis() < 50000) {
-//            int i = (millis() / 400) % 14;
-//            Map m = new HashMap<Integer, Integer>();
-//            m.put(i, 1);
-//            glove.leftHand.setVibrate(m);
-//        }
-
-
-//        if(headContainer.y() < 2) {
-//            PVector location = headContainer.getLocation();
-//            location.y = 2;
-//            headContainer.setLocation(location);
+//            int i = (millis() / 1000) % 14;
+//            glove.leftHand.vibrators.get(i).vibrate(1);
 //        }
     }
 

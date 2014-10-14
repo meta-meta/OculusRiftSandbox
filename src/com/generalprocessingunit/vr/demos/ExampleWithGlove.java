@@ -4,7 +4,7 @@ import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.processing.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.Dial;
-import com.generalprocessingunit.vr.controls.GloveVR;
+import com.generalprocessingunit.vr.controls.HandSpatialized;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -12,7 +12,7 @@ import processing.core.PVector;
 import java.awt.event.KeyEvent;
 
 public class ExampleWithGlove extends Example {
-    GloveVR glove;
+    HandSpatialized glove;
 
     SpaceNavVR spaceNav;
 
@@ -30,7 +30,7 @@ public class ExampleWithGlove extends Example {
         super.setup();
 
         spaceNav = new SpaceNavVR(this, .001f, .2f);
-        glove = new GloveVR(this);
+        glove = new HandSpatialized(this);
 
         // place these in the head container so that they are immobile but we can fly around
         dial1 = new Dial(this, new PVector(), new YawPitchRoll(), .03f, .02f, 0, 0, 255, new Color(192, 0, 0, 127));

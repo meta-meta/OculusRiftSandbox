@@ -4,7 +4,7 @@ import com.generalprocessingunit.audio.SineBalls;
 import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.Quaternion;
 import com.generalprocessingunit.vr.PAppletVR;
-import com.generalprocessingunit.vr.controls.GloveVR;
+import com.generalprocessingunit.vr.controls.HandSpatialized;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -15,8 +15,8 @@ public class SpatialAudioVR extends PAppletVR {
 
     SineBalls sineBalls;
     SpaceNavVR spaceNav;
-    GloveVR gloveVR = new GloveVR(this);
-    Hand leftHand = gloveVR.leftHand;
+    HandSpatialized handSpatialized = new HandSpatialized(this);
+    Hand leftHand = handSpatialized.leftHand;
 
 
     static final float roomSize = 25;
@@ -69,7 +69,7 @@ public class SpatialAudioVR extends PAppletVR {
         spaceNav.update();
         PVector headLoc = headContainer.getLocation();
 
-        gloveVR.update();
+        handSpatialized.update();
 
 
 
@@ -222,7 +222,7 @@ public class SpatialAudioVR extends PAppletVR {
 
         sineBalls.draw(pG);
 
-        gloveVR.drawView(pG);
+        handSpatialized.drawView(pG);
 
 //        pG.pushMatrix();
 //        {
@@ -251,11 +251,11 @@ public class SpatialAudioVR extends PAppletVR {
     @Override
     public void keyPressed(KeyEvent e) {
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
-            gloveVR.reset();
+            handSpatialized.reset();
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {
-            gloveVR.invert();
+            handSpatialized.invert();
         }
 
         if(KeyEvent.VK_I == e.getKeyCode()) {

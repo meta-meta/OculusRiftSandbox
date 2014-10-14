@@ -4,15 +4,15 @@ import processing.core.PVector;
 
 import java.util.Map;
 
-public class Glove extends RazerHydra {
+public class GloveDevice extends RazerHydra {
     private GloveManager gloveManager;
 
     protected int[] bend = new int[5];
     private int[] bendOffset = new int[5];
 
-    private Glove(){};
+    private GloveDevice(){};
 
-    protected Glove(GloveManager gloveManager) {
+    protected GloveDevice(GloveManager gloveManager) {
         this.gloveManager = gloveManager;
     }
 
@@ -20,9 +20,9 @@ public class Glove extends RazerHydra {
         return bendOffset[i] - bend[i];
     }
 
-    protected void setVibrate(Map<Integer, Integer> vibrate) {
+    protected void vibrate(Map<Integer, Integer> vibes) {
         // TODO: modify map: add 14 * gloveIndex so we can have a right hand
-        gloveManager.setVibrate(vibrate);
+        gloveManager.vibrate(vibes);
     }
 
     @Override
