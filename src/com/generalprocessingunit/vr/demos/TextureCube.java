@@ -19,8 +19,8 @@ public class TextureCube extends PAppletVR {
 
     EuclideanSpaceObject textureBox = new EuclideanSpaceObject(new PVector(0, 0, .3f), new Orientation());
     float boxSize = .15f;
-    static int gridSize = 20;
-    int numVoxels = 100;
+    static int gridSize = 4;
+    int numVoxels = 18;
 
     Set<TextureVoxel> textureVoxels = new HashSet<>();
 
@@ -51,7 +51,7 @@ public class TextureCube extends PAppletVR {
 
         
         for (int i = 0; i < numVoxels; i++) {
-            TextureVoxel tv = new TextureVoxel((int)random(11), voxelSize);
+            TextureVoxel tv = new TextureVoxel(random(10) > 1 ? (int)random(1, 2) : (int)random(2, 11), voxelSize);
             textureBox.addChild(tv, randomVec(voxelSize));
             textureVoxels.add(tv);
         }
@@ -67,7 +67,7 @@ public class TextureCube extends PAppletVR {
         }
 
         taken.add(t);
-        return new PVector(t.a * voxelSize - boxSize / 2, t.b * voxelSize - boxSize / 2, t.c * voxelSize - boxSize / 2);
+        return new PVector(t.a * voxelSize - boxSize / 2 + voxelSize / 2, t.b * voxelSize - boxSize / 2 + voxelSize / 2, t.c * voxelSize - boxSize / 2 + voxelSize / 2);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class TextureCube extends PAppletVR {
             for(HandSpatialized.VibratorShell vs : glove.vibratorShells) {
                 if(collision(vs.getLocation(), vs.r)) {
                     if(!vibratorsThisIsTouching.contains(vs)) {
-                        vs.vibrator.setVibrate(density);
+                        vs.setVibrate(density);
                         vibratorsThisIsTouching.add(vs);
                     }
                 } else {
@@ -266,8 +266,11 @@ public class TextureCube extends PAppletVR {
             println("reset glove");
 
             recenterPose();
+        }
 
+        if(KeyEvent.VK_SHIFT == e.getKeyCode()) {
             chooseNewVoxels();
+            println("new voxels");
         }
 
         if(KeyEvent.VK_UP == e.getKeyCode()) {

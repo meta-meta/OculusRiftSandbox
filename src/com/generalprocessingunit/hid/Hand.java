@@ -177,7 +177,7 @@ public class Hand {
 
     Map<Integer, Integer> vibes = new HashMap();
     public class Vibrator {
-        int index;
+        public int index;
         Vibrator(int index) {
             this.index = index;
         }

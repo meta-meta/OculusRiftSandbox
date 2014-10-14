@@ -136,14 +136,8 @@ public class HandSpatialized {
         pointer.draw(pG);
         thumb.draw(pG);
 
-        pG.colorMode(PConstants.HSB);
-        int i = 0;
         for(VibratorShell vs : vibratorShells) {
-            pG.noStroke();
-            pG.fill(13 * i++, 255, 255);
-            pG.emissive(13 * i, 255, 255);
             vs.draw(pG);
-            pG.emissive(0);
         }
         pG.colorMode(PConstants.RGB);
 
@@ -204,8 +198,29 @@ public class HandSpatialized {
             this.vibrator = vibrator;
             r = vibratorShellRadius;
         }
+
+        private int millisAtVibrate = 0;
+        private int intensity = 0;
+        public void setVibrate(int intensity) {
+            vibrator.setVibrate(intensity);
+            millisAtVibrate = p5.millis();
+            this.intensity = intensity;
+
+        }
         
         void draw(PGraphics pG) {
+
+            pG.colorMode(PConstants.HSB);
+
+            pG.noStroke();
+            pG.fill(13 * vibrator.index, 255, 255);
+            pG.emissive(13 * vibrator.index, 255, 255);
+
+            if(p5.millis() - millisAtVibrate < 300) {
+                pG.colorMode(PConstants.RGB);
+                pG.emissive(55 + 200 * intensity / 11f);
+            }
+
             pG.pushMatrix();
             {
                 pG.translate(x(), y(), z());
@@ -214,6 +229,8 @@ public class HandSpatialized {
                 pG.sphere(r);
             }
             pG.popMatrix();
+
+            pG.emissive(0);
         }
     }
 }
