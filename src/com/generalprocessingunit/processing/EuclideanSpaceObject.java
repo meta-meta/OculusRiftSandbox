@@ -13,34 +13,51 @@ public class EuclideanSpaceObject extends MathsHelpers {
     private Set<EuclideanSpaceObject> progeny = new HashSet<>();
     private Set<EuclideanSpaceObject> children = new HashSet<>();
 
+    public EuclideanSpaceObject(PVector location, Orientation orientation) {
+        this.orientation = orientation;
+        this.location = location;
+    }
 
-    public Set<EuclideanSpaceObject> getAllChildren() {
-        Set<EuclideanSpaceObject> c = new HashSet<>();
-        for (EuclideanSpaceObject child : children) {
-            c.addAll(child.getAllChildren());
-        }
-
-        return c;
+    public EuclideanSpaceObject() {
+        this(new PVector(), new Orientation());
     }
 
     public void addChild(EuclideanSpaceObject child, PVector locationWRTParent, YawPitchRoll rotationWRTParent) {
 
         child.locationWRTParent = locationWRTParent;
         child.rotationWRTParent = rotationWRTParent;
-
         child.location.set(getTranslationWRTObjectCoords(locationWRTParent));
-
-//        System.out.println("x: " + orientation.xAxis() + "  y: " + orientation.yAxis() + " z: " + orientation.zAxis());
-//        System.out.println("L: " + location + "  CL: " + child.location);
-
         child.orientation = orientation.rotateFrom(rotationWRTParent);
 
         child.parent = this;
+        children.add(child);
+
         addProgeny(child);
         addProgeny(child.progeny);
+    }
 
-        if (parent != null) {
-            parent.addProgeny(progeny);
+    public void addChild(EuclideanSpaceObject child) {
+        addChild(child, new PVector(), new YawPitchRoll());
+    }
+
+    public void addChild(EuclideanSpaceObject child, PVector locationWRTParent) {
+        addChild(child, locationWRTParent, new YawPitchRoll());
+    }
+
+    public void addChild(EuclideanSpaceObject child, YawPitchRoll rotationWRTParent) {
+        addChild(child, new PVector(), rotationWRTParent);
+    }
+
+    private void addProgeny(EuclideanSpaceObject child) {
+        progeny.add(child);
+        if(null != parent) {
+            parent.addProgeny(child);
+        }
+    }
+
+    private void addProgeny(Set<EuclideanSpaceObject> children) {
+        for (EuclideanSpaceObject child : children) {
+            addProgeny(child);
         }
     }
 
@@ -123,25 +140,6 @@ public class EuclideanSpaceObject extends MathsHelpers {
         obj.setLocation(getTranslationWRTObjectCoords(obj.location));
 
         obj.setOrientation(orientation.rotateFrom(obj.orientation));
-    }
-
-    private void addProgeny(EuclideanSpaceObject child) {
-        progeny.add(child);
-    }
-
-    private void addProgeny(Set<EuclideanSpaceObject> children) {
-        for (EuclideanSpaceObject child : children) {
-            addProgeny(child);
-        }
-    }
-
-    public EuclideanSpaceObject(PVector location, Orientation orientation) {
-        this.orientation = orientation;
-        this.location = location;
-    }
-
-    public EuclideanSpaceObject() {
-        this(new PVector(), new Orientation());
     }
 
     public void translateWRTObjectCoords(PVector translation) {
@@ -257,16 +255,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
     public void setOrientation(YawPitchRoll rotation) {
         //TODO:   set progeny new orientation
         orientation = new Orientation(rotation);
-
-
-        // TODO: THIS IS A HACK. It does not preserve the progeny's orientation
-        for(EuclideanSpaceObject p : progeny) {
-
-            p.location.set(getTranslationWRTObjectCoords(p.locationWRTParent));
-
-            p.orientation = orientation.rotateFrom(p.rotationWRTParent);
-        }
-        
+        setOrientation(orientation);
     }
 
     public void setOrientation(Orientation o) {
@@ -274,12 +263,21 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
         // TODO: THIS IS A HACK It does not preserve the progeny's orientation
         for(EuclideanSpaceObject p : progeny) {
-
-            p.location.set(getTranslationWRTObjectCoords(p.locationWRTParent));
-
             p.orientation = orientation.rotateFrom(p.rotationWRTParent);
         }
 
+        for(EuclideanSpaceObject c : children) {
+            c.location.set(getTranslationWRTObjectCoords(c.locationWRTParent));
+            c.adjustChildren();
+        }
+    }
+
+    private void adjustChildren() {
+        for(EuclideanSpaceObject c : children) {
+            c.location.set(getTranslationWRTObjectCoords(c.locationWRTParent));
+            c.orientation = orientation.rotateFrom(c.rotationWRTParent);
+            c.adjustChildren();
+        }
     }
 
     public AxisAngle getAxisAngle() {
