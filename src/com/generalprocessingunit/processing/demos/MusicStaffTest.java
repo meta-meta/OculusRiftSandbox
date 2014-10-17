@@ -1,7 +1,7 @@
 package com.generalprocessingunit.processing.demos;
 
-import com.generalprocessingunit.processing.Camera;
-import com.generalprocessingunit.processing.MusicalStaff;
+import com.generalprocessingunit.processing.space.Camera;
+import com.generalprocessingunit.processing.music.MusicalStaff;
 import com.generalprocessingunit.processing.PAppletBuffered;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -9,7 +9,7 @@ import processing.core.PGraphics;
 public class MusicStaffTest extends PAppletBuffered {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{"--full-screen", "--display=1", MusicStaffTest.class.getCanonicalName()});
+        PApplet.main(new String[]{"--full-screen",/* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
     }
 
     MusicalStaff staff = new MusicalStaff(this);

@@ -4,6 +4,7 @@ public interface MusicalFontContstants {
     public final static String G_CLEF = "\uE050";
     public final static String F_CLEF = "\uE062";
     public final static String STAFF_5 = "\uE014";
+    public final static String LEDGER = "\uE022";
     public final static String TS_0 = "\uE080";
     public final static String TS_1 = "\uE081";
     public final static String TS_2 = "\uE082";
@@ -21,8 +22,8 @@ public interface MusicalFontContstants {
     public final static String NOTE_HALF_DN = "\uE1D4";
     public final static String NOTE_QUARTER_UP = "\uE1D5";
     public final static String NOTE_QUARTER_DN = "\uE1D6";
-    public final static String NOTE_EIGTH_UP = "\uE1D7";
-    public final static String NOTE_EIGTH_DN = "\uE1D8";
+    public final static String NOTE_EIGHTH_UP = "\uE1D7";
+    public final static String NOTE_EIGHTH_DN = "\uE1D8";
     public final static String NOTE_16TH_UP = "\uE1D9";
     public final static String NOTE_16TH_DN = "\uE1DA";
     public final static String NOTE_32ND_UP = "\uE1DB";
@@ -56,6 +57,7 @@ public interface MusicalFontContstants {
             .append(G_CLEF)
             .append(F_CLEF)
             .append(STAFF_5)
+            .append(LEDGER)
             .append(TS_0)
             .append(TS_1)
             .append(TS_2)
@@ -73,8 +75,8 @@ public interface MusicalFontContstants {
             .append(NOTE_HALF_DN)
             .append(NOTE_QUARTER_UP)
             .append(NOTE_QUARTER_DN)
-            .append(NOTE_EIGTH_UP)
-            .append(NOTE_EIGTH_DN)
+            .append(NOTE_EIGHTH_UP)
+            .append(NOTE_EIGHTH_DN)
             .append(NOTE_16TH_UP)
             .append(NOTE_16TH_DN)
             .append(NOTE_32ND_UP)
