@@ -1,7 +1,7 @@
 package com.generalprocessingunit.audio;
 
 import com.generalprocessingunit.io.OSC;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.MomentumVector;
 import processing.core.PApplet;
 import processing.core.PGraphics;

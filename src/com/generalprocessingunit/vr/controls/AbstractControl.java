@@ -1,6 +1,6 @@
 package com.generalprocessingunit.vr.controls;
 
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 
 public abstract class AbstractControl extends EuclideanSpaceObject {
     public float val;

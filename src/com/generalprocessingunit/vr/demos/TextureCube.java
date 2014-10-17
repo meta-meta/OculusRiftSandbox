@@ -1,6 +1,9 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.processing.*;
+import com.generalprocessingunit.processing.space.AxisAngle;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.Orientation;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.HandSpatialized;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;

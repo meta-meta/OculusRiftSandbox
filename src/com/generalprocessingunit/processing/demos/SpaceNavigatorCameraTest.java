@@ -1,7 +1,7 @@
 package com.generalprocessingunit.processing.demos;
 
 import com.generalprocessingunit.hid.SpaceNavigator;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.MomentumVector;
 import com.generalprocessingunit.processing.MomentumYawPitchRoll;
 import processing.core.PApplet;

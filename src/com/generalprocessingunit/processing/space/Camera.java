@@ -1,5 +1,7 @@
-package com.generalprocessingunit.processing;
+package com.generalprocessingunit.processing.space;
 
+import com.generalprocessingunit.processing.MomentumVector;
+import com.generalprocessingunit.processing.MomentumYawPitchRoll;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -28,6 +30,8 @@ public class Camera extends EuclideanSpaceObject{
                 lookat.x, lookat.y, lookat.z,
                 up.x, up.y, up.z
         );
+
+//        pG.scale(-1, 1);
     }
 
 }

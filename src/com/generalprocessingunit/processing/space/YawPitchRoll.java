@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing;
+package com.generalprocessingunit.processing.space;
 
 import processing.core.PVector;
 

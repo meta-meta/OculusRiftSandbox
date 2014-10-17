@@ -1,7 +1,7 @@
 package com.generalprocessingunit.hid;
 
-import com.generalprocessingunit.processing.AxisAngle;
-import com.generalprocessingunit.processing.YawPitchRoll;
+import com.generalprocessingunit.processing.space.AxisAngle;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import processing.core.PVector;
 
 import java.util.*;

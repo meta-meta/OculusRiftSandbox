@@ -4,6 +4,9 @@ import com.generalprocessingunit.hid.RazerHydra;
 import com.generalprocessingunit.hid.RazerHydraManager;
 import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.*;
+import com.generalprocessingunit.processing.space.AxisAngle;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PVector;
 

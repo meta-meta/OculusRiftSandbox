@@ -1,5 +1,6 @@
 package com.generalprocessingunit.processing;
 
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PVector;
 

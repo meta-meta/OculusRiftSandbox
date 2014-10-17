@@ -1,10 +1,10 @@
 package com.generalprocessingunit.vr.controls;
 
 import com.generalprocessingunit.hid.Hand;
-import com.generalprocessingunit.processing.AxisAngle;
+import com.generalprocessingunit.processing.space.AxisAngle;
 import com.generalprocessingunit.processing.Color;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.YawPitchRoll;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.generalprocessingunit.vr.entities.Primitives;
 import processing.core.*;
 

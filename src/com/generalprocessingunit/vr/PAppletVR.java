@@ -1,9 +1,9 @@
 package com.generalprocessingunit.vr;
 
-import com.generalprocessingunit.processing.AxisAngle;
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.Orientation;
-import com.generalprocessingunit.processing.Quaternion;
+import com.generalprocessingunit.processing.space.AxisAngle;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.Orientation;
+import com.generalprocessingunit.processing.space.Quaternion;
 import com.oculusvr.capi.*;
 import processing.core.PApplet;
 import processing.core.PGraphics;

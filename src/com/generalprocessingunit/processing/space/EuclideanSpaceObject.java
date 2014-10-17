@@ -1,5 +1,6 @@
-package com.generalprocessingunit.processing;
+package com.generalprocessingunit.processing.space;
 
+import com.generalprocessingunit.processing.MathsHelpers;
 import processing.core.PVector;
 
 import java.util.HashSet;

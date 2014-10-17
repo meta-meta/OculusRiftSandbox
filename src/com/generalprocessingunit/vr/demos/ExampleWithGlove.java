@@ -1,7 +1,7 @@
 package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.processing.Color;
-import com.generalprocessingunit.processing.YawPitchRoll;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.Dial;
 import com.generalprocessingunit.vr.controls.HandSpatialized;

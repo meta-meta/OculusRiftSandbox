@@ -1,8 +1,8 @@
 package com.generalprocessingunit.hid;
 
-import com.generalprocessingunit.processing.EuclideanSpaceObject;
-import com.generalprocessingunit.processing.Orientation;
-import com.generalprocessingunit.processing.YawPitchRoll;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
+import com.generalprocessingunit.processing.space.Orientation;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.sixense.ControllerData;
 import com.sixense.EnumButton;
 import processing.core.PVector;

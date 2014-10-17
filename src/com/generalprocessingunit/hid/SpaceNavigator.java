@@ -1,6 +1,6 @@
 package com.generalprocessingunit.hid;
 
-import com.generalprocessingunit.processing.YawPitchRoll;
+import com.generalprocessingunit.processing.space.YawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PVector;
 import procontroll.ControllButton;

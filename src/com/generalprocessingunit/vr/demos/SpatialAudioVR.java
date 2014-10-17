@@ -2,7 +2,7 @@ package com.generalprocessingunit.vr.demos;
 
 import com.generalprocessingunit.audio.SineBalls;
 import com.generalprocessingunit.hid.Hand;
-import com.generalprocessingunit.processing.Quaternion;
+import com.generalprocessingunit.processing.space.Quaternion;
 import com.generalprocessingunit.vr.PAppletVR;
 import com.generalprocessingunit.vr.controls.HandSpatialized;
 import com.generalprocessingunit.vr.controls.SpaceNavVR;

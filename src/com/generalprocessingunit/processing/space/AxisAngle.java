@@ -1,4 +1,6 @@
-package com.generalprocessingunit.processing;
+package com.generalprocessingunit.processing.space;
+
+import com.generalprocessingunit.processing.MathsHelpers;
 
 public class AxisAngle extends MathsHelpers {
     public float w, x, y, z;
