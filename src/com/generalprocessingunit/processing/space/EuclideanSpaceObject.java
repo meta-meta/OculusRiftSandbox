@@ -1,6 +1,7 @@
 package com.generalprocessingunit.processing.space;
 
 import com.generalprocessingunit.processing.MathsHelpers;
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.util.HashSet;
@@ -12,7 +13,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
     private EuclideanSpaceObject parent = null;
     private Set<EuclideanSpaceObject> progeny = new HashSet<>();
-    private Set<EuclideanSpaceObject> children = new HashSet<>();
+    public Set<EuclideanSpaceObject> children = new HashSet<>();
 
     public EuclideanSpaceObject(PVector location, Orientation orientation) {
         this.orientation = orientation;
@@ -292,5 +293,12 @@ public class EuclideanSpaceObject extends MathsHelpers {
 
     public Quaternion getOrientationQuat() {
         return orientation.getOrientationQuat();
+    }
+
+    public void pushMatrixAndTransform(PGraphics pG) {
+        pG.pushMatrix();
+        pG.translate(location.x, location.y, location.z);
+        AxisAngle aa = getAxisAngle();
+        pG.rotate(aa.w, aa.x, aa.y, aa.z);
     }
 }
