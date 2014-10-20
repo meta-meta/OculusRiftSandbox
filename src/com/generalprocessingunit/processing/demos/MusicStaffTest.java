@@ -1,7 +1,9 @@
 package com.generalprocessingunit.processing.demos;
 
+import com.generalprocessingunit.music.Key;
+import com.generalprocessingunit.music.MusicalLibrary;
+import com.generalprocessingunit.processing.music.*;
 import com.generalprocessingunit.processing.space.Camera;
-import com.generalprocessingunit.processing.music.MusicalStaff;
 import com.generalprocessingunit.processing.PAppletBuffered;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -12,7 +14,12 @@ public class MusicStaffTest extends PAppletBuffered {
         PApplet.main(new String[]{"--full-screen",/* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
     }
 
-    MusicalStaff staff = new MusicalStaff(this);
+    Key key = MusicalLibrary.KeyOfFs();
+    TimeSignature timeSig = TimeSignature.FourFour;
+    MusicConductor mc = new MusicConductor(60, RhythmType.ThirtySecond, timeSig);
+
+    MusicalStaff trebleStaff = new MusicalStaff(this, 60, Clef.Treble, key, timeSig, 5);
+    MusicalStaff bassStaff = new MusicalStaff(this, 60, Clef.Bass, key, timeSig, 5);
 
     Camera camera = new Camera();
 
@@ -30,6 +37,19 @@ public class MusicStaffTest extends PAppletBuffered {
 
         camera.camera(pG);
 
-        staff.draw(pG);
+        pG.pushMatrix();
+        {
+            pG.translate(0, -70);
+            bassStaff.draw(pG);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix();
+        {
+            pG.translate(0, 70);
+            trebleStaff.draw(pG);
+        }
+        pG.popMatrix();
+
     }
 }

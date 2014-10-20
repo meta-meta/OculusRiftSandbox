@@ -1,5 +1,8 @@
 package com.generalprocessingunit.processing.music;
 
+import com.generalprocessingunit.music.Accidental;
+import com.generalprocessingunit.music.Key;
+import com.generalprocessingunit.music.NoteName;
 import com.generalprocessingunit.processing.ProcessingDelegateComponent;
 import com.generalprocessingunit.processing.demos.MusicalFontContstants;
 import processing.core.PApplet;
@@ -11,8 +14,13 @@ import java.util.List;
 
 
 public class MusicalStaff extends ProcessingDelegateComponent implements MusicalFontContstants, PConstants {
-    public static final int SIZE = 60;
+    private int size;
     private static PFont bravura;
+    private Clef clef;
+    private TimeSignature timeSig;
+    private int measuresOnScreen = 6;
+
+    private Key key;
 
     static List<MusicNote> testSeq = new MusicNoteSeq();
     static {
@@ -26,16 +34,21 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         testSeq.add(new MusicNote(72, RhythmType.Whole));
     }
 
-    public static final TimeSignature timeSig = TimeSignature.FourFour;
-    int measuresOnScreen = 6;
 
-
-    public MusicalStaff(PApplet p5) {
+    public MusicalStaff(PApplet p5, int size, Clef clef, Key key, TimeSignature timeSig, int measuresOnScreen) {
         super(p5);
-        bravura = p5.createFont("Bravura.otf", 100, true, charset);
+
+        if(null == bravura) {
+            bravura = p5.createFont("Bravura.otf", 100, true, charset);
+        }
+
+        this.size = size;
+        this.clef = clef;
+        this.timeSig = timeSig;
+        this.key = key;
+        this.measuresOnScreen = measuresOnScreen;
     }
 
-    MusicConductor mc = new MusicConductor(60, RhythmType.ThirtySecond, timeSig);
 
     @Override
     public void update() {
@@ -45,13 +58,24 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     @Override
     public void draw(PGraphics pG) {
         pG.textFont(bravura);
-        pG.textSize(SIZE);
+        pG.textSize(size);
 
         pG.fill(0);
-        pG.directionalLight(255, 240, 200, -1, -.3f, .4f);
 
-        float measureWidth = SIZE * 2.53f;
-        pG.translate(-measuresOnScreen / 2 * measureWidth - (p5.millis() / 20f) % measureWidth, 0, 0);
+        float measureWidth = size * timeSig.beatsPerMeasure * .76f;
+
+
+        pG.pushMatrix();
+        {
+            pG.translate(-measuresOnScreen / 2 * measureWidth, 0);
+            drawStaves(pG);
+            clef.drawGlyph(pG, size);
+        }
+        pG.popMatrix();
+
+        pG.translate(-measuresOnScreen / 2 * measureWidth + measureWidth - (p5.millis() / 20f) % measureWidth, 0, 0);
+
+
         for (int i = 0; i < measuresOnScreen + 2; i++) {
             pG.pushMatrix();
             {
@@ -65,19 +89,27 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     private void drawMeasure(PGraphics pG) {
         pG.pushMatrix();
         {
-            pG.text(BARLINE_SINGLE + STAFF_5 + STAFF_5 + STAFF_5 + STAFF_5 + STAFF_5 + BARLINE_SINGLE, 0, 0);
+            drawStaves(pG);
 
-            drawNote(new MusicNote(72, RhythmType.Quarter), 1, pG);
             drawNote(new MusicNote(60, RhythmType.Quarter), 1, pG);
-            drawNote(new MusicNote(59, RhythmType.Quarter), 2, pG);
-            drawNote(new MusicNote(57, RhythmType.Quarter), 3, pG);
-
-            drawNote(new MusicNote(78, RhythmType.Quarter), 1, pG);
-            drawNote(new MusicNote(82, RhythmType.Quarter), 2, pG);
-            drawNote(new MusicNote(83, RhythmType.Quarter), 3, pG);
-            drawNote(new MusicNote(84, RhythmType.Quarter), 4, pG);
+            drawNote(new MusicNote(62, RhythmType.Quarter), 2, pG);
+            drawNote(new MusicNote(64, RhythmType.Quarter), 3, pG);
+            drawNote(new MusicNote(65, RhythmType.Quarter), 4, pG);
+//
+//            drawNote(new MusicNote(78, RhythmType.Quarter), 1, pG);
+//            drawNote(new MusicNote(82, RhythmType.Quarter), 2, pG);
+//            drawNote(new MusicNote(83, RhythmType.Quarter), 3, pG);
+//            drawNote(new MusicNote(84, RhythmType.Quarter), 4, pG);
         }
         pG.popMatrix();
+    }
+
+    private void drawStaves(PGraphics pG) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < timeSig.beatsPerMeasure + 2; i++) {
+            sb.append(STAFF_5);
+        }
+        pG.text(sb.toString() + BARLINE_SINGLE, 0, 0);
     }
 
     void drawNote(MusicNote note, int startBeat, PGraphics pG) {
@@ -92,15 +124,27 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
         pG.pushMatrix();
         {
-            pG.translate(0, -SIZE ); // move from top of staff to bottom
+            pG.translate(0, -size); // move from top of staff to bottom
 
             drawLedgerLines(note, spaces, pG);
 
-            translateForNote(note.staffPosition, pG);
+            translateForNote(clef.getStaffPosition(key, note), pG);
 
             pG.scale(1, -1);
 
-//            pG.text(spaces.substring(1) + SHARP, 0, 0);
+            // TODO: if accidental appears on this staff position earlier in the measure, mark a note in key with natural symbol
+            NoteName noteName = key.getNoteName(note.note);
+            if(!key.isNoteInKey(note.note)) {
+                String accidental = noteName.accidental().equals(Accidental.Sharp()) ? SHARP :
+                        noteName.accidental().equals(Accidental.Flat()) ? FLAT : NATURAL;
+
+                pG.pushMatrix();
+                {
+                    pG.translate(size / 10f, 0);
+                    pG.text(spaces.substring(1) + accidental, 0, 0);
+                }
+                pG.popMatrix();
+            }
 
             pG.text(spaces + note.rhythm.upGlyph, 0, 0);
         }
@@ -108,15 +152,15 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     private void translateForNote(int staffPosition, PGraphics pG) {
-        pG.translate(0, staffPosition * (SIZE / 8f) );
+        pG.translate(0, staffPosition * (size / 8f) );
     }
 
     private void drawLedgerLines(MusicNote note, String spaces, PGraphics pG) {
-        for (int i = note.staffPosition; i < 0; i++) {
+        for (int i = clef.getStaffPosition(key, note); i < 0; i++) {
             drawLedgerLine(i, spaces, pG);
         }
 
-        for (int i = note.staffPosition; i > 8; i--) {
+        for (int i = clef.getStaffPosition(key, note); i > 8; i--) {
             drawLedgerLine(i, spaces, pG);
         }
     }
@@ -134,14 +178,6 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             pG.text(spaces + MusicalFontContstants.LEDGER, 0, 0);
         }
         pG.popMatrix();
-    }
-
-    void drawStaffLines(PGraphics pG) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < timeSig.beatsPerMeasure; i++) {
-            sb.append(STAFF_5);
-        }
-        pG.text(sb.toString(), 0, 0);
     }
 
     void drawNotes(PGraphics pG, MusicNoteSeq measure) {
