@@ -46,6 +46,8 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
 
+    public int millisSinceMeasureStart = 0;
+
     @Override
     public void draw(PGraphics pG) {
         pG.textFont(bravura);
@@ -58,12 +60,18 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             // clef
             pG.translate(glyphWidth * 8 + pG.textWidth(BARLINE_SINGLE), 0);
 
+
+            // scroll
+            float currMeasureWidth = glyphWidth * ((measureQueue.prevMeasure().numElements() + 1) * 2 + 1);
+            float measureTime = timeSig.totalValOfMeasure() * 2000;
+            pG.translate(-millisSinceMeasureStart * currMeasureWidth / measureTime, 0);
+
             pG.fill(64);
             drawMeasure(pG, measureQueue.prevMeasure());
 
             pG.fill(0);
             Measure prevMeasure = measureQueue.prevMeasure();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 15; i++) {
                 pG.translate(glyphWidth * ((prevMeasure.numElements() + 1) * 2 + 1), 0);
                 prevMeasure = measureQueue.nMeasuresFromCurrent(i);
                 drawMeasure(pG, measureQueue.nMeasuresFromCurrent(i));

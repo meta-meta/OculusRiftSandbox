@@ -63,6 +63,7 @@ public class MusicStaffTest extends PAppletBuffered {
         testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
         testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
 
+
         // TODO: might be a good idea to clone a blank sequence from an existing
         for (int i = 0; i < 8; i++) {
             testSeqBass.add(new MusicElementBlank(RhythmType.Whole));
@@ -76,10 +77,12 @@ public class MusicStaffTest extends PAppletBuffered {
         for (int i = 0; i < 8; i++) {
             testSeqBass.add(new MusicElementBlank(RhythmType.Sixteenth));
         }
+
     }
 
     @Override
     public void setup() {
+//        size(1250, 900, OPENGL);
         size(displayWidth, displayHeight, OPENGL);
         super.setup();
 
@@ -89,15 +92,14 @@ public class MusicStaffTest extends PAppletBuffered {
             bassStaff.measureQueue.addMeasure(new Measure(new MusicElementSeq()));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
     }
 
     void update() {
-
-        if(millis() - millisAtMeasureStart > timeSig.totalValOfMeasure() * 1000) {
+        if(millis() - millisAtMeasureStart >= timeSig.totalValOfMeasure() * 2000) {
             millisAtMeasureStart = millis();
 
             // remove measure
@@ -108,6 +110,10 @@ public class MusicStaffTest extends PAppletBuffered {
             trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
+
+        int millisSinceMeasureStart = millis() - millisAtMeasureStart;
+        trebleStaff.millisSinceMeasureStart = millisSinceMeasureStart;
+        bassStaff.millisSinceMeasureStart = millisSinceMeasureStart;
 
     }
 

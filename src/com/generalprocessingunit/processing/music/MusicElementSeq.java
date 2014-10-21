@@ -5,6 +5,7 @@ import java.util.ListIterator;
 
 public class MusicElementSeq extends ArrayList<MusicElement> {
     ListIterator<MusicElement> iter;
+    boolean repeat = true;
 
     public Measure getNextMeasure(TimeSignature timeSig) {
         if(null == iter) {
@@ -19,6 +20,9 @@ public class MusicElementSeq extends ArrayList<MusicElement> {
             seq.add(mE);
         }
 
+        if(!iter.hasNext() && repeat) {
+            iter = listIterator();
+        }
         return new Measure(seq);
     }
 }
