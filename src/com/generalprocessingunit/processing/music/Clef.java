@@ -4,7 +4,7 @@ import com.generalprocessingunit.music.Accidental;
 import com.generalprocessingunit.music.Key;
 import com.generalprocessingunit.music.NoteLetter;
 import com.generalprocessingunit.music.NoteName;
-import com.generalprocessingunit.processing.demos.MusicalFontContstants;
+import com.generalprocessingunit.processing.demos.MusicalFontConstants;
 import com.google.common.base.Objects;
 import processing.core.PGraphics;
 import scala.Enumeration;
@@ -13,7 +13,7 @@ import scala.collection.immutable.VectorIterator;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Clef implements MusicalFontContstants {
+public enum Clef implements MusicalFontConstants {
     Treble(G_CLEF, 2, new NoteName(NoteLetter.E(), 5, Accidental.Natural())),
     Bass(F_CLEF, 6, new NoteName(NoteLetter.G(), 3, Accidental.Natural()));
 

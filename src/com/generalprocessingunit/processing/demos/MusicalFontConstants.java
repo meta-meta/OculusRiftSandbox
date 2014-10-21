@@ -1,6 +1,6 @@
 package com.generalprocessingunit.processing.demos;
 
-public interface MusicalFontContstants {
+public interface MusicalFontConstants {
     public final static String G_CLEF = "\uE050";
     public final static String F_CLEF = "\uE062";
     public final static String STAFF_5 = "\uE014";

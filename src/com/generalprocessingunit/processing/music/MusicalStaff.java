@@ -4,14 +4,14 @@ import com.generalprocessingunit.music.Accidental;
 import com.generalprocessingunit.music.Key;
 import com.generalprocessingunit.music.NoteName;
 import com.generalprocessingunit.processing.ProcessingDelegateComponent;
-import com.generalprocessingunit.processing.demos.MusicalFontContstants;
+import com.generalprocessingunit.processing.demos.MusicalFontConstants;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 
 
-public class MusicalStaff extends ProcessingDelegateComponent implements MusicalFontContstants, PConstants {
+public class MusicalStaff extends ProcessingDelegateComponent implements MusicalFontConstants, PConstants {
     private int size;
     private static PFont bravura;
     private Clef clef;
@@ -19,7 +19,10 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     private Key keySig;
     private float staveHeight;
+    private float gridWidth;
     private float glyphWidth;
+
+    public MeasureQueue measureQueue = new MeasureQueue();
 
     public MusicalStaff(PApplet p5, int size, Clef clef, Key keySig, TimeSignature timeSig) {
         super(p5);
@@ -42,39 +45,46 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     }
 
+
     @Override
     public void draw(PGraphics pG) {
         pG.textFont(bravura);
         pG.textSize(size);
         glyphWidth = pG.textWidth(STAFF_5);
+        gridWidth = glyphWidth * 2;
 
+        pG.pushMatrix();
+        {
+            // clef
+            pG.translate(glyphWidth * 8 + pG.textWidth(BARLINE_SINGLE), 0);
+
+            pG.fill(64);
+            drawMeasure(pG, measureQueue.prevMeasure());
+
+            pG.fill(0);
+            Measure prevMeasure = measureQueue.prevMeasure();
+            for (int i = 0; i < 5; i++) {
+                pG.translate(gridWidth * (prevMeasure.numGlyphs() + 2), 0);
+                prevMeasure = measureQueue.nMeasuresFromCurrent(i);
+                drawMeasure(pG, measureQueue.nMeasuresFromCurrent(i));
+            }
+        }
+        pG.popMatrix();
 
         drawClef(pG);
-
-//        pG.translate(-measuresOnScreen / 2 * measureWidth + measureWidth - (p5.millis() / 20f) % measureWidth, 0, 0);
-
-
-//        for (int i = 0; i < measuresOnScreen + 2; i++) {
-//            pG.pushMatrix();
-//            {
-//                pG.translate(i * measureWidth, 0, 0);
-//                drawMeasure(pG);
-//            }
-//            pG.popMatrix();
-//        }
     }
 
     private void drawClef(PGraphics pG) {
         pG.fill(64);
         pG.noStroke();
 
-        pG.rect(0, -size * 2.5f, pG.textWidth(STAFF_5) * 8 + pG.textWidth(BARLINE_SINGLE), size * 4);
+        pG.rect(0, -size * 2.5f, glyphWidth * 8 + pG.textWidth(BARLINE_SINGLE), size * 4);
 
         pG.fill(0);
 
         pG.pushMatrix();
         {
-            Measure.drawStaves(pG, 6);
+            Measure.drawStaves(pG, 2); // number is fudged because we are not spacing things the same
             clef.drawGlyph(pG, staveHeight);
             pG.translate(size * .6f, 0);
             clef.drawKeySignature(pG, keySig, staveHeight, glyphWidth);
@@ -82,39 +92,28 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         pG.popMatrix();
     }
 
-    private void drawMeasure(PGraphics pG) {
+    private void drawMeasure(PGraphics pG, Measure measure) {
+        Measure.drawStaves(pG, measure.numGlyphs());
+
         pG.pushMatrix();
         {
-            Measure.drawStaves(pG, 4);
+            for(MusicElement mE : measure.elementSeq) {
+                pG.translate(gridWidth, 0);
 
-            drawNote(new MusicNote(60, RhythmType.Quarter), 1, pG);
-            drawNote(new MusicNote(62, RhythmType.Quarter), 2, pG);
-            drawNote(new MusicNote(64, RhythmType.Quarter), 3, pG);
-            drawNote(new MusicNote(65, RhythmType.Quarter), 4, pG);
-//
-//            drawNote(new MusicNote(78, RhythmType.Quarter), 1, pG);
-//            drawNote(new MusicNote(82, RhythmType.Quarter), 2, pG);
-//            drawNote(new MusicNote(83, RhythmType.Quarter), 3, pG);
-//            drawNote(new MusicNote(84, RhythmType.Quarter), 4, pG);
+                if(mE instanceof MusicNote) {
+                    drawNote((MusicNote)mE, pG);
+                }
+            }
         }
         pG.popMatrix();
     }
 
-    void drawNote(MusicNote note, int startBeat, PGraphics pG) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(" ");
-        for (int i = 1; i < startBeat; i++) {
-            sb.append("  ");
-        }
-        String spaces = sb.toString();
-
-
+    void drawNote(MusicNote note, PGraphics pG) {
         pG.pushMatrix();
         {
-            pG.translate(0, -size); // move from top of staff to bottom
+//            pG.translate(0, -size); // move from top of staff to bottom
 
-            drawLedgerLines(note, spaces, pG);
+            drawLedgerLines(note, pG);
 
             translateForNote(clef.getStaffPosition(keySig, note), pG);
 
@@ -125,13 +124,13 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
                 pG.pushMatrix();
                 {
-                    pG.translate(size / 10f, 0);
-                    pG.text(spaces.substring(1) + accidental, 0, 0);
+                    pG.translate( -glyphWidth / 2f, 0);
+                    pG.text(accidental, 0, 0);
                 }
                 pG.popMatrix();
             }
 
-            pG.text(spaces + note.rhythm.upGlyph, 0, 0);
+            pG.text(note.getGlyph(), 0, 0);
         }
         pG.popMatrix();
     }
@@ -142,20 +141,20 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     private void translateForNote(int staffPosition, PGraphics pG) {
-        pG.translate(0, staffPosition * staveHeight);
+        pG.translate(0, -staffPosition * staveHeight);
     }
 
-    private void drawLedgerLines(MusicNote note, String spaces, PGraphics pG) {
+    private void drawLedgerLines(MusicNote note, PGraphics pG) {
         for (int i = clef.getStaffPosition(keySig, note); i < 0; i++) {
-            drawLedgerLine(i, spaces, pG);
+            drawLedgerLine(i, pG);
         }
 
         for (int i = clef.getStaffPosition(keySig, note); i > 8; i--) {
-            drawLedgerLine(i, spaces, pG);
+            drawLedgerLine(i, pG);
         }
     }
 
-    private void drawLedgerLine(int staffPos, String spaces, PGraphics pG) {
+    private void drawLedgerLine(int staffPos, PGraphics pG) {
         // don't draw in between staves
         if(staffPos % 2 != 0) {
             return;
@@ -164,17 +163,16 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         pG.pushMatrix();
         {
             translateForNote(staffPos, pG);
-//            pG.scale(1, -1);
-            pG.text(spaces + MusicalFontContstants.LEDGER, 0, 0);
+            pG.text(MusicalFontConstants.LEDGER, 0, 0);
         }
         pG.popMatrix();
     }
 
-    void drawNotes(PGraphics pG, MusicNoteSeq measure) {
+    void drawNotes(PGraphics pG, MusicElementSeq measure) {
         StringBuilder sb = new StringBuilder();
 
 
-        for(MusicNote note : measure) {
+        for(MusicElement mE : measure) {
 
         }
 
