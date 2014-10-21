@@ -14,15 +14,19 @@ public class Measure implements MusicalFontConstants {
 
     }
 
-    static void drawStaves(PGraphics pG, int numGlyphs) {
+    static void drawStaves(PGraphics pG, int numElements) {
+        drawStaves((numElements + 1) * 2 + 1, pG);
+    }
+
+    static void drawStaves(int numGridPositions, PGraphics pG) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numGlyphs + 2; i++) { // 2 for padding
-            sb.append(STAFF_5 + STAFF_5);
+        for (int i = 0; i < numGridPositions; i++) {
+            sb.append(STAFF_5);
         }
         pG.text(sb.toString() + BARLINE_SINGLE, 0, 0);
     }
 
-    public int numGlyphs() {
+    public int numElements() {
         return elementSeq.size();
     }
 }

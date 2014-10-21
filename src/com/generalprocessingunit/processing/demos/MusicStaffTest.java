@@ -24,43 +24,58 @@ public class MusicStaffTest extends PAppletBuffered {
 
     int millisAtMeasureStart = 0;
 
-    static MusicElementSeq testSeq = new MusicElementSeq();
+    static MusicElementSeq testSeqTreble = new MusicElementSeq();
+    static MusicElementSeq testSeqBass = new MusicElementSeq();
     static {
-        testSeq.add(new MusicNote(60, RhythmType.Whole));
-        testSeq.add(new MusicNote(62, RhythmType.Whole));
-        testSeq.add(new MusicNote(64, RhythmType.Whole));
-        testSeq.add(new MusicNote(65, RhythmType.Whole));
-        testSeq.add(new MusicNote(67, RhythmType.Whole));
-        testSeq.add(new MusicNote(69, RhythmType.Whole));
-        testSeq.add(new MusicNote(71, RhythmType.Whole));
-        testSeq.add(new MusicNote(72, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(60, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(62, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(64, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(65, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(67, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(69, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(71, RhythmType.Whole));
+        testSeqTreble.add(new MusicNote(72, RhythmType.Whole));
 
-        testSeq.add(new MusicNote(60, RhythmType.Half));
-        testSeq.add(new MusicNote(62, RhythmType.Half));
-        testSeq.add(new MusicNote(64, RhythmType.Half));
-        testSeq.add(new MusicNote(65, RhythmType.Half));
-        testSeq.add(new MusicNote(67, RhythmType.Half));
-        testSeq.add(new MusicNote(69, RhythmType.Half));
-        testSeq.add(new MusicNote(71, RhythmType.Half));
-        testSeq.add(new MusicNote(72, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(60, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(62, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(64, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(65, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(67, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(69, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(71, RhythmType.Half));
+        testSeqTreble.add(new MusicNote(72, RhythmType.Half));
 
-        testSeq.add(new MusicNote(60, RhythmType.Quarter));
-        testSeq.add(new MusicNote(62, RhythmType.Quarter));
-        testSeq.add(new MusicNote(64, RhythmType.Quarter));
-        testSeq.add(new MusicNote(65, RhythmType.Quarter));
-        testSeq.add(new MusicNote(67, RhythmType.Quarter));
-        testSeq.add(new MusicNote(69, RhythmType.Quarter));
-        testSeq.add(new MusicNote(71, RhythmType.Quarter));
-        testSeq.add(new MusicNote(72, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(60, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(62, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(64, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(65, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(67, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(69, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(71, RhythmType.Quarter));
+        testSeqTreble.add(new MusicNote(72, RhythmType.Quarter));
 
-        testSeq.add(new MusicNote(60, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(62, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(64, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(65, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(67, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(69, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(71, RhythmType.Sixteenth));
-        testSeq.add(new MusicNote(72, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(60, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(62, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(64, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(65, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(67, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(69, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
+        testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
+
+        // TODO: might be a good idea to clone a blank sequence from an existing
+        for (int i = 0; i < 8; i++) {
+            testSeqBass.add(new MusicElementBlank(RhythmType.Whole));
+        }
+        for (int i = 0; i < 8; i++) {
+            testSeqBass.add(new MusicElementBlank(RhythmType.Half));
+        }
+        for (int i = 0; i < 8; i++) {
+            testSeqBass.add(new MusicElementBlank(RhythmType.Quarter));
+        }
+        for (int i = 0; i < 8; i++) {
+            testSeqBass.add(new MusicElementBlank(RhythmType.Sixteenth));
+        }
     }
 
     @Override
@@ -71,10 +86,12 @@ public class MusicStaffTest extends PAppletBuffered {
         // add at least one blank measure for padding
         for (int i = 0; i < 2; i++) {
             trebleStaff.measureQueue.addMeasure(new Measure(new MusicElementSeq()));
+            bassStaff.measureQueue.addMeasure(new Measure(new MusicElementSeq()));
         }
 
         for (int i = 0; i < 5; i++) {
-            trebleStaff.measureQueue.addMeasure(testSeq.getNextMeasure(timeSig));
+            trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
+            bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
     }
 
@@ -85,9 +102,11 @@ public class MusicStaffTest extends PAppletBuffered {
 
             // remove measure
             trebleStaff.measureQueue.removeMeasure();
+            bassStaff.measureQueue.removeMeasure();
 
             // add next measure
-            trebleStaff.measureQueue.addMeasure(testSeq.getNextMeasure(timeSig));
+            trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
+            bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
 
     }

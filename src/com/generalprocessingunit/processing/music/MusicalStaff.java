@@ -64,7 +64,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             pG.fill(0);
             Measure prevMeasure = measureQueue.prevMeasure();
             for (int i = 0; i < 5; i++) {
-                pG.translate(gridWidth * (prevMeasure.numGlyphs() + 2), 0);
+                pG.translate(glyphWidth * ((prevMeasure.numElements() + 1) * 2 + 1), 0);
                 prevMeasure = measureQueue.nMeasuresFromCurrent(i);
                 drawMeasure(pG, measureQueue.nMeasuresFromCurrent(i));
             }
@@ -84,7 +84,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
         pG.pushMatrix();
         {
-            Measure.drawStaves(pG, 2); // number is fudged because we are not spacing things the same
+            Measure.drawStaves(8, pG); // number is fudged because we are not spacing things the same
             clef.drawGlyph(pG, staveHeight);
             pG.translate(size * .6f, 0);
             clef.drawKeySignature(pG, keySig, staveHeight, glyphWidth);
@@ -93,7 +93,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     private void drawMeasure(PGraphics pG, Measure measure) {
-        Measure.drawStaves(pG, measure.numGlyphs());
+        Measure.drawStaves(pG, measure.numElements());
 
         pG.pushMatrix();
         {
