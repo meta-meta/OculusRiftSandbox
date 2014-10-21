@@ -17,9 +17,23 @@ public class MusicStaffTest extends PAppletBuffered {
     Key key = MusicalLibrary.KeyOfFs();
     TimeSignature timeSig = TimeSignature.FourFour;
     MusicConductor mc = new MusicConductor(60, RhythmType.ThirtySecond, timeSig);
+    int size = 60;
 
-    MusicalStaff trebleStaff = new MusicalStaff(this, 60, Clef.Treble, key, timeSig);
-    MusicalStaff bassStaff = new MusicalStaff(this, 60, Clef.Bass, key, timeSig);
+    MusicalStaff trebleStaff = new MusicalStaff(this, size, Clef.Treble, key, timeSig);
+    MusicalStaff bassStaff = new MusicalStaff(this, size, Clef.Bass, key, timeSig);
+
+
+    static MusicNoteSeq testSeq = new MusicNoteSeq();
+    static {
+        testSeq.add(new MusicNote(60, RhythmType.Whole));
+        testSeq.add(new MusicNote(62, RhythmType.Whole));
+        testSeq.add(new MusicNote(64, RhythmType.Whole));
+        testSeq.add(new MusicNote(65, RhythmType.Whole));
+        testSeq.add(new MusicNote(67, RhythmType.Whole));
+        testSeq.add(new MusicNote(69, RhythmType.Whole));
+        testSeq.add(new MusicNote(71, RhythmType.Whole));
+        testSeq.add(new MusicNote(72, RhythmType.Whole));
+    }
 
     @Override
     public void setup() {
@@ -29,19 +43,25 @@ public class MusicStaffTest extends PAppletBuffered {
 
     @Override
     public void draw(PGraphics pG) {
-        pG.background(127);
+        pG.background(32);
 
         pG.pushMatrix();
         {
-            pG.translate(0, pG.height / 2 - 70);
-            bassStaff.draw(pG);
+            pG.translate(0, pG.height / 2 - size * 1.5f);
+            pG.fill(127);
+            pG.noStroke();
+            pG.rect(0, -size * 2.5f, pG.width, size * 4);
+            trebleStaff.draw(pG);
         }
         pG.popMatrix();
 
         pG.pushMatrix();
         {
-            pG.translate(0, pG.height / 2 + 70);
-            trebleStaff.draw(pG);
+            pG.translate(0, pG.height / 2 + size * 1.5f);
+            pG.fill(127);
+            pG.noStroke();
+            pG.rect(0, -size * 2.5f, pG.width, size * 4);
+            bassStaff.draw(pG);
         }
         pG.popMatrix();
     }

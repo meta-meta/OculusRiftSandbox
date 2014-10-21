@@ -49,16 +49,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         glyphWidth = pG.textWidth(STAFF_5);
 
 
-        pG.fill(0);
-
-        pG.pushMatrix();
-        {
-            Measure.drawStaves(pG, 6);
-            clef.drawGlyph(pG, staveHeight);
-            pG.translate(size * .6f, 0);
-            clef.drawKeySignature(pG, keySig, staveHeight, glyphWidth);
-        }
-        pG.popMatrix();
+        drawClef(pG);
 
 //        pG.translate(-measuresOnScreen / 2 * measureWidth + measureWidth - (p5.millis() / 20f) % measureWidth, 0, 0);
 
@@ -71,6 +62,24 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 //            }
 //            pG.popMatrix();
 //        }
+    }
+
+    private void drawClef(PGraphics pG) {
+        pG.fill(64);
+        pG.noStroke();
+
+        pG.rect(0, -size * 2.5f, pG.textWidth(STAFF_5) * 8 + pG.textWidth(BARLINE_SINGLE), size * 4);
+
+        pG.fill(0);
+
+        pG.pushMatrix();
+        {
+            Measure.drawStaves(pG, 6);
+            clef.drawGlyph(pG, staveHeight);
+            pG.translate(size * .6f, 0);
+            clef.drawKeySignature(pG, keySig, staveHeight, glyphWidth);
+        }
+        pG.popMatrix();
     }
 
     private void drawMeasure(PGraphics pG) {
