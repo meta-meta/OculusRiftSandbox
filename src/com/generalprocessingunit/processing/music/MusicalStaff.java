@@ -11,7 +11,6 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 
 
-
 public class MusicalStaff extends ProcessingDelegateComponent implements MusicalFontContstants, PConstants {
     private int size;
     private static PFont bravura;
@@ -20,20 +19,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     private Key keySig;
     private float staveHeight;
-
-
-    static MusicNoteSeq testSeq = new MusicNoteSeq();
-    static {
-        testSeq.add(new MusicNote(60, RhythmType.Whole));
-        testSeq.add(new MusicNote(62, RhythmType.Whole));
-        testSeq.add(new MusicNote(64, RhythmType.Whole));
-        testSeq.add(new MusicNote(65, RhythmType.Whole));
-        testSeq.add(new MusicNote(67, RhythmType.Whole));
-        testSeq.add(new MusicNote(69, RhythmType.Whole));
-        testSeq.add(new MusicNote(71, RhythmType.Whole));
-        testSeq.add(new MusicNote(72, RhythmType.Whole));
-    }
-
+    private float glyphWidth;
 
     public MusicalStaff(PApplet p5, int size, Clef clef, Key keySig, TimeSignature timeSig) {
         super(p5);
@@ -60,17 +46,17 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     public void draw(PGraphics pG) {
         pG.textFont(bravura);
         pG.textSize(size);
+        glyphWidth = pG.textWidth(STAFF_5);
+
 
         pG.fill(0);
 
-        float measureWidth = size * timeSig.beatsPerMeasure * .76f;
-
-
         pG.pushMatrix();
         {
-//            pG.translate(-measuresOnScreen / 2 * measureWidth, 0);
-            drawStaves(pG);
+            Measure.drawStaves(pG, 6);
             clef.drawGlyph(pG, staveHeight);
+            pG.translate(size * .6f, 0);
+            clef.drawKeySignature(pG, keySig, staveHeight, glyphWidth);
         }
         pG.popMatrix();
 
@@ -90,7 +76,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     private void drawMeasure(PGraphics pG) {
         pG.pushMatrix();
         {
-            drawStaves(pG);
+            Measure.drawStaves(pG, 4);
 
             drawNote(new MusicNote(60, RhythmType.Quarter), 1, pG);
             drawNote(new MusicNote(62, RhythmType.Quarter), 2, pG);
@@ -103,14 +89,6 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 //            drawNote(new MusicNote(84, RhythmType.Quarter), 4, pG);
         }
         pG.popMatrix();
-    }
-
-    private void drawStaves(PGraphics pG) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < timeSig.beatsPerMeasure + 2; i++) {
-            sb.append(STAFF_5);
-        }
-        pG.text(sb.toString() + BARLINE_SINGLE, 0, 0);
     }
 
     void drawNote(MusicNote note, int startBeat, PGraphics pG) {
@@ -131,13 +109,10 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
             translateForNote(clef.getStaffPosition(keySig, note), pG);
 
-//            pG.scale(1, -1);
-
             // TODO: if accidental appears on this staff position earlier in the measure, mark a note in key with natural symbol
             NoteName noteName = keySig.getNoteName(note.noteNumber);
             if(!keySig.isNoteInKey(note.noteNumber)) {
-                String accidental = noteName.accidental().equals(Accidental.Sharp()) ? SHARP :
-                        noteName.accidental().equals(Accidental.Flat()) ? FLAT : NATURAL;
+                String accidental = accidentalToGlyph(noteName);
 
                 pG.pushMatrix();
                 {
@@ -150,6 +125,11 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             pG.text(spaces + note.rhythm.upGlyph, 0, 0);
         }
         pG.popMatrix();
+    }
+
+    static String accidentalToGlyph(NoteName noteName) {
+        return noteName.accidental().equals(Accidental.Sharp()) ? SHARP :
+                noteName.accidental().equals(Accidental.Flat()) ? FLAT : NATURAL;
     }
 
     private void translateForNote(int staffPosition, PGraphics pG) {
