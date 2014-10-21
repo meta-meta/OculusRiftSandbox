@@ -1,13 +1,11 @@
 package com.generalprocessingunit.processing.music;
 
 public class MusicNote {
-    int note;
+    int noteNumber;
     RhythmType rhythm;
 
-    public MusicNote(int note, RhythmType rhythm) {
-        this.note = note;
+    public MusicNote(int noteNumber, RhythmType rhythm) {
+        this.noteNumber = noteNumber;
         this.rhythm = rhythm;
     }
-
-
 }

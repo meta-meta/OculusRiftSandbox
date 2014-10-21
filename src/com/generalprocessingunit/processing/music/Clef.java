@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Clef implements MusicalFontContstants {
-    Treble(G_CLEF, .72f, new NoteName(NoteLetter.E(), 5, Accidental.Natural())),
-    Bass(F_CLEF, .25f, new NoteName(NoteLetter.G(), 3, Accidental.Natural()));
+    Treble(G_CLEF, 2, new NoteName(NoteLetter.E(), 5, Accidental.Natural())),
+    Bass(F_CLEF, 6, new NoteName(NoteLetter.G(), 3, Accidental.Natural()));
 
     private float yOffset;
     private String glyph;
@@ -26,72 +26,79 @@ public enum Clef implements MusicalFontContstants {
         this.glyph = glyph;
         this.yOffset = yOffset;
 
-        Enumeration.Value baseNoteLetter = baseNote.letter();
-        noteToStaffPosition.put(new NoteLetterAndOctave(baseNoteLetter, baseNote.octave()), 0);
+        initNoteToStaffPositionMap(baseNote);
+    }
+
+    private void initNoteToStaffPositionMap(NoteName baseNote) {
+        Enumeration.Value basePitchClass = baseNote.letter();
+        noteToStaffPosition.put(new NoteLetterAndOctave(basePitchClass, baseNote.octave()), 0);
 
         { // walk up the staff and assign values
             int octave = baseNote.octave();
-            Enumeration.Value noteLetter = baseNoteLetter;
+            Enumeration.Value pitchClass = basePitchClass;
             for (int position = 1; position < 50; position++) {
-                noteLetter = NoteLetter.next(noteLetter);
-                if (noteLetter.equals(NoteLetter.C())) {
+                pitchClass = NoteLetter.next(pitchClass);
+
+                if (pitchClass.equals(NoteLetter.C())) {
                     octave++;
                 }
-//                System.out.println(noteLetter + "" + octave + " <- " + position );
-                noteToStaffPosition.put(new NoteLetterAndOctave(noteLetter, octave), position);
+//                System.out.println(pitchClass + "" + octave + " <- " + position );
+
+                noteToStaffPosition.put(new NoteLetterAndOctave(pitchClass, octave), position);
             }
         }
 
         { // walk down the staff and assign values
             int octave = baseNote.octave();
-            Enumeration.Value noteLetter = baseNoteLetter;
+            Enumeration.Value pitchClass = basePitchClass;
             for (int position = -1; position > -50; position--) {
-                noteLetter = NoteLetter.prev(noteLetter);
-                if (noteLetter.equals(NoteLetter.B())) {
+                pitchClass = NoteLetter.prev(pitchClass);
+
+                if (pitchClass.equals(NoteLetter.B())) {
                     octave--;
                 }
-                noteToStaffPosition.put(new NoteLetterAndOctave(noteLetter, octave), position);
+
+                noteToStaffPosition.put(new NoteLetterAndOctave(pitchClass, octave), position);
             }
         }
     }
 
-    void drawGlyph(PGraphics pG, float size) {
+    void drawGlyph(PGraphics pG, float staveHeight) {
         pG.pushMatrix();
         {
-            pG.translate(0, -size * yOffset);
-            pG.scale(1, -1);
+            pG.translate(10, -staveHeight * yOffset);
             pG.text(glyph, 0, 0);
         }
         pG.popMatrix();
     }
 
     int getStaffPosition(Key key, MusicNote note) {
-        NoteName noteName = key.getNoteName(note.note);
+        NoteName noteName = key.getNoteName(note.noteNumber);
         return noteToStaffPosition.get(new NoteLetterAndOctave(noteName.letter(), noteName.octave()));
     }
 
-    class NoteLetterAndOctave {
-        Enumeration.Value letter;
+    private class NoteLetterAndOctave {
+        Enumeration.Value pitchClass;
         int octave;
 
-        NoteLetterAndOctave(Enumeration.Value l, int o) {
-            letter = l;
-            octave = o;
+        NoteLetterAndOctave(Enumeration.Value pitchClass, int octave) {
+            this.pitchClass = pitchClass;
+            this.octave = octave;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(letter, octave);
+            return Objects.hashCode(pitchClass, octave);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof NoteLetterAndOctave)){
+            if (!(obj instanceof NoteLetterAndOctave)) {
                 return false;
             }
 
-            NoteLetterAndOctave that = (NoteLetterAndOctave)obj;
-            return that.octave == octave && that.letter.equals(letter);
+            NoteLetterAndOctave that = (NoteLetterAndOctave) obj;
+            return that.octave == octave && that.pitchClass.equals(pitchClass);
         }
     }
 

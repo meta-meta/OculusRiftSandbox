@@ -18,38 +18,31 @@ public class MusicStaffTest extends PAppletBuffered {
     TimeSignature timeSig = TimeSignature.FourFour;
     MusicConductor mc = new MusicConductor(60, RhythmType.ThirtySecond, timeSig);
 
-    MusicalStaff trebleStaff = new MusicalStaff(this, 60, Clef.Treble, key, timeSig, 5);
-    MusicalStaff bassStaff = new MusicalStaff(this, 60, Clef.Bass, key, timeSig, 5);
-
-    Camera camera = new Camera();
+    MusicalStaff trebleStaff = new MusicalStaff(this, 60, Clef.Treble, key, timeSig);
+    MusicalStaff bassStaff = new MusicalStaff(this, 60, Clef.Bass, key, timeSig);
 
     @Override
     public void setup() {
         size(displayWidth, displayHeight, OPENGL);
         super.setup();
-
-        camera.setLocation(0, 0, -500);
     }
 
     @Override
     public void draw(PGraphics pG) {
         pG.background(127);
 
-        camera.camera(pG);
-
         pG.pushMatrix();
         {
-            pG.translate(0, -70);
+            pG.translate(0, pG.height / 2 - 70);
             bassStaff.draw(pG);
         }
         pG.popMatrix();
 
         pG.pushMatrix();
         {
-            pG.translate(0, 70);
+            pG.translate(0, pG.height / 2 + 70);
             trebleStaff.draw(pG);
         }
         pG.popMatrix();
-
     }
 }
