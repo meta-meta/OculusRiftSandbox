@@ -1,13 +1,16 @@
 package com.generalprocessingunit.processing.music;
 
 import com.generalprocessingunit.processing.demos.MusicalFontConstants;
+import com.google.common.base.Objects;
 import processing.core.PGraphics;
 
 public class Measure implements MusicalFontConstants {
     public MusicElementSeq elementSeq;
+    private final int hash;
 
     public Measure(MusicElementSeq elementSeq) {
         this.elementSeq = elementSeq;
+        hash = Objects.hashCode(System.nanoTime());
     }
 
     void draw(PGraphics pG) {
@@ -28,5 +31,20 @@ public class Measure implements MusicalFontConstants {
 
     public int numElements() {
         return elementSeq.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Measure)) {
+            return false;
+        }
+
+        Measure that = (Measure)obj;
+        return that.hash == hash;
     }
 }

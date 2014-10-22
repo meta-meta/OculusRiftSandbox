@@ -61,9 +61,11 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             float prevMeasureWidth = getMeasureWidth(measureQueue.prevMeasure());
             float trans = prevMeasureWidth * mc.measureProgress();
             pG.translate(-trans, 0);
+//            trans /= 2; // alternate scrolling - kind of disorienting
+//            pG.translate(-trans - trans * PApplet.sq(mc.measureProgress()), 0);
+
 
             // prev measure
-            pG.fill(64);
             Measure pm = measureQueue.prevMeasure();
             drawMeasure(pG, pm);
             pG.translate(getMeasureWidth(pm), 0);
@@ -72,7 +74,6 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             drawMetronome(pG);
 
             // current and later measures
-            pG.fill(0);
             for (int i = 0; i < 15; i++) {
                 Measure m = measureQueue.nMeasuresFromCurrent(i);
                 drawMeasure(pG, m);
@@ -85,6 +86,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     private void drawMetronome(PGraphics pG) {
+        pG.fill(64, 0, 64);
         float measureWidth = getMeasureWidth(measureQueue.currentMeasure());
         for (int i = 0; i < 8 * mc.measureProgress(); i++) {
             pG.pushMatrix();
@@ -119,12 +121,33 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     private void drawMeasure(PGraphics pG, Measure measure) {
+
+        if(measure.equals(measureQueue.prevMeasure())) {
+            pG.fill(64);
+        } else {
+            pG.fill(0);
+        }
         Measure.drawStaves(pG, measure.numElements());
 
         pG.pushMatrix();
         {
+            float rhythmTotal = 0;
             for(MusicElement mE : measure.elementSeq) {
                 pG.translate(gridWidth, 0);
+
+                // TODO: check if note was played by MIDI instrument
+                // TODO: abstract the instrument so that acoustic instruments can be used as well
+
+                // have we passed this note yet?
+                if(measure.equals(measureQueue.prevMeasure())) {
+                    pG.fill(64, 32, 32);
+                } else if(measure.equals(measureQueue.currentMeasure()) && mc.millisSinceMeasureStart() > mc.millisForRhythmVal(rhythmTotal)) {
+                    pG.fill(0, 0, 96);
+                } else {
+                    pG.fill(0);
+                }
+
+                rhythmTotal += mE.rhythm.val;
 
                 if(mE instanceof MusicNote) {
                     drawNote((MusicNote)mE, pG);

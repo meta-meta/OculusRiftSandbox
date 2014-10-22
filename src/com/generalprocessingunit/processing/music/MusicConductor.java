@@ -37,9 +37,9 @@ public class MusicConductor {
         return 60000 / bpm;
     }
 
-    public int getCurrentTick() {
-        return millisSinceMeasureStart() / millisPerTick();
-    }
+//    public int getCurrentTick() {
+//        return millisSinceMeasureStart() / millisPerTick();
+//    }
 
     public boolean isTimeForNextMeasure() {
         if(millisSinceMeasureStart() > millisPerMeasure()) {
@@ -64,6 +64,14 @@ public class MusicConductor {
 
     private void startNewMeasure() {
         millisAtMeasureStart = p5.millis();
+    }
+
+    public int millisForRhythmType(RhythmType rhythm) {
+        return millisForRhythmVal(rhythm.val);
+    }
+
+    public int millisForRhythmVal(float rhythmVal) {
+        return (int)(millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
     }
 
     //TODO: Pause?
