@@ -15,7 +15,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     private int size;
     private static PFont bravura;
     private Clef clef;
-    private TimeSignature timeSig;
+    private MusicConductor mc;
 
     private Key keySig;
     private float staveHeight;
@@ -24,7 +24,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     public MeasureQueue measureQueue = new MeasureQueue();
 
-    public MusicalStaff(PApplet p5, int size, Clef clef, Key keySig, TimeSignature timeSig) {
+    public MusicalStaff(PApplet p5, int size, Clef clef, Key keySig, MusicConductor mc) {
         super(p5);
 
         if(null == bravura) {
@@ -33,7 +33,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
         this.size = size;
         this.clef = clef;
-        this.timeSig = timeSig;
+        this.mc = mc;
         this.keySig = keySig;
 
         staveHeight = size / 8f;
@@ -44,9 +44,6 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     public void update() {
 
     }
-
-
-    public int millisSinceMeasureStart = 0;
 
     @Override
     public void draw(PGraphics pG) {
@@ -60,26 +57,47 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             // clef
             pG.translate(glyphWidth * 8 + pG.textWidth(BARLINE_SINGLE), 0);
 
-
             // scroll
-            float currMeasureWidth = glyphWidth * ((measureQueue.prevMeasure().numElements() + 1) * 2 + 1);
-            float measureTime = timeSig.totalValOfMeasure() * 2000;
-            pG.translate(-millisSinceMeasureStart * currMeasureWidth / measureTime, 0);
+            float prevMeasureWidth = getMeasureWidth(measureQueue.prevMeasure());
+            float trans = prevMeasureWidth * mc.measureProgress();
+            pG.translate(-trans, 0);
 
+            // prev measure
             pG.fill(64);
-            drawMeasure(pG, measureQueue.prevMeasure());
+            Measure pm = measureQueue.prevMeasure();
+            drawMeasure(pG, pm);
+            pG.translate(getMeasureWidth(pm), 0);
 
+            // experimental metronome
+            drawMetronome(pG);
+
+            // current and later measures
             pG.fill(0);
-            Measure prevMeasure = measureQueue.prevMeasure();
             for (int i = 0; i < 15; i++) {
-                pG.translate(glyphWidth * ((prevMeasure.numElements() + 1) * 2 + 1), 0);
-                prevMeasure = measureQueue.nMeasuresFromCurrent(i);
-                drawMeasure(pG, measureQueue.nMeasuresFromCurrent(i));
+                Measure m = measureQueue.nMeasuresFromCurrent(i);
+                drawMeasure(pG, m);
+                pG.translate(getMeasureWidth(m), 0);
             }
         }
         pG.popMatrix();
 
         drawClef(pG);
+    }
+
+    private void drawMetronome(PGraphics pG) {
+        float measureWidth = getMeasureWidth(measureQueue.currentMeasure());
+        for (int i = 0; i < 8 * mc.measureProgress(); i++) {
+            pG.pushMatrix();
+            {
+                pG.translate(i * measureWidth / 8f, size / 2f + (i % 2 == 0 ? size / 4f : size / 8f));
+                pG.ellipse(size / 10f, size / 10f, size / 10f, size / 10f);
+            }
+            pG.popMatrix();
+        }
+    }
+
+    float getMeasureWidth(Measure m) {
+        return glyphWidth * ((m.numElements() + 1) * 2 + 1);
     }
 
     private void drawClef(PGraphics pG) {
@@ -119,8 +137,6 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     void drawNote(MusicNote note, PGraphics pG) {
         pG.pushMatrix();
         {
-//            pG.translate(0, -size); // move from top of staff to bottom
-
             drawLedgerLines(note, pG);
 
             translateForNote(clef.getStaffPosition(keySig, note), pG);
@@ -174,20 +190,5 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             pG.text(MusicalFontConstants.LEDGER, 0, 0);
         }
         pG.popMatrix();
-    }
-
-    void drawNotes(PGraphics pG, MusicElementSeq measure) {
-        StringBuilder sb = new StringBuilder();
-
-
-        for(MusicElement mE : measure) {
-
-        }
-
-        for (int i = 0; i < timeSig.beatsPerMeasure; i++) {
-            sb.append(measure.get(i));
-        }
-
-        pG.text(sb.toString(), 0, 0);
     }
 }

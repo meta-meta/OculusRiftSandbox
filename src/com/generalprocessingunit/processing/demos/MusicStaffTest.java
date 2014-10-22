@@ -10,19 +10,17 @@ import processing.core.PGraphics;
 public class MusicStaffTest extends PAppletBuffered {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{"--full-screen",/* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
+        PApplet.main(new String[]{/*"--full-screen",*//* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
     }
 
     Key key = MusicalLibrary.KeyOfFs();
     TimeSignature timeSig = TimeSignature.FourFour;
-    MusicConductor mc = new MusicConductor(60, RhythmType.ThirtySecond, timeSig);
+    MusicConductor mc = new MusicConductor(this, 120, RhythmType.ThirtySecond, timeSig);
     int size = 60;
 
-    MusicalStaff trebleStaff = new MusicalStaff(this, size, Clef.Treble, key, timeSig);
-    MusicalStaff bassStaff = new MusicalStaff(this, size, Clef.Bass, key, timeSig);
+    MusicalStaff trebleStaff = new MusicalStaff(this, size, Clef.Treble, key, mc);
+    MusicalStaff bassStaff = new MusicalStaff(this, size, Clef.Bass, key, mc);
 
-
-    int millisAtMeasureStart = 0;
 
     static MusicElementSeq testSeqTreble = new MusicElementSeq();
     static MusicElementSeq testSeqBass = new MusicElementSeq();
@@ -82,8 +80,8 @@ public class MusicStaffTest extends PAppletBuffered {
 
     @Override
     public void setup() {
-//        size(1250, 900, OPENGL);
-        size(displayWidth, displayHeight, OPENGL);
+        size(1250, 900, OPENGL);
+//        size(displayWidth, displayHeight, OPENGL);
         super.setup();
 
         // add at least one blank measure for padding
@@ -99,9 +97,9 @@ public class MusicStaffTest extends PAppletBuffered {
     }
 
     void update() {
-        if(millis() - millisAtMeasureStart >= timeSig.totalValOfMeasure() * 2000) {
-            millisAtMeasureStart = millis();
+        mc.start();
 
+        if(mc.isTimeForNextMeasure()) {
             // remove measure
             trebleStaff.measureQueue.removeMeasure();
             bassStaff.measureQueue.removeMeasure();
@@ -110,11 +108,6 @@ public class MusicStaffTest extends PAppletBuffered {
             trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
-
-        int millisSinceMeasureStart = millis() - millisAtMeasureStart;
-        trebleStaff.millisSinceMeasureStart = millisSinceMeasureStart;
-        bassStaff.millisSinceMeasureStart = millisSinceMeasureStart;
-
     }
 
     @Override
@@ -123,22 +116,25 @@ public class MusicStaffTest extends PAppletBuffered {
 
         pG.background(32);
 
-        pG.pushMatrix();
+        pG.fill(127);
+        pG.noStroke();
+        pG.pushMatrix(); // light grey rectangle
         {
             pG.translate(0, pG.height / 2 - size * 1.5f);
-            pG.fill(127);
-            pG.noStroke();
-            pG.rect(0, -size * 2.5f, pG.width, size * 4);
+            pG.rect(0, -size * 2.5f, pG.width, size * 7);
+        }
+        pG.popMatrix();
+
+        pG.pushMatrix(); // Treble staff
+        {
+            pG.translate(0, pG.height / 2 - size * 1.5f);
             trebleStaff.draw(pG);
         }
         pG.popMatrix();
 
-        pG.pushMatrix();
+        pG.pushMatrix(); // Bass staff
         {
             pG.translate(0, pG.height / 2 + size * 1.5f);
-            pG.fill(127);
-            pG.noStroke();
-            pG.rect(0, -size * 2.5f, pG.width, size * 4);
             bassStaff.draw(pG);
         }
         pG.popMatrix();
