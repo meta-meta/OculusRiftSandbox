@@ -128,6 +128,8 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
                 if(mE instanceof MusicNote) {
                     drawNote((MusicNote)mE, pG);
+                } else if(mE instanceof MusicRest) {
+                    drawRest((MusicRest) mE, pG);
                 }
             }
         }
@@ -155,6 +157,15 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
             }
 
             pG.text(note.getGlyph(), 0, 0);
+        }
+        pG.popMatrix();
+    }
+
+    void drawRest(MusicRest rest, PGraphics pG) {
+        pG.pushMatrix();
+        {
+            pG.translate(0, -4 * staveHeight);
+            pG.text(rest.getGlyph(), 0, 0);
         }
         pG.popMatrix();
     }
