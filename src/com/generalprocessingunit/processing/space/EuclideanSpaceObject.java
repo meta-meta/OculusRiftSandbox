@@ -11,7 +11,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
     private Orientation orientation;
     private final PVector location;
 
-    private EuclideanSpaceObject parent = null;
+    public EuclideanSpaceObject parent = null;
     private Set<EuclideanSpaceObject> progeny = new HashSet<>();
     public Set<EuclideanSpaceObject> children = new HashSet<>();
 
@@ -279,7 +279,7 @@ public class EuclideanSpaceObject extends MathsHelpers {
         }
     }
 
-    private void adjustChildren() {
+    public void adjustChildren() {
         for(EuclideanSpaceObject c : children) {
             c.location.set(getTranslationWRTObjectCoords(c.locationWRTParent));
             c.orientation = orientation.rotateFrom(c.rotationWRTParent);
