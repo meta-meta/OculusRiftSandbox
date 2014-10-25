@@ -11,7 +11,9 @@ import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Joints extends PAppletBuffered {
 
@@ -22,9 +24,6 @@ public class Joints extends PAppletBuffered {
 
 
     Camera camera = new Camera();
-
-    Segment seg;
-    Segment seg2;
 
     @Override
     public void setup() {
@@ -37,10 +36,11 @@ public class Joints extends PAppletBuffered {
         camera.yaw(.1f);
 
         p5 = this;
-        seg = new Segment(25, 20);
-        seg2 = new Segment(25, 20);
 
-        seg2.setLocation(50, 0, 0);
+        new Tentacle(25, 20, new PVector(0, 0, 0));
+        new Tentacle(25, 20, new PVector(45, 0, 0));
+//        new Tentacle(25, 20, new PVector(45, 0, 45));
+//        new Tentacle(25, 20, new PVector(0, 0, 45));
     }
 
 
@@ -67,32 +67,57 @@ public class Joints extends PAppletBuffered {
         pG.noStroke();
 
         this.pG = pG;
-        seg.draw(pG);
-        seg2.draw(pG);
 
+        for(Tentacle t : tentacles) {
+            t.draw(pG);
+        }
     }
 
     PApplet p5;
-    List<Segment> segs = new ArrayList<>();
-PGraphics pG;
+    Set<Tentacle> tentacles = new HashSet<>();
+
+    class Tentacle extends EuclideanSpaceObject {
+        int index;
+        List<Segment> segs = new ArrayList<>();
+        Segment baseSeg;
+
+        Tentacle(float radius, int segments, PVector location) {
+            index = tentacles.size();
+            tentacles.add(this);
+
+            baseSeg = new Segment(this, radius, segments - 1);
+            baseSeg.setLocation(location);
+        }
+
+        void draw(PGraphics pG) {
+            baseSeg.draw(pG);
+        }
+    }
+
+    PGraphics pG;
 
     class Segment extends EuclideanSpaceObject {
+        Tentacle tent;
         float radius;
         int descendents;
         int index;
 
-        Segment(float radius, int descendents) {
+        int color = p5.color(127);
+
+        Segment(Tentacle tent, float radius, int descendents) {
+            this.tent = tent;
             this.radius = radius;
             this.descendents = descendents;
 
+            index = tent.segs.size();
+            tent.segs.add(this);
+
             if(descendents > 0) {
-                addChild(new Segment(radius * .85f, descendents - 1), new PVector(0, radius + radius * .7f, 0));
+                addChild(new Segment(tent, radius * .88f, descendents - 1), new PVector(0, radius + radius * .6f, 0));
             }
 
-
             adjustChildren();
-            index = segs.size();
-            segs.add(this);
+
         }
 
         MomentumYawPitchRoll mR = new MomentumYawPitchRoll(p5, .003f);
@@ -116,6 +141,7 @@ PGraphics pG;
 
             pushMatrixAndTransform(pG);
             {
+                pG.fill(color);
                 pG.sphere(radius);
             }
             pG.popMatrix();
@@ -133,7 +159,7 @@ PGraphics pG;
 
             if(collision(o)) {
 //                mR.reverseZ();
-//                mR.add(0, 0, -mR.getValue().z * 1.4f);
+                mR.add(-mR.getValue().yaw() * 1.4f, 0, 0);
             } else {
                 yaw(y);
             }
@@ -175,29 +201,65 @@ PGraphics pG;
         }
 
         boolean collision(Orientation o) {
-            for(Segment s : segs.subList(index + 1, segs.size())){
-                PVector v = s.getLocation();// PVector.sub(s.getLocation(), getLocation());
+            for(Segment thisSeg : tent.segs.subList(index + 1, tent.segs.size())){
+                PVector v = PVector.sub(thisSeg.getLocation(), getLocation());
                 v = o.getOrientationQuat().rotateVector(v); // where this child will be if we rotate
+                v = PVector.add(v, getLocation());
 
-                for(Segment s2 : segs) {
-                    if(abs(s2.index - s.index) < 2) { // don't worry about colliding with parent or child
+                for(Segment thatSeg : tent.segs) {
+                    if(abs(thatSeg.index - thisSeg.index) < 2) { // don't worry about colliding with parent or child
                         continue;
                     }
-                    if(v.dist(s2.getLocation()) < s2.radius + s.radius) {
+                    if(collision(v, thatSeg.getLocation(), thisSeg.radius, thatSeg.radius)) {
 //                        pG.pushMatrix();
 //                        {
-//                            pG.translate(getLocation().x, getLocation().y, getLocation().z);
-//                            pG.translate(100 + v.x, v.y, v.z);
-//                            pG.sphere(2);
+//                            pG.fill(255, 0, 0);
+//                            pG.translate(v.x, v.y, v.z);
+//                            pG.box(thisSeg.radius * 2);
 //                        }
 //                        pG.popMatrix();
-
+//                        thisSeg.color = p5.color(255, 0, 0);
+//                        thatSeg.color = p5.color(255, 0, 0);
                         return true;
+                    }
+                }
 
+                for(Tentacle thatTent : tentacles) {
+                    if(thatTent.index == tent.index) {
+                        continue;
+                    }
+
+                    for(Segment thatSeg : thatTent.segs) {
+                        if(collision(v, thatSeg.getLocation(), thisSeg.radius, thatSeg.radius)) {
+//                            pG.pushMatrix();
+//                            {
+//                                pG.fill(255, 0, 0);
+//                                pG.translate(v.x, v.y, v.z);
+//                                pG.box(thisSeg.radius * 2);
+//                            }
+//                            pG.popMatrix();
+//
+//                            pG.pushMatrix();
+//                            {
+//                                pG.fill(0, 255, 255);
+//                                PVector ts = thatSeg.getLocation();
+//                                pG.translate(ts.x, ts.y, ts.z);
+//                                pG.box(thatSeg.radius * 2);
+//                            }
+//                            pG.popMatrix();
+
+//                            thisSeg.color = p5.color(255, 0, 0);
+//                            thatSeg.color = p5.color(255, 0, 0);
+                            return true;
+                        }
                     }
                 }
             }
             return false;
+        }
+
+        boolean collision(PVector a, PVector b, float r1, float r2) {
+            return PVector.dist(a, b) < r1 + r2;
         }
 
     }
