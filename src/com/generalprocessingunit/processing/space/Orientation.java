@@ -1,7 +1,5 @@
 package com.generalprocessingunit.processing.space;
 
-import processing.core.PConstants;
-import processing.core.PMatrix3D;
 import processing.core.PVector;
 
 public class Orientation {
@@ -26,6 +24,10 @@ public class Orientation {
         this.xAxis.set(xAxis);
         this.yAxis.set(yAxis);
         this.zAxis.set(zAxis);
+    }
+
+    public Orientation clone() {
+        return new Orientation(orientation, xAxis, yAxis, zAxis);
     }
 
 //    public static Orientation fromVector(PVector direction) {
