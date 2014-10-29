@@ -1,11 +1,15 @@
 package com.generalprocessingunit.processing.demos;
 
+import com.generalprocessingunit.io.OSC;
 import com.generalprocessingunit.music.Key;
 import com.generalprocessingunit.music.MusicalLibrary;
 import com.generalprocessingunit.processing.music.*;
 import com.generalprocessingunit.processing.PAppletBuffered;
+import com.illposed.osc.OSCMessage;
 import processing.core.PApplet;
 import processing.core.PGraphics;
+
+import java.util.Date;
 
 public class MusicStaffTest extends PAppletBuffered {
 
@@ -132,6 +136,29 @@ public class MusicStaffTest extends PAppletBuffered {
             trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
+
+        OSC.addListener("/noteOn", new com.illposed.osc.OSCListener() {
+            @Override
+            public void acceptMessage(Date time, OSCMessage message) {
+                noteOn((int) message.getArguments()[0]);
+            }
+        });
+
+        OSC.addListener("/noteOff", new com.illposed.osc.OSCListener() {
+            @Override
+            public void acceptMessage(Date time, OSCMessage message) {
+                noteOff((int) message.getArguments()[0]);
+            }
+        });
+
+    }
+
+    void noteOn(int noteNum) {
+
+    }
+
+    void noteOff(int noteNum) {
+
     }
 
     void update() {
