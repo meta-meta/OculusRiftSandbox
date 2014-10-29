@@ -5,7 +5,6 @@ import com.generalprocessingunit.processing.PAppletBuffered;
 import com.generalprocessingunit.processing.space.Camera;
 import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.space.Orientation;
-import com.generalprocessingunit.processing.space.YawPitchRoll;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -15,10 +14,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Joints extends PAppletBuffered {
+public class Tentacles extends PAppletBuffered {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{"--full-screen", Joints.class.getCanonicalName()});
+        PApplet.main(new String[]{"--full-screen", Tentacles.class.getCanonicalName()});
         // if fullscreen works, --display=hmd.DisplayId
     }
 
@@ -29,18 +28,15 @@ public class Joints extends PAppletBuffered {
     public void setup() {
         size(displayWidth, displayHeight, OPENGL);
         super.setup();
-//        frame.setLocation(0,1200);
 
-        camera.setLocation(0, 150, -300);
-        camera.pitch(.3f);
+        camera.setLocation(0, 200, -150);
+        camera.pitch(.8f);
         camera.yaw(.1f);
 
         p5 = this;
 
-        new Tentacle(25, 20, new PVector(0, 0, 0));
-        new Tentacle(25, 20, new PVector(45, 0, 0));
-//        new Tentacle(25, 20, new PVector(45, 0, 45));
-//        new Tentacle(25, 20, new PVector(0, 0, 45));
+        new Tentacle(20, 26, new PVector(0, 0, 0));
+        new Tentacle(20, 26, new PVector(50, 0, 0));
     }
 
 
@@ -54,13 +50,13 @@ public class Joints extends PAppletBuffered {
 
         camera.camera(pG);
 
-
         pG.background(63);
 
-
+        pG.sphereDetail(15);
         pG.colorMode(RGB);
+        pG.directionalLight(64, 96, 128, 1, .3f, .4f);
+        pG.lightSpecular(255, 255, 255);
         pG.directionalLight(255, 240, 200, -1, -.3f, .4f);
-        pG.directionalLight(64, 96, 192, 1, .3f, .4f);
         pG.specular(255);
         pG.shininess(255);
         pG.fill(127);
@@ -102,7 +98,7 @@ public class Joints extends PAppletBuffered {
         int descendents;
         int index;
 
-        int color = p5.color(127);
+        int color;
 
         Segment(Tentacle tent, float radius, int descendents) {
             this.tent = tent;
@@ -112,19 +108,27 @@ public class Joints extends PAppletBuffered {
             index = tent.segs.size();
             tent.segs.add(this);
 
+            p5.colorMode(HSB);
+            color = p5.color(tent.index * 32 + index * 24, 32, 127);
+
             if(descendents > 0) {
-                addChild(new Segment(tent, radius * .88f, descendents - 1), new PVector(0, radius + radius * .6f, 0));
+                addChild(new Segment(tent, radius * .82f, descendents - 1), new PVector(0, radius + radius * .4f, 0));
+
+//                if(random(1) < .1f) {
+//                    YawPitchRoll ypr = new YawPitchRoll(0, random(1f, 2f), random(1f, 2f));
+//                    addChild(new Tentacle(radius * .81f, descendents + 3, PVector.add(getLocation(), new PVector(radius * .6f, 0, 0))), ypr);
+//                }
             }
 
-            adjustChildren();
 
+            adjustChildren();
         }
 
-        MomentumYawPitchRoll mR = new MomentumYawPitchRoll(p5, .003f);
+        MomentumYawPitchRoll mR = new MomentumYawPitchRoll(p5, .005f);
 
         void draw(PGraphics pG) {
 
-            if(random(1) < .015f) {
+            if(random(1) < .005f) {
                 mR.add(random(-.06f, .06f), random(-.06f, .06f), random(-.06f, .06f));
             }
 
@@ -136,7 +140,9 @@ public class Joints extends PAppletBuffered {
 
 
             for(EuclideanSpaceObject child : children) {
-                ((Segment)child).draw(pG);
+                if(child instanceof Segment) {
+                    ((Segment) child).draw(pG);
+                }
             }
 
             pushMatrixAndTransform(pG);
@@ -151,50 +157,43 @@ public class Joints extends PAppletBuffered {
 
 
         void tryYaw(float y) {
-            Orientation o = getOrientation();
-            o.yaw(y);
-
-            o = new Orientation();
+            Orientation o = new Orientation();
             o.yaw(y);
 
             if(collision(o)) {
-//                mR.reverseZ();
-                mR.add(-mR.getValue().yaw() * 1.4f, 0, 0);
+                mR.reverseYaw();
             } else {
                 yaw(y);
             }
         }
 
         void tryPitch(float p) {
-            Orientation o = getOrientation();
+            Orientation o = getOrientation().clone();
             o.pitch(p);
 
-            boolean outOfBounds = o.yAxis().dist(parent == null ? new PVector(0, 1, 0) : parent.getOrientation().yAxis()) > .5f;
+            boolean outOfBounds = o.yAxis().dist(parent == null ? new PVector(0, 1, 0) : parent.getOrientation().yAxis()) > .9f;
 
             o = new Orientation();
             o.pitch(p);
 
             if(outOfBounds || collision(o)) {
-//                mR.reverseZ();
-                mR.add(0, -mR.getValue().pitch() * 1.4f, 0);
+                mR.reversePitch();
             } else {
                 pitch(p);
             }
         }
 
         void tryRoll(float r) {
-            Orientation o = getOrientation();
+            Orientation o = getOrientation().clone();
             o.roll(r);
 
-            boolean outOfBounds = o.yAxis().dist(parent == null ? new PVector(0, 1, 0) : parent.getOrientation().yAxis()) > .5f;
-
+            boolean outOfBounds = o.yAxis().dist(parent == null ? new PVector(0, 1, 0) : parent.getOrientation().yAxis()) > .9f;
 
             o = new Orientation();
             o.roll(r);
 
             if(outOfBounds || collision(o)) {
-//                mR.reverseZ();
-                mR.add(0, 0, -mR.getValue().roll() * 1.4f);
+                mR.reverseRoll();
             } else {
                 roll(r);
             }
@@ -218,8 +217,6 @@ public class Joints extends PAppletBuffered {
 //                            pG.box(thisSeg.radius * 2);
 //                        }
 //                        pG.popMatrix();
-//                        thisSeg.color = p5.color(255, 0, 0);
-//                        thatSeg.color = p5.color(255, 0, 0);
                         return true;
                     }
                 }
@@ -248,8 +245,6 @@ public class Joints extends PAppletBuffered {
 //                            }
 //                            pG.popMatrix();
 
-//                            thisSeg.color = p5.color(255, 0, 0);
-//                            thatSeg.color = p5.color(255, 0, 0);
                             return true;
                         }
                     }
