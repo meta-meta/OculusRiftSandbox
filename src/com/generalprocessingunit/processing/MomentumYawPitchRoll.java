@@ -34,15 +34,15 @@ public class MomentumYawPitchRoll extends Momentum<YawPitchRoll> {
         m.set(v);
     }
 
-    public void reverseX() {
+    public void reversePitch() {
         m.x = -m.x;
     }
 
-    public void reverseY() {
+    public void reverseYaw() {
         m.y = -m.y;
     }
 
-    public void reverseZ() {
+    public void reverseRoll() {
         m.z = -m.z;
     }
 
