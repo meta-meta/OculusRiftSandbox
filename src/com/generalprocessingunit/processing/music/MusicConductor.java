@@ -3,7 +3,6 @@ package com.generalprocessingunit.processing.music;
 import processing.core.PApplet;
 
 import java.util.HashSet;
-import java.util.ListIterator;
 import java.util.Set;
 
 public class MusicConductor {
@@ -14,6 +13,8 @@ public class MusicConductor {
 
     private int millisAtMeasureStart;
     private boolean running = false;
+
+    private Set<MusicElementTime> musicElementTimes;
 
     public MusicConductor(PApplet p5, int bpm, RhythmType resolution, TimeSignature timeSignature) {
         this.p5 = p5;
@@ -30,7 +31,11 @@ public class MusicConductor {
     }
 
     private int ticksPerMinute() {
-        return (int)(timeSignature.getsOneBeat.val / resolution.val);
+        return ticksForRhythmType(timeSignature.getsOneBeat) * bpm;
+    }
+
+    private int ticksForRhythmType(RhythmType rhythm) {
+        return (int)(rhythm.val / resolution.val);
     }
 
     private int millisPerTick() {
@@ -41,9 +46,9 @@ public class MusicConductor {
         return 60000 / bpm;
     }
 
-//    public int getCurrentTick() {
-//        return millisSinceMeasureStart() / millisPerTick();
-//    }
+    public int getCurrentTick() {
+        return millisSinceMeasureStart() / millisPerTick();
+    }
 
     public boolean isTimeForNextMeasure() {
         if(millisSinceMeasureStart() > millisPerMeasure()) {
@@ -68,6 +73,7 @@ public class MusicConductor {
 
     private void startNewMeasure() {
         millisAtMeasureStart = p5.millis();
+        musicElementTimes = null;
     }
 
     public int millisForRhythmType(RhythmType rhythm) {
@@ -78,30 +84,65 @@ public class MusicConductor {
         return (int)(millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
     }
 
+    public void markPlayedAndMissedNotes(Measure measure, Set<Integer> currentlyPlayingNotes) {
+        refreshNoteTimes(measure);
 
-    public void markPlayedAndMissedNotes(Measure measure) {
+        int currentTick = getCurrentTick();
 
+        for(MusicElementTime musicElementTime : musicElementTimes) {
+            if(musicElementTime.isPlaying(currentTick)) {
+                MusicElement mE = musicElementTime.mE;
+
+                mE.wasPassed = true;
+
+                if(musicElementTime.mE instanceof MusicNote) {
+                    if(currentlyPlayingNotes.contains(((MusicNote)mE).noteNumber)) {
+                        musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
+                    }
+                } else {
+                    if(currentlyPlayingNotes.isEmpty()) {
+                        musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
+                    }
+                }
+            }
+        }
     }
 
+    private void refreshNoteTimes(Measure measure) {
+        if(null != musicElementTimes) return;
 
-    public Set<MusicNote> getCurrentNotes(Measure measure) {
-        Set<MusicNote> notes = new HashSet<>();
-        float rhythmTotal = 0;
+        musicElementTimes = new HashSet<>();
 
-        ListIterator<MusicElement> iter = measure.elementSeq.listIterator();
+        int ticksTotal = 0;
 
-        MusicElement mE = new MusicRest(RhythmType.Whole);
+        for(MusicElement mE : measure.elementSeq) {
+            // don't show what we played last time around
+            mE.reset();
 
-        while( iter.hasNext() && millisForRhythmVal(rhythmTotal) < millisSinceMeasureStart() ) {
-            mE = iter.next();
-            rhythmTotal += mE.rhythm.val;
+            musicElementTimes.add(new MusicElementTime(
+                    ticksTotal,
+                    ticksTotal + ticksForRhythmType(mE.rhythm),
+                    mE
+            ));
+
+            ticksTotal += ticksForRhythmType(mE.rhythm);
+        }
+    }
+
+    class MusicElementTime {
+        int startTick;
+        int endTick;
+        MusicElement mE;
+
+        MusicElementTime(int startTick, int endTick, MusicElement mE) {
+            this.startTick = startTick;
+            this.endTick = endTick;
+            this.mE = mE;
         }
 
-        if(mE instanceof MusicNote) {
-            notes.add((MusicNote) mE);
+        boolean isPlaying(int currentTick) {
+            return startTick <= currentTick && endTick > currentTick;
         }
-
-        return notes;
     }
 
     //TODO: Pause?

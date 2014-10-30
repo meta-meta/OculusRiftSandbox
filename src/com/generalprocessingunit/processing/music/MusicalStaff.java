@@ -132,30 +132,14 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
         pG.pushMatrix();
         {
-            float rhythmTotal = 0;
             for(MusicElement mE : measure.elementSeq) {
                 pG.translate(gridWidth, 0);
 
-                // TODO: check if note was played by MIDI instrument
-                // TODO: abstract the instrument so that acoustic instruments can be used as well
-
-                // have we passed this note yet?
-                if(measure.equals(measureQueue.prevMeasure())) {
-                    pG.fill(64, 32, 32);
-                } else if(measure.equals(measureQueue.currentMeasure()) && mc.millisSinceMeasureStart() > mc.millisForRhythmVal(rhythmTotal)) {
-                    pG.fill(96, 0, 0);
-
-                    if(mE instanceof MusicNote) {
-                        MusicNote note = (MusicNote) mE;
-                        if(note.wasPlayed) {
-                            pG.fill(0, 192, 0);
-                        }
-                    }
-                } else {
+                if(!mE.wasPassed) {
                     pG.fill(0);
+                } else {
+                    pG.fill(255 - 255 * mE.percentagePlayed, 255 * mE.percentagePlayed, 0);
                 }
-
-                rhythmTotal += mE.rhythm.val;
 
                 if(mE instanceof MusicNote) {
                     drawNote((MusicNote)mE, pG);

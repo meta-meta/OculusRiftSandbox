@@ -182,12 +182,7 @@ public class MusicStaffTest extends PAppletBuffered {
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
 
-        Set<MusicNote> currentPromptedNotes = mc.getCurrentNotes(trebleStaff.measureQueue.currentMeasure());
-        for (MusicNote note : currentPromptedNotes) {
-            if (currentlyPlayingNotes.contains(note.noteNumber)) {
-                note.wasPlayed = true;
-            }
-        }
+        mc.markPlayedAndMissedNotes(trebleStaff.measureQueue.currentMeasure(), currentlyPlayingNotes);
 
 //        synchronized (currentlyPlayingNotes) {
 //            for (Integer n : currentlyPlayingNotes) {
