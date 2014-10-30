@@ -84,6 +84,7 @@ public class MusicConductor {
         return (int)(millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
     }
 
+    int prevTick = 0;
     public void markPlayedAndMissedNotes(Measure measure, Set<Integer> currentlyPlayingNotes) {
         refreshNoteTimes(measure);
 
@@ -94,18 +95,21 @@ public class MusicConductor {
                 MusicElement mE = musicElementTime.mE;
 
                 mE.wasPassed = true;
+                mE.percentagePassed = (float)(currentTick - musicElementTime.startTick) / ticksForRhythmType(mE.rhythm);
 
                 if(musicElementTime.mE instanceof MusicNote) {
-                    if(currentlyPlayingNotes.contains(((MusicNote)mE).noteNumber)) {
+                    if(currentlyPlayingNotes.contains(((MusicNote)mE).noteNumber) && currentTick != prevTick) {
                         musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
                     }
                 } else {
-                    if(currentlyPlayingNotes.isEmpty()) {
+                    if(currentlyPlayingNotes.isEmpty() && currentTick != prevTick) {
                         musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
                     }
                 }
             }
         }
+
+        prevTick = currentTick;
     }
 
     private void refreshNoteTimes(Measure measure) {

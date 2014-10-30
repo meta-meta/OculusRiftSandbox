@@ -6,11 +6,14 @@ public abstract class MusicElement {
     RhythmType rhythm;
 
     public float percentagePlayed = 0;
+    public float percentagePassed = 0;
+
     public boolean wasPassed = false;
 
     public void reset() {
         wasPassed = false;
         percentagePlayed = 0;
+        percentagePassed = 0;
     }
 
     public void incrementPercentagePlayed(float amount) {

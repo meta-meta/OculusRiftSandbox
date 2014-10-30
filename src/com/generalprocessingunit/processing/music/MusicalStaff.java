@@ -138,7 +138,9 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
                 if(!mE.wasPassed) {
                     pG.fill(0);
                 } else {
-                    pG.fill(255 - 255 * mE.percentagePlayed, 255 * mE.percentagePlayed, 0);
+                    pG.colorMode(HSB);
+                    pG.fill(96 * mE.percentagePlayed, 255 * mE.percentagePassed, 255 * mE.percentagePassed);
+                    pG.colorMode(RGB);
                 }
 
                 if(mE instanceof MusicNote) {
