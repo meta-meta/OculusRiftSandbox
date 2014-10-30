@@ -9,7 +9,10 @@ import com.illposed.osc.OSCMessage;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MusicStaffTest extends PAppletBuffered {
 
@@ -17,10 +20,12 @@ public class MusicStaffTest extends PAppletBuffered {
         PApplet.main(new String[]{/*"--full-screen",*//* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
     }
 
-    Key key = MusicalLibrary.KeyOfFs();
+    Key key = MusicalLibrary.KeyOfC();
     TimeSignature timeSig = TimeSignature.FourFour;
     MusicConductor mc = new MusicConductor(this, 120, RhythmType.ThirtySecond, timeSig);
     int size = 50;
+
+    Set<Integer> currentlyPlayingNotes = Collections.synchronizedSet(new HashSet<Integer>());
 
     MusicalStaff trebleStaff = new MusicalStaff(this, size, Clef.Treble, key, mc);
     MusicalStaff bassStaff = new MusicalStaff(this, size, Clef.Bass, key, mc);
@@ -153,12 +158,15 @@ public class MusicStaffTest extends PAppletBuffered {
 
     }
 
-    void noteOn(int noteNum) {
+    void noteOn(Integer noteNum) {
+        // for EWI only because we are not receiving noteOff when slurring
+        currentlyPlayingNotes.clear();
 
+        currentlyPlayingNotes.add(noteNum);
     }
 
-    void noteOff(int noteNum) {
-
+    void noteOff(Integer noteNum) {
+        currentlyPlayingNotes.remove(noteNum);
     }
 
     void update() {
@@ -173,6 +181,20 @@ public class MusicStaffTest extends PAppletBuffered {
             trebleStaff.measureQueue.addMeasure(testSeqTreble.getNextMeasure(timeSig));
             bassStaff.measureQueue.addMeasure(testSeqBass.getNextMeasure(timeSig));
         }
+
+        Set<MusicNote> currentPromptedNotes = mc.getCurrentNotes(trebleStaff.measureQueue.currentMeasure());
+        for (MusicNote note : currentPromptedNotes) {
+            if (currentlyPlayingNotes.contains(note.noteNumber)) {
+                note.wasPlayed = true;
+            }
+        }
+
+//        synchronized (currentlyPlayingNotes) {
+//            for (Integer n : currentlyPlayingNotes) {
+//                print("NNN::: " + n + " ");
+//                println();
+//            }
+//        }
     }
 
     @Override

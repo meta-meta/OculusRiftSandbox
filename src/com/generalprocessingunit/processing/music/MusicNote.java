@@ -1,7 +1,8 @@
 package com.generalprocessingunit.processing.music;
 
 public class MusicNote extends MusicElement {
-    int noteNumber;
+    public Integer noteNumber;
+    public boolean wasPlayed = false;
 
     public MusicNote(int noteNumber, RhythmType rhythm) {
         this.noteNumber = noteNumber;

@@ -2,6 +2,10 @@ package com.generalprocessingunit.processing.music;
 
 import processing.core.PApplet;
 
+import java.util.HashSet;
+import java.util.ListIterator;
+import java.util.Set;
+
 public class MusicConductor {
     PApplet p5;
     int bpm;
@@ -72,6 +76,32 @@ public class MusicConductor {
 
     public int millisForRhythmVal(float rhythmVal) {
         return (int)(millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
+    }
+
+
+    public void markPlayedAndMissedNotes(Measure measure) {
+
+    }
+
+
+    public Set<MusicNote> getCurrentNotes(Measure measure) {
+        Set<MusicNote> notes = new HashSet<>();
+        float rhythmTotal = 0;
+
+        ListIterator<MusicElement> iter = measure.elementSeq.listIterator();
+
+        MusicElement mE = new MusicRest(RhythmType.Whole);
+
+        while( iter.hasNext() && millisForRhythmVal(rhythmTotal) < millisSinceMeasureStart() ) {
+            mE = iter.next();
+            rhythmTotal += mE.rhythm.val;
+        }
+
+        if(mE instanceof MusicNote) {
+            notes.add((MusicNote) mE);
+        }
+
+        return notes;
     }
 
     //TODO: Pause?

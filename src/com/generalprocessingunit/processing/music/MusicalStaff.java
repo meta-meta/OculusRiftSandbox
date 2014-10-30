@@ -127,6 +127,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         } else {
             pG.fill(0);
         }
+
         Measure.drawStaves(pG, measure.numElements());
 
         pG.pushMatrix();
@@ -142,7 +143,14 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
                 if(measure.equals(measureQueue.prevMeasure())) {
                     pG.fill(64, 32, 32);
                 } else if(measure.equals(measureQueue.currentMeasure()) && mc.millisSinceMeasureStart() > mc.millisForRhythmVal(rhythmTotal)) {
-                    pG.fill(0, 0, 96);
+                    pG.fill(96, 0, 0);
+
+                    if(mE instanceof MusicNote) {
+                        MusicNote note = (MusicNote) mE;
+                        if(note.wasPlayed) {
+                            pG.fill(0, 192, 0);
+                        }
+                    }
                 } else {
                     pG.fill(0);
                 }

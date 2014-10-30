@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 public class MusicElementSeq extends ArrayList<MusicElement> {
-    ListIterator<MusicElement> iter;
+    private ListIterator<MusicElement> iter;
     boolean repeat = true;
 
     public Measure getNextMeasure(TimeSignature timeSig) {
