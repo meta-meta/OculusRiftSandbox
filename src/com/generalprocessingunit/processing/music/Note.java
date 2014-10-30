@@ -1,9 +1,9 @@
 package com.generalprocessingunit.processing.music;
 
-public class MusicNote extends MusicElement {
+public class Note extends Element {
     public Integer noteNumber;
 
-    public MusicNote(int noteNumber, RhythmType rhythm) {
+    public Note(int noteNumber, Duration rhythm) {
         this.noteNumber = noteNumber;
         this.rhythm = rhythm;
     }

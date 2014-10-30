@@ -2,8 +2,8 @@ package com.generalprocessingunit.processing.music;
 
 import processing.core.PApplet;
 
-public abstract class MusicElement {
-    RhythmType rhythm;
+public abstract class Element {
+    Duration rhythm;
 
     public float percentagePlayed = 0;
     public float percentagePassed = 0;

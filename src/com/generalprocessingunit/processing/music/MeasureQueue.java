@@ -8,21 +8,21 @@ public class MeasureQueue {
 
     public Measure currentMeasure(){
         if(measures.size() < 2) {
-            return new Measure(new MusicElementSeq());
+            return new Measure(new ElementSequence());
         } else {
             return measures.get(1);
         }
     }
     public Measure prevMeasure(){
         if(measures.size() < 1) {
-            return new Measure(new MusicElementSeq());
+            return new Measure(new ElementSequence());
         } else {
             return measures.get(0);
         }
     }
     public Measure nMeasuresFromCurrent(int n){
         if(measures.size() < 2 + n) {
-            return new Measure(new MusicElementSeq());
+            return new Measure(new ElementSequence());
         } else {
             return measures.get(1 + n);
         }

@@ -2,9 +2,9 @@ package com.generalprocessingunit.processing.music;
 
 public class TimeSignature {
     int beatsPerMeasure;
-    RhythmType getsOneBeat;
+    Duration getsOneBeat;
 
-    public TimeSignature(int beatsPerMeasure, RhythmType getsOneBeat) {
+    public TimeSignature(int beatsPerMeasure, Duration getsOneBeat) {
         this.beatsPerMeasure = beatsPerMeasure;
         this.getsOneBeat = getsOneBeat;
     }
@@ -13,6 +13,6 @@ public class TimeSignature {
         return beatsPerMeasure * getsOneBeat.val;
     }
 
-    public static final TimeSignature FourFour = new TimeSignature(4, RhythmType.Quarter);
-    public static final TimeSignature ThreeFour = new TimeSignature(3, RhythmType.Quarter);
+    public static final TimeSignature FourFour = new TimeSignature(4, Duration.Quarter);
+    public static final TimeSignature ThreeFour = new TimeSignature(3, Duration.Quarter);
 }

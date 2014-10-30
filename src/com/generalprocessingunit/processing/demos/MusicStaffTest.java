@@ -17,124 +17,124 @@ import java.util.Set;
 public class MusicStaffTest extends PAppletBuffered {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{/*"--full-screen",*//* "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
+        PApplet.main(new String[]{"--full-screen", "--display=1", MusicStaffTest.class.getCanonicalName()});
     }
 
     Key key = MusicalLibrary.KeyOfC();
     TimeSignature timeSig = TimeSignature.FourFour;
-    MusicConductor mc = new MusicConductor(this, 120, RhythmType.ThirtySecond, timeSig);
+    Conductor mc = new Conductor(this, 120, Duration.ThirtySecond, timeSig);
     int size = 50;
 
     Set<Integer> currentlyPlayingNotes = Collections.synchronizedSet(new HashSet<Integer>());
 
-    MusicalStaff trebleStaff = new MusicalStaff(this, size, Clef.Treble, key, mc);
-    MusicalStaff bassStaff = new MusicalStaff(this, size, Clef.Bass, key, mc);
+    Staff trebleStaff = new Staff(this, size, Clef.Treble, key, mc);
+    Staff bassStaff = new Staff(this, size, Clef.Bass, key, mc);
 
 
-    static MusicElementSeq testSeqTreble = new MusicElementSeq();
-    static MusicElementSeq testSeqBass = new MusicElementSeq();
+    static ElementSequence testSeqTreble = new ElementSequence();
+    static ElementSequence testSeqBass = new ElementSequence();
     static {
 
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Whole));
-        testSeqTreble.add(new MusicRest(RhythmType.Whole));
+        testSeqTreble.add(new Note(60, Duration.Whole));
+        testSeqTreble.add(new Rest(Duration.Whole));
 
-        testSeqTreble.add(new MusicNote(62, RhythmType.Half));
-        testSeqTreble.add(new MusicRest(RhythmType.Half));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Half));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Half));
+        testSeqTreble.add(new Note(62, Duration.Half));
+        testSeqTreble.add(new Rest(Duration.Half));
+        testSeqTreble.add(new Note(67, Duration.Half));
+        testSeqTreble.add(new Note(69, Duration.Half));
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Quarter));
-        testSeqTreble.add(new MusicRest(RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Quarter));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Quarter));
+        testSeqTreble.add(new Note(60, Duration.Quarter));
+        testSeqTreble.add(new Note(62, Duration.Quarter));
+        testSeqTreble.add(new Note(64, Duration.Quarter));
+        testSeqTreble.add(new Rest(Duration.Quarter));
+        testSeqTreble.add(new Note(67, Duration.Quarter));
+        testSeqTreble.add(new Note(69, Duration.Quarter));
+        testSeqTreble.add(new Note(71, Duration.Quarter));
+        testSeqTreble.add(new Note(72, Duration.Quarter));
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Eighth));
-        testSeqTreble.add(new MusicRest(RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Eighth));
+        testSeqTreble.add(new Note(60, Duration.Eighth));
+        testSeqTreble.add(new Note(62, Duration.Eighth));
+        testSeqTreble.add(new Note(64, Duration.Eighth));
+        testSeqTreble.add(new Rest(Duration.Eighth));
+        testSeqTreble.add(new Note(67, Duration.Eighth));
+        testSeqTreble.add(new Note(69, Duration.Eighth));
+        testSeqTreble.add(new Note(71, Duration.Eighth));
+        testSeqTreble.add(new Note(72, Duration.Eighth));
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Eighth));
-        testSeqTreble.add(new MusicRest(RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Eighth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Eighth));
+        testSeqTreble.add(new Note(60, Duration.Eighth));
+        testSeqTreble.add(new Note(62, Duration.Eighth));
+        testSeqTreble.add(new Note(64, Duration.Eighth));
+        testSeqTreble.add(new Rest(Duration.Eighth));
+        testSeqTreble.add(new Note(67, Duration.Eighth));
+        testSeqTreble.add(new Note(69, Duration.Eighth));
+        testSeqTreble.add(new Note(71, Duration.Eighth));
+        testSeqTreble.add(new Note(72, Duration.Eighth));
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicRest(RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(60, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicRest(RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
+        testSeqTreble.add(new Note(60, Duration.Sixteenth));
+        testSeqTreble.add(new Note(62, Duration.Sixteenth));
+        testSeqTreble.add(new Note(64, Duration.Sixteenth));
+        testSeqTreble.add(new Rest(Duration.Sixteenth));
+        testSeqTreble.add(new Note(67, Duration.Sixteenth));
+        testSeqTreble.add(new Note(69, Duration.Sixteenth));
+        testSeqTreble.add(new Note(71, Duration.Sixteenth));
+        testSeqTreble.add(new Note(72, Duration.Sixteenth));
+        testSeqTreble.add(new Note(60, Duration.Sixteenth));
+        testSeqTreble.add(new Note(62, Duration.Sixteenth));
+        testSeqTreble.add(new Note(64, Duration.Sixteenth));
+        testSeqTreble.add(new Rest(Duration.Sixteenth));
+        testSeqTreble.add(new Note(67, Duration.Sixteenth));
+        testSeqTreble.add(new Note(69, Duration.Sixteenth));
+        testSeqTreble.add(new Note(71, Duration.Sixteenth));
+        testSeqTreble.add(new Note(72, Duration.Sixteenth));
 
-        testSeqTreble.add(new MusicNote(60, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicRest(RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(60, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(62, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(64, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicRest(RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(67, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(69, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(71, RhythmType.Sixteenth));
-        testSeqTreble.add(new MusicNote(72, RhythmType.Sixteenth));
+        testSeqTreble.add(new Note(60, Duration.Sixteenth));
+        testSeqTreble.add(new Note(62, Duration.Sixteenth));
+        testSeqTreble.add(new Note(64, Duration.Sixteenth));
+        testSeqTreble.add(new Rest(Duration.Sixteenth));
+        testSeqTreble.add(new Note(67, Duration.Sixteenth));
+        testSeqTreble.add(new Note(69, Duration.Sixteenth));
+        testSeqTreble.add(new Note(71, Duration.Sixteenth));
+        testSeqTreble.add(new Note(72, Duration.Sixteenth));
+        testSeqTreble.add(new Note(60, Duration.Sixteenth));
+        testSeqTreble.add(new Note(62, Duration.Sixteenth));
+        testSeqTreble.add(new Note(64, Duration.Sixteenth));
+        testSeqTreble.add(new Rest(Duration.Sixteenth));
+        testSeqTreble.add(new Note(67, Duration.Sixteenth));
+        testSeqTreble.add(new Note(69, Duration.Sixteenth));
+        testSeqTreble.add(new Note(71, Duration.Sixteenth));
+        testSeqTreble.add(new Note(72, Duration.Sixteenth));
 
 
         // TODO: might be a good idea to clone a blank sequence from an existing
         for (int i = 0; i < 2; i++) {
-            testSeqBass.add(new MusicElementBlank(RhythmType.Whole));
+            testSeqBass.add(new ElementBlank(Duration.Whole));
         }
         for (int i = 0; i < 4; i++) {
-            testSeqBass.add(new MusicElementBlank(RhythmType.Half));
+            testSeqBass.add(new ElementBlank(Duration.Half));
         }
         for (int i = 0; i < 8; i++) {
-            testSeqBass.add(new MusicElementBlank(RhythmType.Quarter));
+            testSeqBass.add(new ElementBlank(Duration.Quarter));
         }
         for (int i = 0; i < 16; i++) {
-            testSeqBass.add(new MusicElementBlank(RhythmType.Eighth));
+            testSeqBass.add(new ElementBlank(Duration.Eighth));
         }
         for (int i = 0; i < 32; i++) {
-            testSeqBass.add(new MusicElementBlank(RhythmType.Sixteenth));
+            testSeqBass.add(new ElementBlank(Duration.Sixteenth));
         }
 
     }
 
     @Override
     public void setup() {
-        size(1800, 900, OPENGL);
-//        size(displayWidth, displayHeight, OPENGL);
+//        size(1800, 900, OPENGL);
+        size(displayWidth, displayHeight, OPENGL);
         super.setup();
 
         // add at least one blank measure for padding
         for (int i = 0; i < 2; i++) {
-            trebleStaff.measureQueue.addMeasure(new Measure(new MusicElementSeq()));
-            bassStaff.measureQueue.addMeasure(new Measure(new MusicElementSeq()));
+            trebleStaff.measureQueue.addMeasure(new Measure(new ElementSequence()));
+            bassStaff.measureQueue.addMeasure(new Measure(new ElementSequence()));
         }
 
         for (int i = 0; i < 15; i++) {

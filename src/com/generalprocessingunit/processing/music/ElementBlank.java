@@ -1,12 +1,12 @@
 package com.generalprocessingunit.processing.music;
 
-public class MusicElementBlank extends MusicElement {
+public class ElementBlank extends Element {
     @Override
     public String getGlyph() {
         return null;
     }
 
-    public MusicElementBlank(RhythmType rhythm) {
+    public ElementBlank(Duration rhythm) {
         this.rhythm = rhythm;
     }
 }

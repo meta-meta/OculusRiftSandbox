@@ -5,18 +5,18 @@ import processing.core.PApplet;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MusicConductor {
+public class Conductor {
     PApplet p5;
     int bpm;
-    RhythmType resolution;
+    Duration resolution;
     TimeSignature timeSignature;
 
     private int millisAtMeasureStart;
     private boolean running = false;
 
-    private Set<MusicElementTime> musicElementTimes;
+    private Set<ElementTiming> elementTimings;
 
-    public MusicConductor(PApplet p5, int bpm, RhythmType resolution, TimeSignature timeSignature) {
+    public Conductor(PApplet p5, int bpm, Duration resolution, TimeSignature timeSignature) {
         this.p5 = p5;
         this.bpm = bpm;
         this.resolution = resolution;
@@ -24,7 +24,7 @@ public class MusicConductor {
     }
 
     public void start() {
-        if(!running){
+        if (!running) {
             startNewMeasure();
             running = true;
         }
@@ -34,8 +34,8 @@ public class MusicConductor {
         return ticksForRhythmType(timeSignature.getsOneBeat) * bpm;
     }
 
-    private int ticksForRhythmType(RhythmType rhythm) {
-        return (int)(rhythm.val / resolution.val);
+    private int ticksForRhythmType(Duration rhythm) {
+        return (int) (rhythm.val / resolution.val);
     }
 
     private int millisPerTick() {
@@ -51,7 +51,7 @@ public class MusicConductor {
     }
 
     public boolean isTimeForNextMeasure() {
-        if(millisSinceMeasureStart() > millisPerMeasure()) {
+        if (millisSinceMeasureStart() > millisPerMeasure()) {
             startNewMeasure();
             return true;
         } else {
@@ -68,42 +68,43 @@ public class MusicConductor {
     }
 
     public float measureProgress() {
-        return millisSinceMeasureStart() / (float)millisPerMeasure();
+        return millisSinceMeasureStart() / (float) millisPerMeasure();
     }
 
     private void startNewMeasure() {
         millisAtMeasureStart = p5.millis();
-        musicElementTimes = null;
+        elementTimings = null;
     }
 
-    public int millisForRhythmType(RhythmType rhythm) {
+    public int millisForRhythmType(Duration rhythm) {
         return millisForRhythmVal(rhythm.val);
     }
 
     public int millisForRhythmVal(float rhythmVal) {
-        return (int)(millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
+        return (int) (millisPerBeat() * (rhythmVal / timeSignature.getsOneBeat.val));
     }
 
     int prevTick = 0;
+
     public void markPlayedAndMissedNotes(Measure measure, Set<Integer> currentlyPlayingNotes) {
-        refreshNoteTimes(measure);
+        refreshElementTimings(measure);
 
         int currentTick = getCurrentTick();
 
-        for(MusicElementTime musicElementTime : musicElementTimes) {
-            if(musicElementTime.isPlaying(currentTick)) {
-                MusicElement mE = musicElementTime.mE;
+        for (ElementTiming elementTiming : elementTimings) {
+            if (elementTiming.isPlaying(currentTick)) {
+                Element mE = elementTiming.e;
 
                 mE.wasPassed = true;
-                mE.percentagePassed = (float)(currentTick - musicElementTime.startTick) / ticksForRhythmType(mE.rhythm);
+                mE.percentagePassed = (float) (currentTick - elementTiming.startTick) / ticksForRhythmType(mE.rhythm);
 
-                if(musicElementTime.mE instanceof MusicNote) {
-                    if(currentlyPlayingNotes.contains(((MusicNote)mE).noteNumber) && currentTick != prevTick) {
-                        musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
+                if (elementTiming.e instanceof Note) {
+                    if (currentlyPlayingNotes.contains(((Note) mE).noteNumber) && currentTick != prevTick) {
+                        elementTiming.e.incrementPercentagePlayed(1f / ticksForRhythmType(mE.rhythm));
                     }
                 } else {
-                    if(currentlyPlayingNotes.isEmpty() && currentTick != prevTick) {
-                        musicElementTime.mE.incrementPercentagePlayed( 1f / ticksForRhythmType(mE.rhythm) );
+                    if (currentlyPlayingNotes.isEmpty() && currentTick != prevTick) {
+                        elementTiming.e.incrementPercentagePlayed(1f / ticksForRhythmType(mE.rhythm));
                     }
                 }
             }
@@ -112,18 +113,18 @@ public class MusicConductor {
         prevTick = currentTick;
     }
 
-    private void refreshNoteTimes(Measure measure) {
-        if(null != musicElementTimes) return;
+    private void refreshElementTimings(Measure measure) {
+        if (null != elementTimings) return;
 
-        musicElementTimes = new HashSet<>();
+        elementTimings = new HashSet<>();
 
         int ticksTotal = 0;
 
-        for(MusicElement mE : measure.elementSeq) {
+        for (Element mE : measure.seq) {
             // don't show what we played last time around
             mE.reset();
 
-            musicElementTimes.add(new MusicElementTime(
+            elementTimings.add(new ElementTiming(
                     ticksTotal,
                     ticksTotal + ticksForRhythmType(mE.rhythm),
                     mE
@@ -133,15 +134,15 @@ public class MusicConductor {
         }
     }
 
-    class MusicElementTime {
+    class ElementTiming {
         int startTick;
         int endTick;
-        MusicElement mE;
+        Element e;
 
-        MusicElementTime(int startTick, int endTick, MusicElement mE) {
+        ElementTiming(int startTick, int endTick, Element e) {
             this.startTick = startTick;
             this.endTick = endTick;
-            this.mE = mE;
+            this.e = e;
         }
 
         boolean isPlaying(int currentTick) {

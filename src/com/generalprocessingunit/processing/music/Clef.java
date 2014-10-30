@@ -4,7 +4,6 @@ import com.generalprocessingunit.music.Accidental;
 import com.generalprocessingunit.music.Key;
 import com.generalprocessingunit.music.NoteLetter;
 import com.generalprocessingunit.music.NoteName;
-import com.generalprocessingunit.processing.demos.MusicalFontConstants;
 import com.google.common.base.Objects;
 import processing.core.PGraphics;
 import scala.Enumeration;
@@ -91,13 +90,13 @@ public enum Clef implements MusicalFontConstants {
                 }
 
                 pG.translate(0, -staveHeight * staffPos);
-                pG.text(MusicalStaff.accidentalToGlyph(noteName), 0, 0);
+                pG.text(Staff.accidentalToGlyph(noteName), 0, 0);
             }
             pG.popMatrix();
         }
     }
 
-    int getStaffPosition(Key keySig, MusicNote note) {
+    int getStaffPosition(Key keySig, Note note) {
         NoteName noteName = keySig.getNoteName(note.noteNumber);
         return getStaffPosition(noteName);
     }

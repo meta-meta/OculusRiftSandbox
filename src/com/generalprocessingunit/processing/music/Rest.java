@@ -1,7 +1,7 @@
 package com.generalprocessingunit.processing.music;
 
-public class MusicRest extends MusicElement {
-    public MusicRest(RhythmType rhythm) {
+public class Rest extends Element {
+    public Rest(Duration rhythm) {
         this.rhythm = rhythm;
     }
 

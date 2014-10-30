@@ -1,8 +1,6 @@
 package com.generalprocessingunit.processing.music;
 
-import com.generalprocessingunit.processing.demos.MusicalFontConstants;
-
-public enum RhythmType implements MusicalFontConstants {
+public enum Duration implements MusicalFontConstants {
     Whole          (1, NOTE_WHOLE, NOTE_WHOLE, REST_WHOLE),
     Half           (.5f, NOTE_HALF_UP, NOTE_HALF_UP, REST_HALF),
     Quarter        (.25f, NOTE_QUARTER_UP, NOTE_QUARTER_DN, REST_QUARTER),
@@ -15,7 +13,7 @@ public enum RhythmType implements MusicalFontConstants {
     String restGlyph;
     float val;
 
-    RhythmType(float val, String upGlyph, String dnGlyph, String restGlyph) {
+    Duration(float val, String upGlyph, String dnGlyph, String restGlyph) {
         this.upGlyph = upGlyph;
         this.dnGlyph = dnGlyph;
         this.restGlyph = restGlyph;

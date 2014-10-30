@@ -1,4 +1,4 @@
-package com.generalprocessingunit.processing.demos;
+package com.generalprocessingunit.processing.music;
 
 public interface MusicalFontConstants {
     public final static String G_CLEF = "\uE050";

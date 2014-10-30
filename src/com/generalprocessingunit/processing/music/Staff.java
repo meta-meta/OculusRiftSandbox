@@ -4,18 +4,17 @@ import com.generalprocessingunit.music.Accidental;
 import com.generalprocessingunit.music.Key;
 import com.generalprocessingunit.music.NoteName;
 import com.generalprocessingunit.processing.ProcessingDelegateComponent;
-import com.generalprocessingunit.processing.demos.MusicalFontConstants;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 
 
-public class MusicalStaff extends ProcessingDelegateComponent implements MusicalFontConstants, PConstants {
+public class Staff extends ProcessingDelegateComponent implements MusicalFontConstants, PConstants {
     private int size;
     private static PFont bravura;
     private Clef clef;
-    private MusicConductor mc;
+    private Conductor mc;
 
     private Key keySig;
     private float staveHeight;
@@ -24,10 +23,10 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     public MeasureQueue measureQueue = new MeasureQueue();
 
-    public MusicalStaff(PApplet p5, int size, Clef clef, Key keySig, MusicConductor mc) {
+    public Staff(PApplet p5, int size, Clef clef, Key keySig, Conductor mc) {
         super(p5);
 
-        if(null == bravura) {
+        if (null == bravura) {
             bravura = p5.createFont("Bravura.otf", 100, true, charset);
         }
 
@@ -66,18 +65,18 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
 
             // prev measure
-            Measure pm = measureQueue.prevMeasure();
-            drawMeasure(pG, pm);
-            pG.translate(getMeasureWidth(pm), 0);
+            Measure prevMeasure = measureQueue.prevMeasure();
+            drawMeasure(pG, prevMeasure);
+            pG.translate(getMeasureWidth(prevMeasure), 0);
 
             // experimental metronome
             drawMetronome(pG);
 
             // current and later measures
             for (int i = 0; i < 15; i++) {
-                Measure m = measureQueue.nMeasuresFromCurrent(i);
-                drawMeasure(pG, m);
-                pG.translate(getMeasureWidth(m), 0);
+                Measure measure = measureQueue.nMeasuresFromCurrent(i);
+                drawMeasure(pG, measure);
+                pG.translate(getMeasureWidth(measure), 0);
             }
         }
         pG.popMatrix();
@@ -99,7 +98,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
     }
 
     float getMeasureWidth(Measure m) {
-        return glyphWidth * ((m.numElements() + 1) * 2 + 1);
+        return glyphWidth * m.getNumGridPositions();
     }
 
     private void drawClef(PGraphics pG) {
@@ -122,38 +121,38 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     private void drawMeasure(PGraphics pG, Measure measure) {
 
-        if(measure.equals(measureQueue.prevMeasure())) {
+        if (measure.equals(measureQueue.prevMeasure())) {
             pG.fill(64);
         } else {
             pG.fill(0);
         }
 
-        Measure.drawStaves(pG, measure.numElements());
+        measure.drawStaves(pG);
 
         pG.pushMatrix();
         {
-            for(MusicElement mE : measure.elementSeq) {
+            for (Element e : measure.seq) {
                 pG.translate(gridWidth, 0);
 
-                if(!mE.wasPassed) {
+                if (!e.wasPassed) {
                     pG.fill(0);
                 } else {
                     pG.colorMode(HSB);
-                    pG.fill(96 * mE.percentagePlayed, 255 * mE.percentagePassed, 255 * mE.percentagePassed);
+                    pG.fill(96 * e.percentagePlayed, 255 * e.percentagePassed, 255 * e.percentagePassed);
                     pG.colorMode(RGB);
                 }
 
-                if(mE instanceof MusicNote) {
-                    drawNote((MusicNote)mE, pG);
-                } else if(mE instanceof MusicRest) {
-                    drawRest((MusicRest) mE, pG);
+                if (e instanceof Note) {
+                    drawNote((Note) e, pG);
+                } else if (e instanceof Rest) {
+                    drawRest((Rest) e, pG);
                 }
             }
         }
         pG.popMatrix();
     }
 
-    void drawNote(MusicNote note, PGraphics pG) {
+    void drawNote(Note note, PGraphics pG) {
         pG.pushMatrix();
         {
             drawLedgerLines(note, pG);
@@ -162,12 +161,12 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
             // TODO: if accidental appears on this staff position earlier in the measure, mark a note in key with natural symbol
             NoteName noteName = keySig.getNoteName(note.noteNumber);
-            if(!keySig.isNoteInKey(note.noteNumber)) {
+            if (!keySig.isNoteInKey(note.noteNumber)) {
                 String accidental = accidentalToGlyph(noteName);
 
                 pG.pushMatrix();
                 {
-                    pG.translate( -glyphWidth / 2f, 0);
+                    pG.translate(-glyphWidth / 2f, 0);
                     pG.text(accidental, 0, 0);
                 }
                 pG.popMatrix();
@@ -178,7 +177,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         pG.popMatrix();
     }
 
-    void drawRest(MusicRest rest, PGraphics pG) {
+    void drawRest(Rest rest, PGraphics pG) {
         pG.pushMatrix();
         {
             pG.translate(0, -4 * staveHeight);
@@ -196,7 +195,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
         pG.translate(0, -staffPosition * staveHeight);
     }
 
-    private void drawLedgerLines(MusicNote note, PGraphics pG) {
+    private void drawLedgerLines(Note note, PGraphics pG) {
         for (int i = clef.getStaffPosition(keySig, note); i < 0; i++) {
             drawLedgerLine(i, pG);
         }
@@ -208,7 +207,7 @@ public class MusicalStaff extends ProcessingDelegateComponent implements Musical
 
     private void drawLedgerLine(int staffPos, PGraphics pG) {
         // don't draw in between staves
-        if(staffPos % 2 != 0) {
+        if (staffPos % 2 != 0) {
             return;
         }
 

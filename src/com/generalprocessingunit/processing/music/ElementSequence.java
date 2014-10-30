@@ -3,8 +3,8 @@ package com.generalprocessingunit.processing.music;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-public class MusicElementSeq extends ArrayList<MusicElement> {
-    private ListIterator<MusicElement> iter;
+public class ElementSequence extends ArrayList<Element> {
+    private ListIterator<Element> iter;
     boolean repeat = true;
 
     public Measure getNextMeasure(TimeSignature timeSig) {
@@ -12,12 +12,12 @@ public class MusicElementSeq extends ArrayList<MusicElement> {
             iter = listIterator();
         }
 
-        MusicElementSeq seq = new MusicElementSeq();
+        ElementSequence seq = new ElementSequence();
         float totalRhythm = 0;
         while(iter.hasNext() && totalRhythm < timeSig.totalValOfMeasure()) {
-            MusicElement mE = iter.next();
-            totalRhythm += mE.rhythm.val;
-            seq.add(mE);
+            Element e = iter.next();
+            totalRhythm += e.rhythm.val;
+            seq.add(e);
         }
 
         if(!iter.hasNext() && repeat) {

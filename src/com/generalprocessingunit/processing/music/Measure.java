@@ -1,15 +1,14 @@
 package com.generalprocessingunit.processing.music;
 
-import com.generalprocessingunit.processing.demos.MusicalFontConstants;
 import com.google.common.base.Objects;
 import processing.core.PGraphics;
 
 public class Measure implements MusicalFontConstants {
-    public MusicElementSeq elementSeq;
+    public ElementSequence seq;
     private final int hash;
 
-    public Measure(MusicElementSeq elementSeq) {
-        this.elementSeq = elementSeq;
+    public Measure(ElementSequence seq) {
+        this.seq = seq;
         hash = Objects.hashCode(System.nanoTime());
     }
 
@@ -17,8 +16,8 @@ public class Measure implements MusicalFontConstants {
 
     }
 
-    static void drawStaves(PGraphics pG, int numElements) {
-        drawStaves((numElements + 1) * 2 + 1, pG);
+    void drawStaves(PGraphics pG) {
+        drawStaves(getNumGridPositions(), pG);
     }
 
     static void drawStaves(int numGridPositions, PGraphics pG) {
@@ -29,8 +28,8 @@ public class Measure implements MusicalFontConstants {
         pG.text(sb.toString() + BARLINE_SINGLE, 0, 0);
     }
 
-    public int numElements() {
-        return elementSeq.size();
+    int getNumGridPositions() {
+        return (seq.size() + 1) * 2 + 1;
     }
 
     @Override
