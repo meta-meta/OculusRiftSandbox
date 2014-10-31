@@ -10,7 +10,5 @@ public abstract class ProcessingDelegateComponent {
         this.p5 = p5;
     }
 
-    public abstract void update();
-
     public abstract void draw(PGraphics pG);
 }
