@@ -1,5 +1,8 @@
 package com.generalprocessingunit.processing.music;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum Duration implements MusicalFontConstants {
     Whole          (1, NOTE_WHOLE, NOTE_WHOLE, REST_WHOLE),
     Half           (.5f, NOTE_HALF_UP, NOTE_HALF_UP, REST_HALF),
@@ -18,5 +21,26 @@ public enum Duration implements MusicalFontConstants {
         this.dnGlyph = dnGlyph;
         this.restGlyph = restGlyph;
         this.val = val;
+    }
+
+    /**
+     * Returns a list of the least number of rests to fill the given duration
+     * @param val
+     * @return
+     */
+    static List<Rest> restsForVal(float val) {
+        List<Rest> rests = new ArrayList<>();
+
+        while(val > 0) {
+            for(Duration d :  Duration.values()) {
+                if(val - d.val >= 0) {
+                    rests.add(new Rest(d));
+                    val -= d.val;
+                    break;
+                }
+            }
+        }
+
+        return rests;
     }
 }

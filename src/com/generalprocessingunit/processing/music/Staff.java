@@ -14,7 +14,7 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
     private int size;
     private static PFont bravura;
     private Clef clef;
-    private Conductor mc;
+    private Conductor conductor;
 
     private Key keySig;
     private float staveHeight;
@@ -23,7 +23,7 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
 
     public MeasureQueue measureQueue = new MeasureQueue();
 
-    public Staff(PApplet p5, int size, Clef clef, Key keySig, Conductor mc) {
+    public Staff(PApplet p5, int size, Clef clef, Key keySig, Conductor conductor) {
         super(p5);
 
         if (null == bravura) {
@@ -32,16 +32,14 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
 
         this.size = size;
         this.clef = clef;
-        this.mc = mc;
+        this.conductor = conductor;
         this.keySig = keySig;
 
         staveHeight = size / 8f;
     }
 
-
-    @Override
-    public void update() {
-
+    public void setKeySig(Key keySig) {
+        this.keySig = keySig;
     }
 
     @Override
@@ -58,10 +56,10 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
 
             // scroll
             float prevMeasureWidth = getMeasureWidth(measureQueue.prevMeasure());
-            float trans = prevMeasureWidth * mc.measureProgress();
+            float trans = prevMeasureWidth * conductor.measureProgress();
             pG.translate(-trans, 0);
 //            trans /= 2; // alternate scrolling - kind of disorienting
-//            pG.translate(-trans - trans * PApplet.sq(mc.measureProgress()), 0);
+//            pG.translate(-trans - trans * PApplet.sq(conductor.measureProgress()), 0);
 
 
             // prev measure
@@ -69,8 +67,8 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
             drawMeasure(pG, prevMeasure);
             pG.translate(getMeasureWidth(prevMeasure), 0);
 
-            // experimental metronome
-            drawMetronome(pG);
+//            // experimental metronome
+//            drawMetronome(pG);
 
             // current and later measures
             for (int i = 0; i < 15; i++) {
@@ -80,14 +78,12 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
             }
         }
         pG.popMatrix();
-
-        drawClef(pG);
     }
 
     private void drawMetronome(PGraphics pG) {
         pG.fill(64, 0, 64);
         float measureWidth = getMeasureWidth(measureQueue.currentMeasure());
-        for (int i = 0; i < 8 * mc.measureProgress(); i++) {
+        for (int i = 0; i < 8 * conductor.measureProgress(); i++) {
             pG.pushMatrix();
             {
                 pG.translate(i * measureWidth / 8f, size / 2f + (i % 2 == 0 ? size / 4f : size / 8f));
@@ -101,12 +97,7 @@ public class Staff extends ProcessingDelegateComponent implements MusicalFontCon
         return glyphWidth * m.getNumGridPositions();
     }
 
-    private void drawClef(PGraphics pG) {
-        pG.fill(64);
-        pG.noStroke();
-
-        pG.rect(0, -size * 2.5f, glyphWidth * 8 + pG.textWidth(BARLINE_SINGLE), size * 4);
-
+    public void drawClef(PGraphics pG) {
         pG.fill(0);
 
         pG.pushMatrix();

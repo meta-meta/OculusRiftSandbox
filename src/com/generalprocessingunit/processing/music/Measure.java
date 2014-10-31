@@ -3,6 +3,7 @@ package com.generalprocessingunit.processing.music;
 import com.google.common.base.Objects;
 import processing.core.PGraphics;
 
+// TODO: maybe associate key signature and time signature with measure
 public class Measure implements MusicalFontConstants {
     public ElementSequence seq;
     private final int hash;

@@ -7,6 +7,10 @@ public class ElementSequence extends ArrayList<Element> {
     private ListIterator<Element> iter;
     boolean repeat = true;
 
+    public boolean hasNextMeasure() {
+        return iter.hasNext();
+    }
+
     public Measure getNextMeasure(TimeSignature timeSig) {
         if(null == iter) {
             iter = listIterator();
