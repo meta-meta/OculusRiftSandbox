@@ -1,8 +1,8 @@
 package com.generalprocessingunit.processing.demos;
 
-import com.generalprocessingunit.processing.Camera;
 import com.generalprocessingunit.processing.PAppletBuffered;
 import com.generalprocessingunit.processing.geometry.Icosahedron;
+import com.generalprocessingunit.processing.space.Camera;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
