@@ -48,11 +48,11 @@ public class HandSpatialized {
     VibratorShell ringTip = new VibratorShell(leftHand.fingertips.get(3));
     VibratorShell pinkyTip = new VibratorShell(leftHand.fingertips.get(4));
 
-    VibratorShell palmPointerMid = new VibratorShell(leftHand.palm.get(0));
-    VibratorShell palmRingPinky = new VibratorShell(leftHand.palm.get(1));
-    VibratorShell palmThumbMeat = new VibratorShell(leftHand.palm.get(2));
-    VibratorShell palmPinkyMeat = new VibratorShell(leftHand.palm.get(3));
-    
+    VibratorShell palmRingPinky = new VibratorShell(leftHand.palm.get(0));
+    VibratorShell palmPointerMid = new VibratorShell(leftHand.palm.get(1));
+    VibratorShell palmPinkyMeat = new VibratorShell(leftHand.palm.get(2));
+    VibratorShell palmThumbMeat = new VibratorShell(leftHand.palm.get(3));
+
     public List<VibratorShell> vibratorShells = Arrays.asList(
             thumbTip, pointerTip, middleTip, ringTip, pinkyTip,
             thumbBase, pointerBase, middleBase, ringBase, pinkyBase,
