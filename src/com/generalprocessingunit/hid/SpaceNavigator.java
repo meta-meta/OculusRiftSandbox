@@ -53,7 +53,7 @@ public class SpaceNavigator {
 
     public void poll() {
         if(!spaceNavigatorPresent) {
-            PApplet.println("No SpaceNavigator Found");
+//            PApplet.println("No SpaceNavigator Found");
             return;
         }
 
