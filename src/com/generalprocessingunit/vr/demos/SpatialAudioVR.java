@@ -19,7 +19,7 @@ public class SpatialAudioVR extends PAppletVR {
     Hand leftHand = handSpatialized.leftHand;
 
 
-    static final float roomSize = 25;
+    static final float roomSize = 20;
 
 
     public static void main(String[] args){
@@ -123,9 +123,11 @@ public class SpatialAudioVR extends PAppletVR {
                     }
                 } else if(leftHand.isGrabbing()) { // ball in hand, still grabbing
 
+                    leftHand.fingers.vibrate(vibe);
                     leftHand.palm.vibrate(vibe);
                     grabbedBall.setLocation(leftHand.getLocation());
-                    grabbedBall.momentum.set(PVector.mult(PVector.sub(grabbedBall.getLocation(), grabbedBall.prevLocation), 4));
+                    grabbedBall.momentum.set(PVector.mult(PVector.sub(grabbedBall.getLocation(), grabbedBall.prevLocation),(millis() - millisPrev) * .4f));
+
                 } else { // let go
                     grabbedBall = null;
                 }
@@ -140,10 +142,14 @@ public class SpatialAudioVR extends PAppletVR {
             if(null == grabbedBall) {
                 tryMoveBall(ball);
             }
+
+            millisPrev = millis();
         }
 
         sineBalls.updateMaxPatch();
     }
+
+    int millisPrev = 0;
 
     boolean wasGrabbing = false;
     SineBalls.SineBall grabbedBall = null;
