@@ -32,13 +32,16 @@ public class SpaceNavigatorDemo extends PApplet {
     EuclideanSpaceObject shipChildChild = new EuclideanSpaceObject();
 
     EuclideanSpaceObject hydraChild = new EuclideanSpaceObject();
+    EuclideanSpaceObject hydraChildChild = new EuclideanSpaceObject();
 
     public void setup() {
         size(1280, 720, P3D);
 
         spaceNavigator = new SpaceNavigator(this);
         razerHydraManager = new RazerHydraManager();
-        razerHydraManager.razerHydras[0].addChild(hydraChild, new YawPitchRoll(0, 0, -30), new YawPitchRoll());
+        razerHydraManager.razerHydras[0].addChild(hydraChild, new PVector(0, 0, -30), new YawPitchRoll());
+
+        hydraChild.addChild(hydraChildChild, new PVector(10, 0, 0), new YawPitchRoll());
 
         ship.addChild(shipChild, new YawPitchRoll(10f, 20f, -10f), new YawPitchRoll());
         ship.addChild(shipChild2, new YawPitchRoll(10f, -20f, -10f), new YawPitchRoll());
@@ -156,6 +159,18 @@ public class SpaceNavigatorDemo extends PApplet {
             rotate(aa.w, aa.x, aa.y, aa.z);
             fill(120);
             box(5, 5, 5);
+        }
+        popMatrix();
+
+        pushMatrix(); // hydra child
+        {
+            PVector loc = hydraChildChild.getLocation();
+            translate(loc.x, loc.y, loc.z);
+
+            AxisAngle aa = hydraChildChild.getAxisAngle();
+            rotate(aa.w, aa.x, aa.y, aa.z);
+            fill(120, 0, 255);
+            box(10);
         }
         popMatrix();
 
