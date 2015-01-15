@@ -5,6 +5,7 @@ import com.generalprocessingunit.processing.*;
 import com.generalprocessingunit.processing.geometry.Cube;
 import com.generalprocessingunit.processing.geometry.Dodecahedron;
 import com.generalprocessingunit.processing.geometry.Pentagon;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import processing.core.*;
 
 public class DodecahedronTree extends PAppletBuffered {
