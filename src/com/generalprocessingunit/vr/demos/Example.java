@@ -23,9 +23,9 @@ public class Example extends PAppletVR {
         headContainer.setLocation(0, 2, -1);
 
         cubes = createShape(GROUP);
-        for(int y = 0; y < 10; y+= 10) {
-            for (int x = -20; x < 20; x += 10) {
-                for (int z = -20; z < 20; z += 10) {
+        for(int y = 0; y < 100; y+= 10) {
+            for (int x = -200; x < 200; x += 10) {
+                for (int z = -200; z < 200; z += 10) {
                     PShape cube = Cube.createCube(this, x, y, z, 1f, 1f, 1f, Color.grey(127), null);
                     cubes.addChild(cube);
                 }
