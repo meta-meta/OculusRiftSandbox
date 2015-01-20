@@ -10,7 +10,7 @@ gradle.ext.gitDependencies = [
 	[cloneTo:'../p5-Spatial', uri:'https://github.com/meta-meta/p5-Spatial.git'],
 	[cloneTo:'../p5-VR', uri:'https://github.com/meta-meta/p5-VR.git'],
 	
-	[cloneTo:'../processing', uri:'https://github.com/meta-meta/processing.git', subPath:'/core']
+	[cloneTo:'../processing', uri:'https://github.com/meta-meta/processing.git', subPath:'/core', checkout:'riftIntegration']
 ]
 
 def includes = []
