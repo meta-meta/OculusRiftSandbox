@@ -1,12 +1,4 @@
-import org.gradle.plugins.ide.idea.model.*
 import org.ajoberstar.grgit.*
-
-apply plugin: 'java'
-apply plugin: 'idea'
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.0'
-}
 
 buildscript {
 	repositories {
@@ -14,56 +6,68 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'org.ajoberstar:gradle-git:0.9.0'
+		classpath 'org.ajoberstar:gradle-git:0.12.0'
 	}
 }
 
-//TODO: clone processing in ../_Libraries/processing, 
-// generate an Idea module 
-// import core.iml into project as a module dependency
-
-
-task cloneRepo << {
-	def repoDir = new File('myGitRepo') 
-	if(!repoDir.exists()) {
-		def grgit = Grgit.clone(dir: repoDir, uri: 'https://github.com/meta-meta/AndroidUsbCommunication.git')
-		grgit.checkout(branch: 'cbebf13')
-	} else {
-		println 'already cloned ' + repoDir
-	}
+plugins {
+    id 'java'
+	id 'idea'
+	id 'eclipse'
 }
-
-
 
 repositories {
     mavenCentral()
 }
 
-configurations {
-  provided
-  provided.extendsFrom(compile)
-}
-
 dependencies {
-	// compile is a standard configuration of the java plugin
-    compile group: 'org.saintandreas', name: 'jovr', version: '0.4.1.1'
+    compile project (':../human-interface-devices')
+	compile project (':../OSC')
+    compile project (':../p5-Helpers')
+    compile project (':../p5-Musical')
+    compile project (':../p5-Rift')
+    compile project (':../p5-Spatial')
+    compile project (':../p5-VR')
+    compile project (':../processing/core')
 }
 
-
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+version = '1.0'
 
 idea {
 	project {
-		jdkName = '1.7 x64' // my SDK Name in Idea for jdk1.7.0_67 (x64)
-		languageLevel = '1.7'
+	    languageLevel = '1.7'
 	}
-
 	module {
-		sourceDirs += file('src')
+		name = 'OculusRiftSandbox'
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.2.1'
+}
 
 
-        //excludeDirs += file('gradle') // I think this is there already by default
+def cloneRepo(repo) {
+	def cloneTo = file(repo.cloneTo)
 
-//TODO: this should be COMPILE ??
-        scopes.PROVIDED.plus += [ configurations.provided ]
+	if(!cloneTo.exists()) {
+		logger.quiet 'cloning into ' + cloneTo
+		
+		def grgit = Grgit.clone(dir: cloneTo, uri: repo.uri )
+		
+		if(repo.checkout) {
+			logger.quiet 'checking out ' + repo.checkout
+			grgit.checkout(branch: repo.checkout)
+		}
+	} else {
+		logger.quiet 'already cloned ' + cloneTo
+	}
+}
+
+task setup << {
+	gradle.gitDependencies.each() {
+		cloneRepo it
 	}
 }

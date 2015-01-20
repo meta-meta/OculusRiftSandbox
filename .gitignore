@@ -1,14 +1,15 @@
+.idea
+.gradle
+*.iml
+build
+
 *.class
 out
-
-*.iml
-*.ipr
-*.iws
-
-.gradle
 
 # Package Files #
 *.jar
 *.war
 *.ear
 *.log
+
+!gradle/wrapper/gradle-wrapper.jar

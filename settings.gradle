@@ -1,0 +1,19 @@
+rootProject.name = 'OculusRiftSandbox'
+
+gradle.ext.gitDependencies = [
+	[cloneTo:'../human-interface-devices', uri:'https://github.com/meta-meta/human-interface-devices.git'],
+	[cloneTo:'../MusicalLibrary', uri:'https://github.com/meta-meta/MusicalLibrary.git'], //required by p5-Musical
+	[cloneTo:'../OSC', uri:'https://github.com/meta-meta/OSC.git'],
+	[cloneTo:'../p5-Helpers', uri:'https://github.com/meta-meta/p5-Helpers.git'],
+	[cloneTo:'../p5-Musical', uri:'https://github.com/meta-meta/p5-Musical.git'],
+	[cloneTo:'../p5-Rift', uri:'https://github.com/meta-meta/p5-Rift.git'],
+	[cloneTo:'../p5-Spatial', uri:'https://github.com/meta-meta/p5-Spatial.git'],
+	[cloneTo:'../p5-VR', uri:'https://github.com/meta-meta/p5-VR.git'],
+	
+	[cloneTo:'../processing', uri:'https://github.com/meta-meta/processing.git', subPath:'/core']
+]
+
+def includes = []
+gradle.ext.gitDependencies.each() { includes << it.cloneTo + (it.subPath ? it.subPath : '') }
+
+include (includes as String[]) 
