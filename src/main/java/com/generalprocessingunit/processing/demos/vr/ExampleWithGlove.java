@@ -2,10 +2,10 @@ package com.generalprocessingunit.processing.demos.vr;
 
 import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
-import com.generalprocessingunit.vr.PAppletVR;
-import com.generalprocessingunit.vr.controls.Dial;
-import com.generalprocessingunit.vr.controls.HandSpatialized;
-import com.generalprocessingunit.vr.controls.SpaceNavVR;
+import com.generalprocessingunit.processing.vr.PAppletVR;
+import com.generalprocessingunit.processing.vr.controls.Dial;
+import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
+import com.generalprocessingunit.processing.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
 

@@ -3,9 +3,9 @@ package com.generalprocessingunit.processing.demos.vr;
 import com.generalprocessingunit.audio.SineBalls;
 import com.generalprocessingunit.hid.Hand;
 import com.generalprocessingunit.processing.space.Quaternion;
-import com.generalprocessingunit.vr.PAppletVR;
-import com.generalprocessingunit.vr.controls.HandSpatialized;
-import com.generalprocessingunit.vr.controls.SpaceNavVR;
+import com.generalprocessingunit.processing.vr.PAppletVR;
+import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
+import com.generalprocessingunit.processing.vr.controls.SpaceNavVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
 

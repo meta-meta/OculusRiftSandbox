@@ -2,7 +2,7 @@ package com.generalprocessingunit.processing.demos.vr;
 
 import com.generalprocessingunit.hid.SpaceNavigator;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
-import com.generalprocessingunit.vr.PAppletVR;
+import com.generalprocessingunit.processing.vr.PAppletVR;
 import processing.core.PGraphics;
 import processing.core.PVector;
 

@@ -1,7 +1,7 @@
 package com.generalprocessingunit.processing.demos.vr;
 
-import com.generalprocessingunit.vr.PAppletVR;
-import com.generalprocessingunit.vr.entities.Orbitable;
+import com.generalprocessingunit.processing.vr.PAppletVR;
+import com.generalprocessingunit.processing.vr.entities.Orbitable;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;

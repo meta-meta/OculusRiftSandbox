@@ -19,7 +19,7 @@ import java.util.Set;
 public class MusicStaffTest extends PAppletBuffered {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{"--full-screen", "--display=1", MusicStaffTest.class.getCanonicalName()});
+        PApplet.main(new String[]{/*"--full-screen", "--display=1",*/ MusicStaffTest.class.getCanonicalName()});
     }
 
     Key keySig = MusicalLibrary.KeyOfF();
@@ -48,8 +48,8 @@ public class MusicStaffTest extends PAppletBuffered {
 
     @Override
     public void setup() {
-//        size(1800, 900, OPENGL);
-        size(displayWidth, displayHeight, OPENGL);
+        size(1800, 900, OPENGL);
+//        size(displayWidth, displayHeight, OPENGL);
         super.setup();
 
         // add at least one blank measure for padding
@@ -64,14 +64,14 @@ public class MusicStaffTest extends PAppletBuffered {
         OSC.addListener("/noteOn", new com.illposed.osc.OSCListener() {
             @Override
             public void acceptMessage(Date time, OSCMessage message) {
-                noteOn((int) message.getArguments()[0]);
+                noteOn((int) message.getArguments().get(0));
             }
         });
 
         OSC.addListener("/noteOff", new com.illposed.osc.OSCListener() {
             @Override
             public void acceptMessage(Date time, OSCMessage message) {
-                noteOff((int) message.getArguments()[0]);
+                noteOff((int) message.getArguments().get(0));
             }
         });
 
