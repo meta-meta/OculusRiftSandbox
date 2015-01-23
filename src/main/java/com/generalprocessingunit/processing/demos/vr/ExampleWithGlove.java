@@ -30,7 +30,7 @@ public class ExampleWithGlove extends Example {
         super.setup();
 
         spaceNav = new SpaceNavVR(this, .001f, .2f);
-        glove = new HandSpatialized(this);
+        glove = new HandSpatialized(this, this);
 
         // place these in the head container so that they are immobile but we can fly around
         dial1 = new Dial(this, new PVector(), new YawPitchRoll(), .03f, .02f, 0, 0, 255, new Color(192, 0, 0, 127));

@@ -15,7 +15,7 @@ public class SpatialAudioVR extends PAppletVR {
 
     SineBalls sineBalls;
     SpaceNavVR spaceNav;
-    HandSpatialized handSpatialized = new HandSpatialized(this);
+    HandSpatialized handSpatialized = new HandSpatialized(this, this);
     Hand leftHand = handSpatialized.leftHand;
 
 
