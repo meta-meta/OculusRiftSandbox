@@ -1,6 +1,7 @@
 package com.generalprocessingunit.processing.demos;
 
 import com.generalprocessingunit.processing.SpaceNavCamera;
+import com.generalprocessingunit.processing.demos.jBulletGloveString.BallChain;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.ESOjBullet;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.marionetteRig;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
@@ -10,8 +11,7 @@ import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.awt.event.KeyEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 public class JBulletGloveString extends PAppletBufferedHeadModel {
@@ -30,7 +30,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
     @Override
     public void setup() {
         size(1900, 1000, OPENGL);
-        frame.setLocation(1051 , 10);
+//        frame.setLocation(1051 , 10);
 
         super.setup();
 
@@ -68,7 +68,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         glove.drawView(pG);
 
         if(!rig.esOjBullets.isEmpty()){
-            for(ESOjBullet frst : strings) {
+            for(ESOjBullet frst : chainHeads) {
                 // I think this has to do with the way hand location is set each update.
                 // setLocation SHOULD be getting called
                 frst.setLocation(frst.getLocation());
@@ -78,7 +78,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
     }
 
-    Set<ESOjBullet> strings = new HashSet<>();
+    Set<ESOjBullet> chainHeads = new HashSet<>();
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -87,33 +87,23 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
             println("reset glove");
         }
 
-        PVector[] locs = {new PVector(0, 0, .1f), new PVector(0, 0, -.1f), new PVector(.1f, 0, 0), new PVector(-.1f, 0, 0)};
         if(KeyEvent.VK_S == e.getKeyCode()) {
-            for (int i = 0; i < 4; i++) {
-                ESOjBullet stringHead = rig.spawnString(PVector.mult(glove.razerHydraSensor.getLocation(), .01f), 15);
-                glove.razerHydraSensor.addChild(stringHead, locs[i]);
-                strings.add(stringHead);
+
+            List<PVector> locs = Arrays.asList(new PVector(0, 0, .1f), new PVector(0, 0, -.1f), new PVector(.1f, 0, 0), new PVector(-.1f, 0, 0));
+
+            List<PVector> worldLocs = new ArrayList<>();
+            for(PVector loc: locs) {
+                worldLocs.add(PVector.add(loc, PVector.mult(glove.razerHydraSensor.getLocation(), .01f)));
             }
 
-            {
-                ESOjBullet stringHead = rig.spawnString(PVector.mult(glove.pointerTip.getLocation(), .01f), 5);
-                glove.pointerTip.addChild(stringHead);
-                strings.add(stringHead);
+            List<BallChain> chains = rig.spawnMarionette(worldLocs);
+
+            int i = 0;
+            for(BallChain chain: chains) {
+                chainHeads.add(chain.head);
+                glove.razerHydraSensor.addChild(chain.head, locs.get(i));
+                i++;
             }
-
-            {
-                ESOjBullet stringHead = rig.spawnString(PVector.mult(glove.middleTip.getLocation(), .01f), 5);
-                glove.middleTip.addChild(stringHead);
-                strings.add(stringHead);
-            }
-
-            {
-                ESOjBullet stringHead = rig.spawnString(PVector.mult(glove.ringTip.getLocation(), .01f), 5);
-                glove.ringTip.addChild(stringHead);
-                strings.add(stringHead);
-            }
-
-
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {

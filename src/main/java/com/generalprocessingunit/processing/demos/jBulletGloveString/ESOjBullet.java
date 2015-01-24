@@ -11,13 +11,14 @@ import com.bulletphysics.linearmath.Transform;
 import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.space.Orientation;
 import com.generalprocessingunit.processing.space.Quaternion;
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 
-public class ESOjBullet extends EuclideanSpaceObject {
+public abstract class ESOjBullet extends EuclideanSpaceObject {
     RigidBody body;
 
     public ESOjBullet(DiscreteDynamicsWorld dynamicsWorld, CollisionShape collisionShape, float mass, PVector location, Orientation orientation) {
@@ -82,4 +83,6 @@ public class ESOjBullet extends EuclideanSpaceObject {
 //        body.translate(new Vector3f(.001f, 0, 0));//new Vector3f(v.x - trans.origin.x, v.y - trans.origin.y, v.z - trans.origin.z));
         super.setLocation(v);
     }
+
+    public abstract void draw(PGraphics pG);
 }

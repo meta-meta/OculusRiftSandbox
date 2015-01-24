@@ -14,13 +14,15 @@ import processing.core.PVector;
 
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class marionetteRig {
     DiscreteDynamicsWorld dynamicsWorld;
     static final float gravity = -8f;
 
-    public List<ESOjBullet> esOjBullets = new ArrayList<>();
+    public Set<ESOjBullet> esOjBullets = new HashSet<>();
 
     public marionetteRig() {
 
@@ -50,55 +52,31 @@ public class marionetteRig {
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
         dynamicsWorld.setGravity(new Vector3f(0, gravity, 0));
-
-
-
-
-
     }
 
-    public ESOjBullet spawnString(PVector location, int links) {
-        CollisionShape bead = new SphereShape(2f);
+    List<BallChain> chains = new ArrayList<>();
 
-        ESOjBullet firstLink = null;
-        ESOjBullet prevEso = null;
-        for(int i =0; i < links; ++i) {
-            ESOjBullet currEso = new ESOjBullet(dynamicsWorld, bead, i == 0 ? 0 : 1f - i/50f, PVector.add(location, new PVector(0, -2f * i, 0)), new Orientation());
-            if(i == 0) {
-                firstLink = currEso;
-                currEso.body.setCollisionFlags(currEso.body.getCollisionFlags() | CollisionFlags.KINEMATIC_OBJECT);
-                currEso.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
-            }
-
-            esOjBullets.add(currEso);
-
-            if(i > 0) {
-                //add constraint
-                Point2PointConstraint p2p = new Point2PointConstraint(
-                        prevEso.body, currEso.body, new Vector3f(0, -1f, 0), new Vector3f(0, 1f, 0) );
-//                p2p.setting.impulseClamp = 3f;
-                p2p.setting.damping = .8f;
-
-                dynamicsWorld.addConstraint(p2p, true);
-            }
-
-            prevEso = currEso;
+    public List<BallChain> spawnMarionette(List<PVector> locations) {
+        for(PVector location: locations) {
+            BallChain chain = new BallChain(dynamicsWorld, 10, location);
+            chains.add(chain);
+            esOjBullets.addAll(chain.balls);
         }
 
-        return firstLink;
+
+
+        return chains;
+    }
+
+    void attachModelToChains() {
+
     }
 
     public void draw(PGraphics pG, PApplet p5) {
         dynamicsWorld.stepSimulation(1f / 30, 5);
         for(ESOjBullet eso: esOjBullets) {
             eso.update();
-
-            eso.pushMatrixAndTransform(pG);
-            {
-                pG.sphere(.004f);
-                // draw
-            }
-            pG.popMatrix();
+            eso.draw(pG);
         }
 
     }
