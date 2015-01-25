@@ -22,9 +22,9 @@ public class SpaceNavCamera extends Camera {
     public void update() {
         spaceNavigator.poll();
 
-        float mult = inverseControls ? -.0045f: .0045f;
+        float mult = inverseControls ? -.045f: .045f;
 
-        PVector t = PVector.mult(spaceNavigator.translation, mult);
+        PVector t = PVector.mult(spaceNavigator.translation, mult / 100f);
 
         momentum.add(t);
 
