@@ -1,26 +1,32 @@
-package com.generalprocessingunit.processing.demos;
+package com.generalprocessingunit.processing.demos.vr;
 
 import com.generalprocessingunit.processing.SpaceNavCamera;
+import com.generalprocessingunit.processing.demos.PAppletBufferedHeadModel;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.BallChain;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.ESOjBullet;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.marionetteRig;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
+import com.generalprocessingunit.processing.vr.PAppletVR;
 import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
+import com.generalprocessingunit.processing.vr.controls.SpaceNavVR;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
-public class JBulletGloveString extends PAppletBufferedHeadModel {
+public class JBulletGloveString extends PAppletVR {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{"--full-screen", /*"--display=3",*/ JBulletGloveString.class.getCanonicalName()});
+        PAppletVR.main(JBulletGloveString.class);
     }
 
-    SpaceNavCamera camera;
+    SpaceNavVR spaceNav;
 
     HandSpatialized glove;
 
@@ -39,34 +45,13 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         glove = new HandSpatialized(this, this);
         glove.drawArm = false;
 
-        camera = new SpaceNavCamera(this);
-        camera.setLocation(0, 0, 1);
-        camera.rotate(new YawPitchRoll(PI, 0, 0));
-        frameRate(60);
-
-
+        spaceNav = new SpaceNavVR(this, .0007f, .03f);
     }
 
-
     @Override
-    public final void draw(PGraphics pG) {
-        camera.update();
-        head.setLocation(camera.getLocation());
-        head.setOrientation(camera.getOrientation());
-        headContainer.setLocation(camera.getLocation());
-        headContainer.setOrientation(camera.getOrientation());
-        /* Neck Location Object
-            * */
-        neck.setLocation(head.x(), head.y() - .01f, head.z());
-        neck.setOrientation(camera.getOrientation());
-
-        camera.camera(pG);
-
-        pG.background(100, 90, 100);
-        pG.lights();
-
+    protected void updateState() {
+        spaceNav.update();
         glove.update();
-        glove.drawView(pG);
 
         if(!rig.rigObjects.isEmpty()){
             for(ESOjBullet frst : chainHeads) {
@@ -75,9 +60,18 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
                 frst.setLocation(frst.getLocation());
             }
         }
-        rig.update(this);
-        rig.draw(pG);
 
+        rig.update(this);
+    }
+
+    @Override
+    public final void drawView(int eye, PGraphics pG) {
+        pG.background(100, 90, 100);
+        pG.lights();
+
+        glove.drawView(pG);
+
+        rig.draw(pG);
     }
 
     Set<ESOjBullet> chainHeads = new HashSet<>();
@@ -87,6 +81,9 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
             glove.reset();
             println("reset glove");
+
+            recenterPose();
+
         }
 
         if(KeyEvent.VK_S == e.getKeyCode()) {
@@ -119,7 +116,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         }
 
         if(KeyEvent.VK_I == e.getKeyCode()) {
-            camera.inverseControls = !camera.inverseControls;
+            spaceNav.invertControl();
             println("invert spacenav");
         }
 

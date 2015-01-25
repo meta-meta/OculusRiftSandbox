@@ -11,9 +11,7 @@ import com.bulletphysics.dynamics.constraintsolver.Point2PointConstraint;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.Transform;
 import com.generalprocessingunit.processing.space.Orientation;
-import processing.core.PApplet;
-import processing.core.PGraphics;
-import processing.core.PVector;
+import processing.core.*;
 
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
@@ -23,11 +21,15 @@ import java.util.Set;
 
 public class marionetteRig {
     DiscreteDynamicsWorld dynamicsWorld;
-    static final float gravity = -15f;
+    static final float gravity = -11f;
 
     public Set<ESOjBullet> rigObjects = new HashSet<>();
 
-    public marionetteRig() {
+    PApplet p5;
+
+    public marionetteRig(PApplet p5) {
+
+        this.p5 = p5;
 
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
 
@@ -54,15 +56,47 @@ public class marionetteRig {
     }
 
     private void createFloor(ESOjBullet lava) {
+        // Ripped from Dog Dearth
+        final PGraphics grid = p5.createGraphics(5000, 5000);
+        grid.beginDraw();
+        grid.background(20, 255, 0, 20);
+
+        int boldLine = grid.width / 10;
+        for( int n = 0; n <= grid.width; n += grid.width / 100){
+            grid.stroke(n % boldLine == 0 ? 0 : 50);
+            grid.strokeWeight(n % boldLine == 0 ? 2 : 1);
+            grid.line(n, 0, n, grid.width);
+            grid.line(0, n, grid.width, n);
+        }
+        grid.endDraw();
+
+        float w = 1.5f;
+
+        final PShape subPlane = p5.createShape();
+        subPlane.beginShape();
+        subPlane.fill(255);
+        subPlane.noStroke();
+        subPlane.texture(grid);
+        subPlane.textureMode(PConstants.NORMAL);
+        subPlane.vertex(-w , 0,  w, 0, 1);
+        subPlane.vertex( w , 0,  w, 1, 1);
+        subPlane.vertex( w , 0, -w, 1, 0);
+        subPlane.vertex(-w , 0, -w, 0, 0);
+        subPlane.endShape();
+
         CollisionShape floorBoxC = new BoxShape(new Vector3f(150f, 10f, 150f));
+
 
         ESOjBullet floor = new ESOjBullet(dynamicsWorld, floorBoxC, 2f, new PVector(0, -.4f, 0), new Orientation()) {
             @Override
             public void draw(PGraphics pG) {
                 pushMatrixAndTransform(pG);
                 {
-                    pG.fill(70, 50, 20);
-                    pG.box(3f, .2f, 3f);
+                    pG.translate(0, .01f, 0);
+                    pG.shape(subPlane);
+//
+//                    pG.fill(70, 50, 20);
+//                    pG.box(3f, .2f, 3f);
                 }
                 pG.popMatrix();
             }
@@ -215,8 +249,8 @@ public class marionetteRig {
 
         rigObjects.add(foot);
 
-        addP2PConstraint(leg.tail, foot, 0, 0, 0, neg * .015f, .01f, .03f);
         addP2PConstraint(chains.get(i == 0 ? 3 : 2).tail, foot, 0, 0, 0, 0, .01f, .01f);
+        addP2PConstraint(leg.tail, foot, 0, 0, 0, neg * .015f, .01f, .03f);
     }
 
     private void createNeck(final PVector center, ESOjBullet bodyBox, ESOjBullet head) {
@@ -236,7 +270,7 @@ public class marionetteRig {
     private ESOjBullet createHead(final PVector center) {
         CollisionShape sphereColl = new SphereShape(3f);
 
-        ESOjBullet head = new ESOjBullet(dynamicsWorld, sphereColl, 4, center, new Orientation()) {
+        ESOjBullet head = new ESOjBullet(dynamicsWorld, sphereColl, 4, PVector.add(center, new PVector(0, 0, .02f)), new Orientation()) {
             @Override
             public void draw(PGraphics pG) {
                 pushMatrixAndTransform(pG);
@@ -274,16 +308,20 @@ public class marionetteRig {
         return bodyBox;
     }
 
-    int prevMillis = 0;
+    public void draw(PGraphics pG) {
+        for (ESOjBullet eso : rigObjects) {
+            eso.draw(pG);
+        }
+    }
 
-    public void draw(PGraphics pG, PApplet p5) {
+    int prevMillis = 0;
+    public void update(PApplet p5) {
         int currMillis = p5.millis();
         dynamicsWorld.stepSimulation((currMillis - prevMillis) / 500f, 10);
         prevMillis = currMillis;
 
         for (ESOjBullet eso : rigObjects) {
             eso.update();
-            eso.draw(pG);
         }
     }
 
