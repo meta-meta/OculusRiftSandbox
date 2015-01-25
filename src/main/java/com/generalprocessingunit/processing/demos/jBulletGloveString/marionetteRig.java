@@ -78,7 +78,7 @@ public class marionetteRig {
             public void draw(PGraphics pG) {
                 pushMatrixAndTransform(pG);
                 {
-                    pG.fill(100, 200, 255);
+                    pG.fill(70, 50, 20);
                     pG.box(3f, .2f, 3f);
                 }
                 pG.popMatrix();

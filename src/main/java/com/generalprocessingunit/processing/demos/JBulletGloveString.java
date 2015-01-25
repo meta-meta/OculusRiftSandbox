@@ -61,7 +61,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
         camera.camera(pG);
 
-        pG.background(30, 20, 30);
+        pG.background(100, 90, 100);
         pG.lights();
 
         glove.update();
