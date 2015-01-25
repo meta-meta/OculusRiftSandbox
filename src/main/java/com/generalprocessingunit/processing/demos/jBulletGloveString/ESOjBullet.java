@@ -1,7 +1,5 @@
 package com.generalprocessingunit.processing.demos.jBulletGloveString;
 
-import com.bulletphysics.collision.dispatch.CollisionFlags;
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.RigidBody;
@@ -20,11 +18,12 @@ import javax.vecmath.Vector3f;
 
 public abstract class ESOjBullet extends EuclideanSpaceObject {
     RigidBody body;
+    static final float scale = 100f; // bullet works best with units between .05 and 10
 
     public ESOjBullet(DiscreteDynamicsWorld dynamicsWorld, CollisionShape collisionShape, float mass, PVector location, Orientation orientation) {
         super(location, orientation);
 
-        initPhysics(dynamicsWorld, collisionShape, location, mass);
+        initPhysics(dynamicsWorld, collisionShape, PVector.mult(location, scale), mass);
     }
 
     private void initPhysics(DiscreteDynamicsWorld dynamicsWorld, CollisionShape collisionShape, PVector initialTransform, float mass) {
@@ -59,7 +58,11 @@ public abstract class ESOjBullet extends EuclideanSpaceObject {
         if (body != null && body.getMotionState() != null) {
             Transform trans = new Transform();
             body.getMotionState().getWorldTransform(trans);
-            setLocation(trans.origin.x / 100f, trans.origin.y / 100f, trans.origin.z / 100f);
+            setLocation(trans.origin.x / scale, trans.origin.y / scale, trans.origin.z / scale);
+
+            Quat4f q = new Quat4f();
+            trans.getRotation(q);
+            setOrientation(new Orientation(new Quaternion(q.w, q.x, q.y, q.z)));
         }
     }
 
@@ -67,20 +70,12 @@ public abstract class ESOjBullet extends EuclideanSpaceObject {
     public void setLocation(PVector v) {
         Transform trans = new Transform();
         trans.setIdentity();
-        trans.origin.set(new Vector3f(v.x * 100f, v.y * 100f, v.z * 100f));
-//        body.getMotionState().getWorldTransform(trans);
-//
+        trans.origin.set(new Vector3f(v.x * scale, v.y * scale, v.z * scale));
 
         body.setWorldTransform(trans);
         body.getMotionState().setWorldTransform(trans);
-        body.setInterpolationAngularVelocity(new Vector3f(0, 0, 0));
-        body.setInterpolationLinearVelocity(new Vector3f(0, 0, 0));
-
-
-//        body.getMotionState().setWorldTransform(trans);
-//        body.setCollisionFlags(body.getCollisionFlags() | CollisionFlags.STATIC_OBJECT);
-
-//        body.translate(new Vector3f(.001f, 0, 0));//new Vector3f(v.x - trans.origin.x, v.y - trans.origin.y, v.z - trans.origin.z));
+//        body.setInterpolationAngularVelocity(new Vector3f(0, 0, 0));
+//        body.setInterpolationLinearVelocity(new Vector3f(0, 0, 0));
         super.setLocation(v);
     }
 

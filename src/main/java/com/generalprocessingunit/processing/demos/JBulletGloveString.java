@@ -46,7 +46,6 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
     }
 
 
-
     @Override
     public final void draw(PGraphics pG) {
         camera.update();
@@ -67,7 +66,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         glove.update();
         glove.drawView(pG);
 
-        if(!rig.esOjBullets.isEmpty()){
+        if(!rig.rigObjects.isEmpty()){
             for(ESOjBullet frst : chainHeads) {
                 // I think this has to do with the way hand location is set each update.
                 // setLocation SHOULD be getting called
@@ -91,12 +90,8 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
             List<PVector> locs = Arrays.asList(new PVector(0, 0, .1f), new PVector(0, 0, -.1f), new PVector(.1f, 0, 0), new PVector(-.1f, 0, 0));
 
-            List<PVector> worldLocs = new ArrayList<>();
-            for(PVector loc: locs) {
-                worldLocs.add(PVector.add(loc, PVector.mult(glove.razerHydraSensor.getLocation(), .01f)));
-            }
 
-            List<BallChain> chains = rig.spawnMarionette(worldLocs);
+            List<BallChain> chains = rig.spawnMarionette(locs, glove.razerHydraSensor.getLocation());
 
             int i = 0;
             for(BallChain chain: chains) {
@@ -104,6 +99,10 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
                 glove.razerHydraSensor.addChild(chain.head, locs.get(i));
                 i++;
             }
+        }
+
+        if(KeyEvent.VK_D == e.getKeyCode()) {
+            rig.attachModelToChains(glove.razerHydraSensor.getLocation());
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {

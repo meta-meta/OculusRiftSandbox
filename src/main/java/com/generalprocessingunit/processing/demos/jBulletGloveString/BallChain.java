@@ -18,29 +18,37 @@ public class BallChain {
     public ESOjBullet head;
     public ESOjBullet tail;
 
+    static final float ballSize = 1f;
+
     public List<ESOjBullet> balls = new ArrayList<>();
 
-    public BallChain(DiscreteDynamicsWorld dynamicsWorld, int links, PVector location) {
-        CollisionShape bead = new SphereShape(2f);
+    public BallChain(DiscreteDynamicsWorld dynamicsWorld, int links, PVector location, boolean kinematicHead) {
+        CollisionShape bead = new SphereShape(ballSize);
 
         ESOjBullet prevEso = null;
-        for(int i =0; i < links; ++i) {
-            ESOjBullet currEso = new Ball(dynamicsWorld, bead, i == 0 ? 0 : 1f - i/50f, PVector.add(location, new PVector(0, -2f * i, 0)), new Orientation());
-            if(i == 0) {
+        for(int i = 0; i < links; ++i) {
+            ESOjBullet currEso = new Ball(
+                    dynamicsWorld, bead, i == 0 && kinematicHead ? 0 : .1f ,
+                    PVector.add(location, new PVector(0, -(ballSize / ESOjBullet.scale) * i, 0)),
+                    new Orientation()
+            );
+
+            // set the head ball as kinematic
+            if(i == 0 && kinematicHead) {
                 currEso.body.setCollisionFlags(currEso.body.getCollisionFlags() | CollisionFlags.KINEMATIC_OBJECT);
                 currEso.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
             }
 
             balls.add(currEso);
 
+            // add constraints
             if(i > 0) {
-                //add constraint
-                Point2PointConstraint p2p = new Point2PointConstraint(
-                        prevEso.body, currEso.body, new Vector3f(0, -1f, 0), new Vector3f(0, 1f, 0) );
-//                p2p.setting.impulseClamp = 3f;
-                p2p.setting.damping = .8f;
-
-                dynamicsWorld.addConstraint(p2p, true);
+                dynamicsWorld.addConstraint(new Point2PointConstraint(
+                        prevEso.body,
+                        currEso.body,
+                        new Vector3f(0, -ballSize, 0),
+                        new Vector3f(0, ballSize, 0)
+                ), true);
             }
 
             prevEso = currEso;

@@ -6,8 +6,8 @@ import com.generalprocessingunit.processing.space.Orientation;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
-public class Ball extends ESOjBullet {
-    public Ball(DiscreteDynamicsWorld dynamicsWorld, CollisionShape collisionShape, float mass, PVector location, Orientation orientation) {
+public class BigBall extends ESOjBullet {
+    public BigBall(DiscreteDynamicsWorld dynamicsWorld, CollisionShape collisionShape, float mass, PVector location, Orientation orientation) {
         super(dynamicsWorld, collisionShape, mass, location, orientation);
     }
 
@@ -15,7 +15,7 @@ public class Ball extends ESOjBullet {
     public void draw(PGraphics pG) {
         pushMatrixAndTransform(pG);
         {
-            pG.sphere(.01f);
+            pG.sphere(.03f);
             // draw
         }
         pG.popMatrix();
