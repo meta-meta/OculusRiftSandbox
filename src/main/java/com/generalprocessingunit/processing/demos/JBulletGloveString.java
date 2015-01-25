@@ -18,7 +18,6 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
     public static void main(String[] args){
         PApplet.main(new String[]{"--full-screen", /*"--display=3",*/ JBulletGloveString.class.getCanonicalName()});
-        // if fullscreen works, --display=hmd.DisplayId
     }
 
     SpaceNavCamera camera;
@@ -97,7 +96,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
             );
 
 
-            List<BallChain> chains = rig.spawnMarionette(locs, glove.razerHydraSensor.getLocation());
+            List<BallChain> chains = rig.spawnChains(locs, glove.razerHydraSensor.getLocation());
 
             int i = 0;
             for(BallChain chain: chains) {
@@ -108,7 +107,7 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         }
 
         if(KeyEvent.VK_D == e.getKeyCode()) {
-            rig.attachModelToChains(glove.razerHydraSensor.getLocation());
+            rig.attachPuppetToChains(glove.razerHydraSensor.getLocation());
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {
