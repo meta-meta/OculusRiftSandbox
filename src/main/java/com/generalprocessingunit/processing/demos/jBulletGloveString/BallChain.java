@@ -7,31 +7,44 @@ import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.constraintsolver.Point2PointConstraint;
+import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.space.Orientation;
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BallChain {
+public abstract class BallChain {
     public ESOjBullet head;
     public ESOjBullet tail;
 
-    static final float ballSize = 1f;
 
     public List<ESOjBullet> balls = new ArrayList<>();
 
-    public BallChain(DiscreteDynamicsWorld dynamicsWorld, int links, PVector location, boolean kinematicHead) {
+    public BallChain(DiscreteDynamicsWorld dynamicsWorld, int links, final float ballSize, PVector location, boolean kinematicHead) {
         CollisionShape bead = new SphereShape(ballSize);
+
+        final BallChain self = this;
 
         ESOjBullet prevEso = null;
         for(int i = 0; i < links; ++i) {
-            ESOjBullet currEso = new Ball(
-                    dynamicsWorld, bead, i == 0 && kinematicHead ? 0 : .1f ,
+            float ballMass = 1f;
+            ESOjBullet currEso = new ESOjBullet(
+                    dynamicsWorld, bead, i == 0 && kinematicHead ? 0 : ballMass,
                     PVector.add(location, new PVector(0, -(ballSize / ESOjBullet.scale) * i, 0)),
                     new Orientation()
-            );
+            ) {
+                @Override
+                public void draw(PGraphics pG) {
+                    pushMatrixAndTransform(pG);
+                    {
+                        self.draw(pG);
+                    }
+                    pG.popMatrix();
+                }
+            };
 
             // set the head ball as kinematic
             if(i == 0 && kinematicHead) {
@@ -57,5 +70,7 @@ public class BallChain {
         head = balls.get(0);
         tail = balls.get(balls.size() - 1);
     }
+
+    public abstract void draw(PGraphics pG);
 
 }

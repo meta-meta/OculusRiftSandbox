@@ -17,7 +17,7 @@ import java.util.*;
 public class JBulletGloveString extends PAppletBufferedHeadModel {
 
     public static void main(String[] args){
-        PApplet.main(new String[]{/*"--full-screen", "--display=3",*/ JBulletGloveString.class.getCanonicalName()});
+        PApplet.main(new String[]{"--full-screen", /*"--display=3",*/ JBulletGloveString.class.getCanonicalName()});
         // if fullscreen works, --display=hmd.DisplayId
     }
 
@@ -29,7 +29,8 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
     @Override
     public void setup() {
-        size(1900, 1000, OPENGL);
+        size(displayWidth, displayHeight, OPENGL);
+//        size(1900, 1000, OPENGL);
 //        frame.setLocation(1051 , 10);
 
         super.setup();
@@ -88,7 +89,12 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
 
         if(KeyEvent.VK_S == e.getKeyCode()) {
 
-            List<PVector> locs = Arrays.asList(new PVector(0, 0, .1f), new PVector(0, 0, -.1f), new PVector(.1f, 0, 0), new PVector(-.1f, 0, 0));
+            List<PVector> locs = Arrays.asList(
+                    new PVector(    0, 0,   .1f),
+                    new PVector(    0, 0, -.07f),
+                    new PVector( .11f, 0,     0),
+                    new PVector(-.11f, 0,     0)
+            );
 
 
             List<BallChain> chains = rig.spawnMarionette(locs, glove.razerHydraSensor.getLocation());
