@@ -1,7 +1,9 @@
 package com.generalprocessingunit.processing.demos.jBulletGloveString;
 
 import com.bulletphysics.collision.broadphase.AxisSweep3;
-import com.bulletphysics.collision.dispatch.*;
+import com.bulletphysics.collision.dispatch.CollisionConfiguration;
+import com.bulletphysics.collision.dispatch.CollisionDispatcher;
+import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.SphereShape;
@@ -11,13 +13,12 @@ import com.bulletphysics.dynamics.constraintsolver.Point2PointConstraint;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.Transform;
 import com.generalprocessingunit.processing.space.Orientation;
+import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
 import processing.core.*;
 
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.awt.event.KeyEvent;
+import java.util.*;
 
 public class marionetteRig {
     DiscreteDynamicsWorld dynamicsWorld;
@@ -56,33 +57,7 @@ public class marionetteRig {
     }
 
     private void createFloor(ESOjBullet lava) {
-        // Ripped from Dog Dearth
-        final PGraphics grid = p5.createGraphics(5000, 5000);
-        grid.beginDraw();
-        grid.background(20, 255, 0, 20);
-
-        int boldLine = grid.width / 10;
-        for( int n = 0; n <= grid.width; n += grid.width / 100){
-            grid.stroke(n % boldLine == 0 ? 0 : 50);
-            grid.strokeWeight(n % boldLine == 0 ? 2 : 1);
-            grid.line(n, 0, n, grid.width);
-            grid.line(0, n, grid.width, n);
-        }
-        grid.endDraw();
-
-        float w = 1.5f;
-
-        final PShape subPlane = p5.createShape();
-        subPlane.beginShape();
-        subPlane.fill(255);
-        subPlane.noStroke();
-        subPlane.texture(grid);
-        subPlane.textureMode(PConstants.NORMAL);
-        subPlane.vertex(-w , 0,  w, 0, 1);
-        subPlane.vertex( w , 0,  w, 1, 1);
-        subPlane.vertex( w , 0, -w, 1, 0);
-        subPlane.vertex(-w , 0, -w, 0, 0);
-        subPlane.endShape();
+        final PShape subPlane = createGrid();
 
         CollisionShape floorBoxC = new BoxShape(new Vector3f(150f, 10f, 150f));
 
@@ -121,6 +96,37 @@ public class marionetteRig {
         constr.setAngularLowerLimit(new Vector3f());
         constr.setAngularUpperLimit(new Vector3f());
         dynamicsWorld.addConstraint(constr, false);
+    }
+
+    private PShape createGrid() {
+        // Ripped from Dog Dearth
+        PGraphics grid = p5.createGraphics(5000, 5000);
+        grid.beginDraw();
+        grid.background(20, 255, 0, 20);
+
+        int boldLine = grid.width / 10;
+        for( int n = 0; n <= grid.width; n += grid.width / 100){
+            grid.stroke(n % boldLine == 0 ? 0 : 50);
+            grid.strokeWeight(n % boldLine == 0 ? 2 : 1);
+            grid.line(n, 0, n, grid.width);
+            grid.line(0, n, grid.width, n);
+        }
+        grid.endDraw();
+
+        float w = 1.5f;
+
+        final PShape subPlane = p5.createShape();
+        subPlane.beginShape();
+        subPlane.fill(255, 255);
+        subPlane.noStroke();
+        subPlane.texture(grid);
+        subPlane.textureMode(PConstants.NORMAL);
+        subPlane.vertex(-w , 0,  w, 0, 1);
+        subPlane.vertex( w , 0,  w, 1, 1);
+        subPlane.vertex( w , 0, -w, 1, 0);
+        subPlane.vertex(-w , 0, -w, 0, 0);
+        subPlane.endShape();
+        return subPlane;
     }
 
     private ESOjBullet createLava() {
@@ -171,13 +177,20 @@ public class marionetteRig {
         }
     }
 
-    List<BallChain> chains = new ArrayList<>();
+    List<BeadChain> chains = new ArrayList<>();
 
-    public List<BallChain> spawnChains(List<PVector> locs, PVector hydraLoc) {
+    public List<BeadChain> spawnChains(List<PVector> locs, PVector hydraLoc) {
+        float beadSize = 1.2f;
+        CollisionShape bead = new SphereShape(beadSize);
 
         int i = 0;
         for(PVector loc: locs) {
-            BallChain chain = new BallChain(dynamicsWorld, i==0 ? 6 : (i < 2 ? 17: 25), .6f, PVector.add(loc, hydraLoc), true){
+
+            BeadChain chain = new BeadChain(
+                    dynamicsWorld, bead,
+                    i==0 ? 3 : (i < 2 ? 8: 12), beadSize,
+                    PVector.add(loc, hydraLoc), true
+            ){
                 @Override
                 public void draw(PGraphics pG) {
                     pG.fill(255, 127);
@@ -211,11 +224,14 @@ public class marionetteRig {
     private void createLegs(PVector center, ESOjBullet bodyBox) {
         CollisionShape footBoxC = new BoxShape(new Vector3f(1.5f, 1f, 3f));
 
+        float beadSize = 1f;
+        CollisionShape bead = new SphereShape(beadSize);
+
         for (int i = 0; i < 2; i++) {
             int neg = i == 0 ? -1 : 1;
 
             PVector leftOfCenter = PVector.add(center, new PVector(0, 0, .03f * neg));
-            BallChain leg = new BallChain(dynamicsWorld, 7, 1f, leftOfCenter, false) {
+            BeadChain leg = new BeadChain(dynamicsWorld, bead, 7, beadSize, leftOfCenter, false) {
                 @Override
                 public void draw(PGraphics pG) {
                     pG.fill(50, 150, 200);
@@ -231,7 +247,7 @@ public class marionetteRig {
         }
     }
 
-    private void createFoot(final CollisionShape footBoxC, int i, int neg, final PVector leftOfCenter, BallChain leg) {
+    private void createFoot(final CollisionShape footBoxC, int i, int neg, final PVector leftOfCenter, BeadChain leg) {
         ESOjBullet foot = new ESOjBullet(dynamicsWorld, footBoxC, 5f, leftOfCenter, new Orientation()) {
             @Override
             public void draw(PGraphics pG) {
@@ -254,7 +270,10 @@ public class marionetteRig {
     }
 
     private void createNeck(final PVector center, ESOjBullet bodyBox, ESOjBullet head) {
-        BallChain neck = new BallChain(dynamicsWorld, 7, 1.4f, center, false) {
+        float beadSize = 1.4f;
+        CollisionShape bead = new SphereShape(beadSize);
+
+        BeadChain neck = new BeadChain(dynamicsWorld, bead, 7, beadSize, center, false) {
             @Override
             public void draw(PGraphics pG) {
                 pG.fill(50, 100, 200);
@@ -314,14 +333,54 @@ public class marionetteRig {
         }
     }
 
+    float stepDivisor = 1000;
     int prevMillis = 0;
     public void update(PApplet p5) {
         int currMillis = p5.millis();
-        dynamicsWorld.stepSimulation((currMillis - prevMillis) / 500f, 10);
+        dynamicsWorld.stepSimulation((currMillis - prevMillis) / stepDivisor, 10);
         prevMillis = currMillis;
 
         for (ESOjBullet eso : rigObjects) {
             eso.update();
+        }
+    }
+
+    public void incStepDivisor(float inc) {
+        stepDivisor += inc;
+        System.out.println("stepDivisor: " + stepDivisor);
+    }
+
+    public void keyPressed(KeyEvent e, HandSpatialized glove, Set<ESOjBullet> chainHeads){
+        if(java.awt.event.KeyEvent.VK_S == e.getKeyCode()) {
+
+            List<PVector> locs = Arrays.asList(
+                    new PVector(0, 0, .1f),
+                    new PVector(0, 0, -.07f),
+                    new PVector(.11f, 0, 0),
+                    new PVector(-.11f, 0, 0)
+            );
+
+
+            List<BeadChain> chains = spawnChains(locs, glove.razerHydraSensor.getLocation());
+
+            int i = 0;
+            for(BeadChain chain: chains) {
+                chainHeads.add(chain.head);
+                glove.razerHydraSensor.addChild(chain.head, locs.get(i));
+                i++;
+            }
+        }
+
+        if(KeyEvent.VK_D == e.getKeyCode()) {
+            attachPuppetToChains(glove.razerHydraSensor.getLocation());
+        }
+
+        if(java.awt.event.KeyEvent.VK_UP == e.getKeyCode()) {
+            incStepDivisor(-10);
+        }
+
+        if(java.awt.event.KeyEvent.VK_DOWN == e.getKeyCode()) {
+            incStepDivisor(10);
         }
     }
 

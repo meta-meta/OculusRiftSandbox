@@ -4,10 +4,9 @@ package com.generalprocessingunit.processing.demos.jBulletGloveString;
 import com.bulletphysics.collision.dispatch.CollisionFlags;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.CollisionShape;
-import com.bulletphysics.collision.shapes.SphereShape;
+import com.bulletphysics.collision.shapes.ConvexInternalShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.constraintsolver.Point2PointConstraint;
-import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.space.Orientation;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -16,17 +15,16 @@ import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BallChain {
+public abstract class BeadChain {
     public ESOjBullet head;
     public ESOjBullet tail;
 
 
     public List<ESOjBullet> balls = new ArrayList<>();
 
-    public BallChain(DiscreteDynamicsWorld dynamicsWorld, int links, final float ballSize, PVector location, boolean kinematicHead) {
-        CollisionShape bead = new SphereShape(ballSize);
+    public BeadChain(DiscreteDynamicsWorld dynamicsWorld, CollisionShape bead, int links, final float ballSize, PVector location, boolean kinematicHead) {
 
-        final BallChain self = this;
+        final BeadChain self = this;
 
         ESOjBullet prevEso = null;
         for(int i = 0; i < links; ++i) {
@@ -59,8 +57,8 @@ public abstract class BallChain {
                 dynamicsWorld.addConstraint(new Point2PointConstraint(
                         prevEso.body,
                         currEso.body,
-                        new Vector3f(0, -ballSize, 0),
-                        new Vector3f(0, ballSize, 0)
+                        new Vector3f(0, -ballSize * 1.3f, 0),
+                        new Vector3f(0, ballSize * 1.3f, 0)
                 ), true);
             }
 

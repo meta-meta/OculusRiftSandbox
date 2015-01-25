@@ -1,15 +1,11 @@
 package com.generalprocessingunit.processing.demos.vr;
 
-import com.generalprocessingunit.processing.SpaceNavCamera;
-import com.generalprocessingunit.processing.demos.PAppletBufferedHeadModel;
-import com.generalprocessingunit.processing.demos.jBulletGloveString.BallChain;
+import com.generalprocessingunit.processing.demos.jBulletGloveString.BeadChain;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.ESOjBullet;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.marionetteRig;
-import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.generalprocessingunit.processing.vr.PAppletVR;
 import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
 import com.generalprocessingunit.processing.vr.controls.SpaceNavVR;
-import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -43,9 +39,11 @@ public class JBulletGloveString extends PAppletVR {
         rig = new marionetteRig(this);
 
         glove = new HandSpatialized(this, this);
-        glove.drawArm = false;
 
         spaceNav = new SpaceNavVR(this, .0007f, .03f);
+
+        headContainer.yaw(PI);
+        headContainer.translateWRTObjectCoords(new PVector(0, .2f, -.7f ));
     }
 
     @Override
@@ -78,36 +76,14 @@ public class JBulletGloveString extends PAppletVR {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        rig.keyPressed(e, glove, chainHeads);
+
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
             glove.reset();
             println("reset glove");
 
             recenterPose();
 
-        }
-
-        if(KeyEvent.VK_S == e.getKeyCode()) {
-
-            List<PVector> locs = Arrays.asList(
-                    new PVector(    0, 0,   .1f),
-                    new PVector(    0, 0, -.07f),
-                    new PVector( .11f, 0,     0),
-                    new PVector(-.11f, 0,     0)
-            );
-
-
-            List<BallChain> chains = rig.spawnChains(locs, glove.razerHydraSensor.getLocation());
-
-            int i = 0;
-            for(BallChain chain: chains) {
-                chainHeads.add(chain.head);
-                glove.razerHydraSensor.addChild(chain.head, locs.get(i));
-                i++;
-            }
-        }
-
-        if(KeyEvent.VK_D == e.getKeyCode()) {
-            rig.attachPuppetToChains(glove.razerHydraSensor.getLocation());
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {

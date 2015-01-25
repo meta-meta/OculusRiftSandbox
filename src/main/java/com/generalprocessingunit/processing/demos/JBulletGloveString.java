@@ -1,9 +1,10 @@
 package com.generalprocessingunit.processing.demos;
 
 import com.generalprocessingunit.processing.SpaceNavCamera;
-import com.generalprocessingunit.processing.demos.jBulletGloveString.BallChain;
+import com.generalprocessingunit.processing.demos.jBulletGloveString.BeadChain;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.ESOjBullet;
 import com.generalprocessingunit.processing.demos.jBulletGloveString.marionetteRig;
+import com.generalprocessingunit.processing.space.Orientation;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
 import processing.core.PApplet;
@@ -37,13 +38,14 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         rig = new marionetteRig(this);
 
         glove = new HandSpatialized(this, this);
-        glove.drawArm = false;
+        glove.color.A = 100;
 
         camera = new SpaceNavCamera(this);
-        camera.setLocation(0, 0, 1);
-        camera.rotate(new YawPitchRoll(PI, 0, 0));
+        camera.setLocation(0, .2f, 1);
+        camera.rotate(new YawPitchRoll(PI, .45f, 0));
         frameRate(60);
 
+        camera.fov = PI / 2.4f;
 
     }
 
@@ -58,7 +60,8 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         /* Neck Location Object
             * */
         neck.setLocation(head.x(), head.y() - .01f, head.z());
-        neck.setOrientation(camera.getOrientation());
+        Orientation o = camera.getOrientation().rotateFrom(new YawPitchRoll(0, -.45f, 0));
+        neck.setOrientation(o);
 
         camera.camera(pG);
 
@@ -66,7 +69,9 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         pG.lights();
 
         glove.update();
-        glove.drawView(pG);
+        glove.update();
+        glove.leftHand.gloveDevice.pitch(-.5f);
+
 
         if(!rig.rigObjects.isEmpty()){
             for(ESOjBullet frst : chainHeads) {
@@ -78,39 +83,18 @@ public class JBulletGloveString extends PAppletBufferedHeadModel {
         rig.update(this);
         rig.draw(pG);
 
+        glove.drawView(pG);
     }
 
     Set<ESOjBullet> chainHeads = new HashSet<>();
 
     @Override
     public void keyPressed(KeyEvent e) {
+        rig.keyPressed(e, glove, chainHeads);
+
         if(KeyEvent.VK_SPACE == e.getKeyCode()) {
             glove.reset();
             println("reset glove");
-        }
-
-        if(KeyEvent.VK_S == e.getKeyCode()) {
-
-            List<PVector> locs = Arrays.asList(
-                    new PVector(    0, 0,   .1f),
-                    new PVector(    0, 0, -.07f),
-                    new PVector( .11f, 0,     0),
-                    new PVector(-.11f, 0,     0)
-            );
-
-
-            List<BallChain> chains = rig.spawnChains(locs, glove.razerHydraSensor.getLocation());
-
-            int i = 0;
-            for(BallChain chain: chains) {
-                chainHeads.add(chain.head);
-                glove.razerHydraSensor.addChild(chain.head, locs.get(i));
-                i++;
-            }
-        }
-
-        if(KeyEvent.VK_D == e.getKeyCode()) {
-            rig.attachPuppetToChains(glove.razerHydraSensor.getLocation());
         }
 
         if(KeyEvent.VK_G == e.getKeyCode()) {
