@@ -1,5 +1,6 @@
 package com.generalprocessingunit.processing.demos;
 
+import com.generalprocessingunit.processing.Color;
 import com.generalprocessingunit.processing.Lighting;
 import com.generalprocessingunit.processing.SpaceNavCamera;
 import com.generalprocessingunit.processing.space.AxisAngle;
@@ -7,6 +8,7 @@ import com.generalprocessingunit.processing.space.EuclideanSpaceObject;
 import com.generalprocessingunit.processing.space.Orientation;
 import com.generalprocessingunit.processing.space.YawPitchRoll;
 import com.generalprocessingunit.processing.vr.PAppletVR;
+import com.generalprocessingunit.processing.vr.controls.Dial;
 import com.generalprocessingunit.processing.vr.controls.HandSpatialized;
 import com.generalprocessingunit.processing.vr.controls.SpaceNavVR;
 import com.google.common.base.Objects;
@@ -15,15 +17,18 @@ import processing.core.PGraphics;
 import processing.core.PVector;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TextureCube extends PAppletBufferedHeadModel {
     HandSpatialized glove;
 
     SpaceNavCamera camera;
+    List<Dial> dials = new ArrayList<>();
 
-    EuclideanSpaceObject textureBox = new EuclideanSpaceObject(new PVector(0, 0, .3f), new Orientation());
+    EuclideanSpaceObject textureBox = new EuclideanSpaceObject(new PVector(0, 0, 0f), new Orientation());
     float boxSize = .15f;
     static int gridSize = 4;
     int numVoxels = 18;
@@ -46,12 +51,32 @@ public class TextureCube extends PAppletBufferedHeadModel {
         glove.drawArm = false;
 
         camera = new SpaceNavCamera(this);
-        camera.setLocation(0, 0, 1);
-        camera.rotate(new YawPitchRoll(PI, 0, 0));
+        camera.setLocation(0, .1f, -.6f);
+        camera.pitch(.1f);
 
         frameRate(60);
 
         chooseNewVoxels();
+
+        dials.add(
+                new Dial(
+                        this,
+                        new PVector(-.13f, 0, -.1f),
+                        new YawPitchRoll(-.3f, 0, 0),
+                        .03f, .02f,
+                        new Color(200, 40, 30)
+                ).addAsChildTo(textureBox)
+        );
+
+        dials.add(
+                new Dial(
+                        this,
+                        new PVector(-.13f, -.06f, -.1f),
+                        new YawPitchRoll(-.3f, 0, 0),
+                        .03f, .02f,
+                        new Color(40, 60, 200)
+                ).addAsChildTo(textureBox)
+        );
     }
 
 
@@ -63,7 +88,7 @@ public class TextureCube extends PAppletBufferedHeadModel {
         float voxelSize = boxSize / gridSize;
 
         
-        for (int i = 0; i < numVoxels; i++) {
+        for (int i = 0; i < min(numVoxels, pow(gridSize, 3)); i++) {
             TextureVoxel tv = new TextureVoxel(random(10) > 1 ? (int)random(1, 2) : (int)random(2, 11), voxelSize);
             textureBox.addChild(tv, randomVec(voxelSize));
             textureVoxels.add(tv);
@@ -83,6 +108,9 @@ public class TextureCube extends PAppletBufferedHeadModel {
         return new PVector(t.a * voxelSize - boxSize / 2 + voxelSize / 2, t.b * voxelSize - boxSize / 2 + voxelSize / 2, t.c * voxelSize - boxSize / 2 + voxelSize / 2);
     }
 
+    float d1 = 0;
+    float d2 = 0;
+
     protected void updateState() {
         camera.update();
         head.setLocation(camera.getLocation());
@@ -97,6 +125,24 @@ public class TextureCube extends PAppletBufferedHeadModel {
         camera.camera(pG);
 
         glove.update();
+
+        for(Dial d: dials) {
+            d.update(this, glove.leftHand);
+        }
+
+        if(abs(dials.get(0).val - d1) > .01f ) {
+            println("pow: " + pow(numVoxels, .33f));
+            println(gridSize + " " + d1);
+            gridSize = (int)min(100, max(1,  (int)(dials.get(0).val * 10) ) );
+            chooseNewVoxels();
+            d1 = dials.get(0).val;
+        }
+
+        if(abs(dials.get(1).val - d2) > .01f ) {
+            numVoxels = (int)min(pow(gridSize, 3), max(1, dials.get(1).val * 100));
+            chooseNewVoxels();
+            d2 = dials.get(1).val;
+        }
 
 
         for(TextureVoxel tv : textureVoxels) {
@@ -140,8 +186,6 @@ public class TextureCube extends PAppletBufferedHeadModel {
     @Override
     public void draw(PGraphics pG) {
         updateState();
-        glove.drawView(pG);
-
 
         Lighting.WhiteCube(pG, 50, 50, 10, 180, 180, 0);
         pG.emissive(0, 0, 0);
@@ -150,6 +194,10 @@ public class TextureCube extends PAppletBufferedHeadModel {
         glove.color.G = 64;
         glove.color.B = 48;
         glove.drawView(pG);
+
+        for(Dial d: dials) {
+            d.draw(pG);
+        }
 
         for(TextureVoxel tv : textureVoxels) {
             tv.draw(pG);
@@ -165,7 +213,12 @@ public class TextureCube extends PAppletBufferedHeadModel {
             pG.box(boxSize);
         }
         pG.popMatrix();
+
+
+
     }
+
+
 
 
     class TextureVoxel extends EuclideanSpaceObject {
