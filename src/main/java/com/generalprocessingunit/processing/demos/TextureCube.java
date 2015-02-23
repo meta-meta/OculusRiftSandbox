@@ -51,7 +51,7 @@ public class TextureCube extends PAppletBufferedHeadModel {
         glove.drawArm = false;
 
         camera = new SpaceNavCamera(this);
-        camera.setLocation(0, .1f, -.6f);
+        camera.setLocation(0, .1f, -.4f);
         camera.pitch(.1f);
 
         frameRate(60);
@@ -61,7 +61,7 @@ public class TextureCube extends PAppletBufferedHeadModel {
         dials.add(
                 new Dial(
                         this,
-                        new PVector(-.13f, 0, -.1f),
+                        new PVector(-.13f, .01f, -.1f),
                         new YawPitchRoll(-.3f, 0, 0),
                         .03f, .02f,
                         new Color(200, 40, 30)
@@ -131,8 +131,8 @@ public class TextureCube extends PAppletBufferedHeadModel {
         }
 
         if(abs(dials.get(0).val - d1) > .01f ) {
-            println("pow: " + pow(numVoxels, .33f));
-            println(gridSize + " " + d1);
+//            println("pow: " + pow(numVoxels, .33f));
+//            println(gridSize + " " + d1);
             gridSize = (int)min(100, max(1,  (int)(dials.get(0).val * 10) ) );
             chooseNewVoxels();
             d1 = dials.get(0).val;
@@ -241,7 +241,11 @@ public class TextureCube extends PAppletBufferedHeadModel {
                         vibratorsThisIsTouching.add(vs);
                     }
                 } else {
-                    vibratorsThisIsTouching.remove(vs);
+                    // vibrate on withdrawl as well. like surface of water
+                    if(vibratorsThisIsTouching.contains(vs)) {
+                        vs.setVibrate(density);
+                        vibratorsThisIsTouching.remove(vs);
+                    }
                 }
             }
         }
@@ -262,43 +266,12 @@ public class TextureCube extends PAppletBufferedHeadModel {
                     pG.fill(180 - (density / 11f) * 180, 180, 255 );
                 }
                 pG.sphere(halfWidth);
-//                pG.box(size);
             }
             pG.popMatrix();
         }
         
         boolean collision(PVector v, float r) {
-            if(getDistFrom(v) > halfWidth + r) {
-                return false;
-            }
-
-            //TODO: this only works if we don't rotate
-            
-//            if(x() - halfWidth > v.x + r) {
-//                return false;
-//            }
-//
-//            if(x() + halfWidth < v.x - r) {
-//                return false;
-//            }
-//
-//            if(y() - halfWidth > v.y + r) {
-//                return false;
-//            }
-//
-//            if(y() + halfWidth < v.y - r) {
-//                return false;
-//            }
-//
-//            if(z() - halfWidth > v.z + r) {
-//                return false;
-//            }
-//
-//            if(z() + halfWidth < v.z - r) {
-//                return false;
-//            }
-            
-            return true;
+            return !(getDistFrom(v) > halfWidth + r);
         }
     }
 
