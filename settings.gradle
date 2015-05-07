@@ -9,7 +9,8 @@ gradle.ext.gitDependencies = [
 	[cloneTo:'../p5-Rift', uri:'https://github.com/meta-meta/p5-Rift.git'],
 	[cloneTo:'../p5-Spatial', uri:'https://github.com/meta-meta/p5-Spatial.git'],
 	[cloneTo:'../p5-VR', uri:'https://github.com/meta-meta/p5-VR.git'],
-	
+	[cloneTo:'../PS3Eye', uri:'https://github.com/meta-meta/PS3Eye.git'],
+
 	[cloneTo:'../processing', uri:'https://github.com/meta-meta/processing.git', subPath:'/core', checkout:'riftIntegration']
 ]
 

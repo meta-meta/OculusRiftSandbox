@@ -28,6 +28,7 @@ dependencies {
     compile project (':../p5-Rift')
     compile project (':../p5-Spatial')
     compile project (':../p5-VR')
+    compile project (':../PS3Eye')
     compile project (':../processing/core')
 	compile 'cz.advel.jbullet:jbullet:20101010-1'
 }
@@ -67,8 +68,16 @@ def cloneRepo(repo) {
 	}
 }
 
+task copyPS3EyeDlls(type: Copy) {
+	from '../PS3Eye/dlls/'
+	into 'dll/ps3Eye'
+	include '*'
+}
+
 task setup << {
 	gradle.gitDependencies.each() {
 		cloneRepo it
 	}
+
+	tasks.copyPS3EyeDlls.execute()
 }
