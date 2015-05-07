@@ -39,7 +39,7 @@ public class SpatialAudioVR extends PAppletVR {
             );
         }
 
-        spaceNav = new SpaceNavVR(this, .001f, .1f);
+        spaceNav = new SpaceNavVR(this, headContainer, .001f, .1f);
     }
 
     @Override

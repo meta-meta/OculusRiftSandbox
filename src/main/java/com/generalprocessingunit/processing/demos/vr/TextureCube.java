@@ -43,7 +43,7 @@ public class TextureCube extends PAppletVR {
     public void setup() {
         super.setup();
 
-        spaceNav = new SpaceNavVR(this, .0007f, .03f);
+        spaceNav = new SpaceNavVR(this, headContainer, .0007f, .03f);
         glove = new HandSpatialized(this, this);
 
         chooseNewVoxels();

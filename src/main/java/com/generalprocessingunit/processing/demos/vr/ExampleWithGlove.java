@@ -29,7 +29,7 @@ public class ExampleWithGlove extends Example {
     public void setup() {
         super.setup();
 
-        spaceNav = new SpaceNavVR(this, .001f, .2f);
+        spaceNav = new SpaceNavVR(this, headContainer, .001f, .2f);
         glove = new HandSpatialized(this, this);
 
         // place these in the head container so that they are immobile but we can fly around

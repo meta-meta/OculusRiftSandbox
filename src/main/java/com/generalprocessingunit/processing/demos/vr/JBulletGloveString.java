@@ -40,7 +40,7 @@ public class JBulletGloveString extends PAppletVR {
 
         glove = new HandSpatialized(this, this);
 
-        spaceNav = new SpaceNavVR(this, .0007f, .03f);
+        spaceNav = new SpaceNavVR(this, headContainer, .0007f, .03f);
 
         headContainer.yaw(PI);
         headContainer.translateWRTObjectCoords(new PVector(0, .2f, -.7f ));

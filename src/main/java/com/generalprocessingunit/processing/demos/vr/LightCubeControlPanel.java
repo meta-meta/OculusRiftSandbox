@@ -32,7 +32,7 @@ public class LightCubeControlPanel extends PAppletVR {
     public void setup() {
         super.setup();
 
-        spaceNav = new SpaceNavVR(this, .001f, .2f);
+        spaceNav = new SpaceNavVR(this, headContainer, .001f, .2f);
         glove = new HandSpatialized(this, this);
 
         for (int y = -3; y < 0; y++) {
