@@ -146,10 +146,10 @@ public class DodecahedronTree extends PAppletBuffered {
     public void updateScene() {
         spaceNavigator.poll();
 
-        PVector t = PVector.mult(spaceNavigator.translation, .1f);
+        PVector t = PVector.mult(spaceNavigator.getTranslation(), .1f);
         momentum.add(t);
 
-        rotMomentum.add(PVector.mult(spaceNavigator.rotation, .1f));
+        rotMomentum.add(PVector.mult(spaceNavigator.getRotation(), .1f));
 
         momentum.friction();
         rotMomentum.friction();

@@ -37,8 +37,8 @@ public class TvNoiseWithSpaceNavigator extends TvNoise {
         spaceNav.poll();
 
         int i = invertedControl ? -1 : 1;
-        momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
-        rotMomentum.add(PVector.mult(spaceNav.rotation, i * rotSpeedCoef));
+        momentum.add(PVector.mult(spaceNav.getTranslation(), i * speedCoef));
+        rotMomentum.add(PVector.mult(spaceNav.getRotation(), i * rotSpeedCoef));
 
         // this is somewhat incorrect as forward momentum rotates with the object
         momentum.x = momentum.x - momentum.x * drag;

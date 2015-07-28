@@ -24,11 +24,11 @@ public class SpaceNavCamera extends Camera {
 
         float mult = inverseControls ? -.045f: .045f;
 
-        PVector t = PVector.mult(spaceNavigator.translation, mult / 100f);
+        PVector t = PVector.mult(spaceNavigator.getTranslation(), mult / 100f);
 
         momentum.add(t);
 
-        rotMomentum.add(PVector.mult(spaceNavigator.rotation, mult));
+        rotMomentum.add(PVector.mult(spaceNavigator.getRotation(), mult));
 
         momentum.friction();
         rotMomentum.friction();

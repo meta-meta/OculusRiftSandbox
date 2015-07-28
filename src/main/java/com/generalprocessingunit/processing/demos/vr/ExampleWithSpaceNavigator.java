@@ -37,8 +37,8 @@ public class ExampleWithSpaceNavigator extends Example {
         spaceNav.poll();
 
         int i = invertedControl ? -1 : 1;
-        momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
-        rotMomentum.add(PVector.mult(spaceNav.rotation, i * rotSpeedCoef));
+        momentum.add(PVector.mult(spaceNav.getTranslation(), i * speedCoef));
+        rotMomentum.add(PVector.mult(spaceNav.getRotation(), i * rotSpeedCoef));
 
         momentum.friction();
         rotMomentum.friction();

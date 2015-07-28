@@ -40,9 +40,9 @@ public class SpatialAudio extends PApplet {
 
         spaceNav.poll();
         int i = invertedControl ? -1 : 1;
-        momentum.add(PVector.mult(spaceNav.translation, i * speedCoef));
+        momentum.add(PVector.mult(spaceNav.getTranslation(), i * speedCoef));
 
-        println(spaceNav.translation);
+        println(spaceNav.getTranslation());
 
         momentum.x = momentum.x - momentum.x * drag;
         momentum.y = momentum.y - momentum.y * drag;
